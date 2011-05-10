@@ -75,7 +75,7 @@ void setup(void) {
   delay(500);
 
   tft.fillScreen(BLACK);
-  testfillcircles(10, MAGENTA);
+  testfillcircles(10, BLUE);
   testdrawcircles(10, WHITE);
   
   Serial.println("done");
