@@ -28,6 +28,8 @@ ST7735::ST7735(uint8_t cs, uint8_t rs,  uint8_t rst) {
 
 inline void ST7735::spiwrite(uint8_t c) {
 
+  //Serial.println(c, HEX);
+
   if (!_sid) {
     SPI.transfer(c);
     return;
@@ -46,9 +48,11 @@ inline void ST7735::spiwrite(uint8_t c) {
     
     if (c & _BV(i)) {
       *sidportreg |= sidpin;
+      //digitalWrite(_sid, HIGH);
       //SID_PORT |= _BV(SID);
     } else {
       *sidportreg &= ~sidpin;
+      //digitalWrite(_sid, LOW);
       //SID_PORT &= ~_BV(SID);
     }
     
@@ -65,6 +69,7 @@ void ST7735::writecommand(uint8_t c) {
   *portOutputRegister(csport) &= ~ cspin;
   //digitalWrite(_cs, LOW);
 
+  //Serial.print("C ");
   spiwrite(c);
 
   *portOutputRegister(csport) |= cspin;
@@ -79,6 +84,7 @@ void ST7735::writedata(uint8_t c) {
   *portOutputRegister(csport) &= ~ cspin;
     //digitalWrite(_cs, LOW);
 
+  //Serial.print("D ");
   spiwrite(c);
 
   *portOutputRegister(csport) |= cspin;
@@ -147,7 +153,7 @@ void ST7735::fillScreen(uint16_t color) {
   *portOutputRegister(csport) |= cspin;
 }
 
-void ST7735::init(void) {
+void ST7735::initB(void) {
   // set pin directions
   pinMode(_rs, OUTPUT);
 
@@ -283,6 +289,154 @@ void ST7735::init(void) {
   writecommand(ST7735_DISPON);
   delay(500);
 }
+
+
+
+void ST7735::initR(void) {
+  // set pin directions
+  pinMode(_rs, OUTPUT);
+
+  if (_sclk) {
+    pinMode(_sclk, OUTPUT);
+    sclkport = digitalPinToPort(_sclk);
+    sclkpin = digitalPinToBitMask(_sclk);
+
+    pinMode(_sid, OUTPUT);
+    sidport = digitalPinToPort(_sid);
+    sidpin = digitalPinToBitMask(_sid);
+  } else {
+    // using the hardware SPI
+    SPI.begin();
+    SPI.setDataMode(SPI_MODE3);
+  }
+  // toggle RST low to reset; CS low so it'll listen to us
+  pinMode(_cs, OUTPUT);
+  digitalWrite(_cs, LOW);
+  cspin = digitalPinToBitMask(_cs);
+  csport = digitalPinToPort(_cs);
+
+  rspin = digitalPinToBitMask(_rs);
+  rsport = digitalPinToPort(_rs);
+
+  if (_rst) {
+    pinMode(_rst, OUTPUT);
+    digitalWrite(_rst, HIGH);
+    delay(500);
+    digitalWrite(_rst, LOW);
+    delay(500);
+    digitalWrite(_rst, HIGH);
+    delay(500);
+  }
+
+  writecommand(ST7735_SWRESET); // software reset
+  delay(150);
+
+  writecommand(ST7735_SLPOUT);  // out of sleep mode
+  delay(500);
+
+  writecommand(ST7735_FRMCTR1);  // frame rate control - normal mode
+  writedata(0x01);  // frame rate = fosc / (1 x 2 + 40) * (LINE + 2C + 2D)
+  writedata(0x2C); 
+  writedata(0x2D); 
+
+  writecommand(ST7735_FRMCTR2);  // frame rate control - idle mode
+  writedata(0x01);  // frame rate = fosc / (1 x 2 + 40) * (LINE + 2C + 2D)
+  writedata(0x2C); 
+  writedata(0x2D); 
+
+  writecommand(ST7735_FRMCTR3);  // frame rate control - partial mode
+  writedata(0x01); // dot inversion mode
+  writedata(0x2C); 
+  writedata(0x2D); 
+  writedata(0x01); // line inversion mode
+  writedata(0x2C); 
+  writedata(0x2D); 
+  
+  writecommand(ST7735_INVCTR);  // display inversion control
+  writedata(0x07);  // no inversion
+
+  writecommand(ST7735_PWCTR1);  // power control
+  writedata(0x50);      // AVDD = 4.7V, VRHP = 3.9
+  writedata(0x02);      // -4.6V
+  writedata(0x84);      // AUTO mode
+
+  writecommand(ST7735_PWCTR2);  // power control
+  writedata(0xC5);      // VGH25 = 2.4C VGSEL = -10 VGH = 3 * AVDD
+
+  writecommand(ST7735_PWCTR3);  // power control
+  writedata(0x0A);      // Opamp current small 
+  writedata(0x00);      // Boost frequency
+
+  writecommand(ST7735_PWCTR4);  // power control
+  writedata(0x8A);      // BCLK/2, Opamp current small & Medium low
+  writedata(0xEE);      // BLCK/4, BCLK/2, BLCK/4, BCLK/2
+
+  writecommand(ST7735_INVOFF);    // don't invert display
+
+  writecommand(ST7735_VMCTR1);  // power control
+  writedata(0x26);      // VCOM = -1.375V
+
+  writecommand(ST7735_MADCTL);  // memory access control (directions)
+  writedata(0xC8);  // row address/col address, bottom to top refresh
+  madctl = 0xC8;
+  
+  writecommand(ST7735_COLMOD);  // set color mode
+  writedata(0x05);        // 16-bit color
+
+  writecommand(ST7735_CASET);  // column addr set
+  writedata(0x00);
+  writedata(0x00);   // XSTART = 0
+  writedata(0x00);
+  writedata(0x7F);   // XEND = 127
+
+  writecommand(ST7735_RASET);  // row addr set
+  writedata(0x00);
+  writedata(0x00);    // XSTART = 0
+  writedata(0x00);
+  writedata(0x9F);    // XEND = 159
+
+  writecommand(ST7735_GMCTRP1);
+  writedata(0x09);
+  writedata(0x16);
+  writedata(0x09);
+  writedata(0x20);
+  writedata(0x21);
+  writedata(0x1B);
+  writedata(0x13);
+  writedata(0x19);
+  writedata(0x17);
+  writedata(0x15);
+  writedata(0x1E);
+  writedata(0x2B);
+  writedata(0x04);
+  writedata(0x05);
+  writedata(0x02);
+  writedata(0x0E);
+  writecommand(ST7735_GMCTRN1);
+  writedata(0x0B); 
+  writedata(0x14); 
+  writedata(0x08); 
+  writedata(0x1E); 
+  writedata(0x22); 
+  writedata(0x1D); 
+  writedata(0x18); 
+  writedata(0x1E); 
+  writedata(0x1B); 
+  writedata(0x1A); 
+  writedata(0x24); 
+  writedata(0x2B); 
+  writedata(0x06); 
+  writedata(0x06); 
+  writedata(0x02); 
+  writedata(0x0F); 
+  
+  writecommand(ST7735_DISPON);
+  delay(100);
+
+  writecommand(ST7735_NORON);  // normal display on
+  delay(10);
+}
+
 
 // draw a string from memory
 
@@ -497,8 +651,7 @@ void ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
 
 
 //////////
-
-/* 
+/*
 uint8_t ST7735::spiread(void) {
   uint8_t r = 0;
   if (_sid > 0) {
@@ -518,7 +671,7 @@ uint8_t ST7735::spiread(void) {
   return r;
 }
 
-void ST7735::writecommand(uint8_t c) {
+
 
 void ST7735::dummyclock(void) {
 
@@ -549,8 +702,13 @@ uint8_t ST7735::readcommand8(uint8_t c) {
   *portOutputRegister(csport) &= ~ cspin;
 
   spiwrite(c);
+
+  digitalWrite(_rs, HIGH);
   pinMode(_sid, INPUT); // input!
+  digitalWrite(_sid, LOW); // low
+  spiread();
   uint8_t r = spiread();
+
 
   *portOutputRegister(csport) |= cspin;
 
@@ -600,4 +758,5 @@ uint32_t ST7735::readcommand32(uint8_t c) {
   pinMode(_sid, OUTPUT); // back to output
   return r;
 }
+
 */

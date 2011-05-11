@@ -27,13 +27,17 @@
 #define ST7735_COLMOD 0x3A
 #define ST7735_MADCTL 0x36
 
+
 #define ST7735_FRMCTR1 0xB1
+#define ST7735_FRMCTR2 0xB2
+#define ST7735_FRMCTR3 0xB3
 #define ST7735_INVCTR 0xB4
 #define ST7735_DISSET5 0xB6
 
 #define ST7735_PWCTR1 0xC0
 #define ST7735_PWCTR2 0xC1
 #define ST7735_PWCTR3 0xC2
+#define ST7735_PWCTR4 0xC3
 #define ST7735_VMCTR1 0xC5
 
 #define ST7735_RDID1 0xDA
@@ -52,7 +56,8 @@ class ST7735 {
   ST7735(uint8_t CS, uint8_t RS, uint8_t SID, 
 	 uint8_t SCLK, uint8_t RST);
   ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
-  void init(void);
+  void initB(void);
+  void initR(void);
 
   // drawing primitives!
   void pushColor(uint16_t color);
@@ -89,8 +94,8 @@ class ST7735 {
   void dummyclock(void);
   void writecommand(uint8_t);
   void writedata(uint8_t);
-
-  /* these are not for use, 8-bit protocol only!
+  /*
+  // these are not for use, 8-bit protocol only!
   uint8_t readdata(void);
   uint8_t readcommand8(uint8_t);
   uint16_t readcommand16(uint8_t);
