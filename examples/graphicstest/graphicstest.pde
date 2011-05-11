@@ -39,7 +39,7 @@ void fillpixelbypixel(uint16_t color) {
 void setup(void) {
   Serial.begin(9600);
   Serial.print("hello!");
-  tft.init();
+  tft.initR();               // initialize a ST7735R chip
 
   Serial.println("init");
   tft.writecommand(ST7735_DISPON);
