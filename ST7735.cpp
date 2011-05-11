@@ -378,7 +378,7 @@ void ST7735::initR(void) {
 
   writecommand(ST7735_MADCTL);  // memory access control (directions)
   writedata(0xC8);  // row address/col address, bottom to top refresh
-  madctl = 0xC8;
+  madctl = 0xC8
   
   writecommand(ST7735_COLMOD);  // set color mode
   writedata(0x05);        // 16-bit color
