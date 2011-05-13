@@ -356,7 +356,7 @@ void ST7735::initR(void) {
   writedata(0x07);  // no inversion
 
   writecommand(ST7735_PWCTR1);  // power control
-  writedata(0x50);      // AVDD = 4.7V, VRHP = 3.9
+  writedata(0xA2);      
   writedata(0x02);      // -4.6V
   writedata(0x84);      // AUTO mode
 
@@ -369,12 +369,16 @@ void ST7735::initR(void) {
 
   writecommand(ST7735_PWCTR4);  // power control
   writedata(0x8A);      // BCLK/2, Opamp current small & Medium low
-  writedata(0xEE);      // BLCK/4, BCLK/2, BLCK/4, BCLK/2
+  writedata(0x2A);     
 
-  writecommand(ST7735_INVOFF);    // don't invert display
+  writecommand(ST7735_PWCTR5);  // power control
+  writedata(0x8A);    
+  writedata(0xEE);     
 
   writecommand(ST7735_VMCTR1);  // power control
-  writedata(0x26);      // VCOM = -1.375V
+  writedata(0x0E);  
+
+  writecommand(ST7735_INVOFF);    // don't invert display
 
   writecommand(ST7735_MADCTL);  // memory access control (directions)
   writedata(0xC8);  // row address/col address, bottom to top refresh
@@ -396,39 +400,39 @@ void ST7735::initR(void) {
   writedata(0x9F);    // XEND = 159
 
   writecommand(ST7735_GMCTRP1);
-  writedata(0x09);
-  writedata(0x16);
-  writedata(0x09);
-  writedata(0x20);
-  writedata(0x21);
-  writedata(0x1B);
-  writedata(0x13);
-  writedata(0x19);
-  writedata(0x17);
-  writedata(0x15);
-  writedata(0x1E);
-  writedata(0x2B);
-  writedata(0x04);
-  writedata(0x05);
   writedata(0x02);
-  writedata(0x0E);
+  writedata(0x1c);
+  writedata(0x07);
+  writedata(0x12);
+  writedata(0x37);
+  writedata(0x32);
+  writedata(0x29);
+  writedata(0x2d);
+  writedata(0x29);
+  writedata(0x25);
+  writedata(0x2B);
+  writedata(0x39);
+  writedata(0x00);
+  writedata(0x01);
+  writedata(0x03);
+  writedata(0x10);
   writecommand(ST7735_GMCTRN1);
-  writedata(0x0B); 
-  writedata(0x14); 
-  writedata(0x08); 
-  writedata(0x1E); 
-  writedata(0x22); 
-  writedata(0x1D); 
-  writedata(0x18); 
-  writedata(0x1E); 
-  writedata(0x1B); 
-  writedata(0x1A); 
-  writedata(0x24); 
-  writedata(0x2B); 
+  writedata(0x03); 
+  writedata(0x1d); 
+  writedata(0x07); 
   writedata(0x06); 
-  writedata(0x06); 
+  writedata(0x2E); 
+  writedata(0x2C); 
+  writedata(0x29); 
+  writedata(0x2D); 
+  writedata(0x2E); 
+  writedata(0x2E); 
+  writedata(0x37); 
+  writedata(0x3F); 
+  writedata(0x00); 
+  writedata(0x00); 
   writedata(0x02); 
-  writedata(0x0F); 
+  writedata(0x10); 
   
   writecommand(ST7735_DISPON);
   delay(100);
