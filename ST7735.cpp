@@ -562,7 +562,7 @@ void ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
 		      uint16_t color) {
   // smarter version
 
-  setAddrWindow(x, y, x+w, y+h);
+  setAddrWindow(x, y, x+w-1, y+h-1);
 
   // setup for data
   digitalWrite(_rs, HIGH);
