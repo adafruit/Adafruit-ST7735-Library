@@ -1,5 +1,5 @@
 // Graphics library by ladyada/adafruit with init code from Rossum 
-// MIT license 
+// MIT license
 
 #include "ST7735.h"
 #include "glcdfont.c"
