@@ -542,6 +542,168 @@ uint8_t ST7735::getRotation() {
   return madctl;
 }
 
+// draw a triangle!
+void ST7735::drawTriangle(uint8_t x0, uint8_t y0,
+                          uint8_t x1, uint8_t y1,
+                          uint8_t x2, uint8_t y2, uint16_t color)
+{
+    drawLine(x0, y0, x1, y1, color);
+    drawLine(x1, y1, x2, y2, color);
+    drawLine(x2, y2, x0, y0, color); 
+}
+
+// fill a triangle!
+void ST7735::fillTriangle ( int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16_t color)
+{
+    if (y0 > y1) {
+        swap(y0, y1); swap(x0, x1);
+    }
+    if (y1 > y2) {
+        swap(y2, y1); swap(x2, x1);
+    }
+    if (y0 > y1) {
+        swap(y0, y1); swap(x0, x1);
+    }
+    
+    int32_t dx1, dx2, dx3; // Interpolation deltas
+    int32_t sx1, sx2, sy; // Scanline co-ordinates
+    
+    sx2=(int32_t)x0 * (int32_t)1000; // Use fixed point math for x axis values
+    sx1 = sx2;
+    sy=y0;
+    
+    // Calculate interpolation deltas
+    if (y1-y0 > 0) dx1=((x1-x0)*1000)/(y1-y0);
+    else dx1=0;
+    if (y2-y0 > 0) dx2=((x2-x0)*1000)/(y2-y0);
+    else dx2=0;
+    if (y2-y1 > 0) dx3=((x2-x1)*1000)/(y2-y1);
+    else dx3=0;
+    
+    // Render scanlines (horizontal lines are the fastest rendering method)
+    if (dx1 > dx2)
+    {
+        for(; sy<=y1; sy++, sx1+=dx2, sx2+=dx1)
+        {
+            drawHorizontalLine(sx1/1000, sy, (sx2-sx1)/1000, color);
+        }
+        sx2 = x1*1000;
+        sy = y1;
+        for(; sy<=y2; sy++, sx1+=dx2, sx2+=dx3)
+        {
+            drawHorizontalLine(sx1/1000, sy, (sx2-sx1)/1000, color);
+        }
+    }
+    else
+    {
+        for(; sy<=y1; sy++, sx1+=dx1, sx2+=dx2)
+        {
+            drawHorizontalLine(sx1/1000, sy, (sx2-sx1)/1000, color);
+        }
+        sx1 = x1*1000;
+        sy = y1;
+        for(; sy<=y2; sy++, sx1+=dx3, sx2+=dx2)
+        {
+            drawHorizontalLine(sx1/1000, sy, (sx2-sx1)/1000, color);
+        }
+    }
+}
+
+// draw a rounded rectangle
+void ST7735::drawRoundRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
+                           uint16_t color) {
+    // smarter version
+    drawHorizontalLine(x+r, y, w-2*r, color);
+    drawHorizontalLine(x+r, y+h-1, w-2*r, color);
+    drawVerticalLine(x, y+r, h-2*r, color);
+    drawVerticalLine(x+w-1, y+r, h-2*r, color);
+    // draw four corners
+    drawCircleHelper(x+r, y+r, r, 1, color);
+    drawCircleHelper(x+w-r-1, y+r, r, 2, color);
+    drawCircleHelper(x+w-r-1, y+h-r-1, r, 4, color);
+    drawCircleHelper(x+r, y+h-r-1, r, 8, color);
+}
+
+// fill a rounded rectangle
+void ST7735::fillRoundRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
+                           uint16_t color) {
+    // smarter version
+    fillRect(x+r, y, w-2*r, h, color);
+    
+    // draw four corners
+    fillCircleHelper(x+w-r-1, y+r, r, 1, h-2*r-1, color);
+    fillCircleHelper(x+r, y+r, r, 2, h-2*r-1, color);
+}
+
+// draw circle helper
+void ST7735::drawCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t cornername,
+                              uint16_t color) {
+    int16_t f = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x = 0;
+    int16_t y = r;
+    
+    
+    while (x<y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
+        if (cornername & 0x4) {
+            drawPixel(x0 + x, y0 + y, color);
+            drawPixel(x0 + y, y0 + x, color);
+        } 
+        if (cornername & 0x2) {
+            drawPixel(x0 + x, y0 - y, color);
+            drawPixel(x0 + y, y0 - x, color);
+        }
+        if (cornername & 0x8) {
+            drawPixel(x0 - y, y0 + x, color);
+            drawPixel(x0 - x, y0 + y, color);
+        }
+        if (cornername & 0x1) {
+            drawPixel(x0 - y, y0 - x, color);
+            drawPixel(x0 - x, y0 - y, color);
+        }
+    }
+}
+
+// used to do circles and roundrects!
+void ST7735::fillCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t cornername, uint16_t delta,
+                              uint16_t color) {
+    
+    int16_t f = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x = 0;
+    int16_t y = r;
+    
+    while (x<y) {
+        if (f >= 0) {
+            y--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
+        
+        if (cornername & 0x1) {
+            drawVerticalLine(x0+x, y0-y, 2*y+1+delta, color);
+            drawVerticalLine(x0+y, y0-x, 2*x+1+delta, color);
+        }
+        if (cornername & 0x2) {
+            drawVerticalLine(x0-x, y0-y, 2*y+1+delta, color);
+            drawVerticalLine(x0-y, y0-x, 2*x+1+delta, color);
+        }
+    }
+}
+
 void ST7735::setRotation(uint8_t m) {
   madctl = m;
   writecommand(ST7735_MADCTL);  // memory access control (directions)

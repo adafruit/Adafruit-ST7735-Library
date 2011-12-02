@@ -7,7 +7,7 @@
 #define rst 8  // you can also connect this to the Arduino reset
 
 // Color definitions
-#define	BLACK           0x0000
+#define  BLACK           0x0000
 #define	BLUE            0x001F
 #define	RED             0xF800
 #define	GREEN           0x07E0
@@ -78,6 +78,16 @@ void setup(void) {
   tft.fillScreen(BLACK);
   testfillcircles(10, BLUE);
   testdrawcircles(10, WHITE);
+  delay(500);
+  
+  testroundrects();
+  delay(500);
+  
+  testtriangles();
+  delay(500);
+  
+  mediabuttons();
+  delay(500);
   
   Serial.println("done");
   delay(1000);
@@ -154,6 +164,8 @@ void testfillrects(uint16_t color1, uint16_t color2) {
  }
 }
 
+
+
 void testfillcircles(uint8_t radius, uint16_t color) {
   for (uint8_t x=radius; x < tft.width; x+=radius*2) {
     for (uint8_t y=radius; y < tft.height; y+=radius*2) {
@@ -168,4 +180,64 @@ void testdrawcircles(uint8_t radius, uint16_t color) {
       tft.drawCircle(x, y, radius, color);
     }
   }  
+}
+
+void testtriangles() {
+  tft.fillScreen(BLACK);
+  int color = 0xF800;
+  int t;
+  int w = 63;
+  int x = 159;
+  int y = 0;
+  int z = 127;
+  for(t = 0 ; t <= 15; t+=1) {
+    tft.drawTriangle(w, y, y, x, z, x, color);
+    x-=4;
+    y+=4;
+    z-=4;
+    color+=100;
+  }
+}
+
+void testroundrects() {
+  tft.fillScreen(BLACK);
+  int color = 100;
+  int i;
+  int t;
+  for(t = 0 ; t <= 4; t+=1) {
+  int x = 0;
+  int y = 0;
+  int w = 127;
+  int h = 159;
+    for(i = 0 ; i <= 24; i+=1) {
+    tft.drawRoundRect(x, y, w, h, 5, color);
+    x+=2;
+    y+=3;
+    w-=4;
+    h-=6;
+    color+=1100;
+  }
+  color+=100;
+  }
+}
+
+void mediabuttons() {
+ // play
+  tft.fillScreen(BLACK);
+  tft.fillRoundRect(25, 10, 78, 60, 8, WHITE);
+  tft.fillTriangle(42, 20, 42, 60, 90, 40, BLACK);
+  delay(500);
+  // pause
+  tft.fillRoundRect(25, 90, 78, 60, 8, WHITE);
+  tft.fillRoundRect(39, 98, 20, 45, 5, BLACK);
+  tft.fillRoundRect(69, 98, 20, 45, 5, BLACK);
+  delay(500);
+  // play color
+  tft.fillTriangle(42, 20, 42, 60, 90, 40, GREEN);
+  // pause color
+  tft.fillRoundRect(39, 98, 20, 45, 5, RED);
+  tft.fillRoundRect(69, 98, 20, 45, 5, RED);
+  delay(500);
+  // play color
+  tft.fillTriangle(42, 20, 42, 60, 90, 40, BLUE);
 }
