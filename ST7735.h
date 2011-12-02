@@ -1,5 +1,5 @@
 // Graphics library by ladyada/adafruit 
-// MIT license 
+// MIT license
 
 #define swap(a, b) { uint16_t t = a; a = b; b = t; }
 
