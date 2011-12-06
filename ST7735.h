@@ -126,4 +126,6 @@ class ST7735 {
   uint8_t cspin, rspin, sidpin, sclkpin;
 
   uint8_t madctl;
+  uint16_t _width, _height;
+  uint8_t rotation;
 };
