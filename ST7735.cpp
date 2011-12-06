@@ -121,6 +121,22 @@ void ST7735::pushColor(uint16_t color) {
 
 void ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
   if ((x >= width) || (y >= height)) return;
+    
+    // check rotation, move pixel around if necessary
+    switch (rotation) {
+        case 1:
+            swap(x, y);
+            x = width - x - 1;
+            break;
+        case 2:
+            x = width - x - 1;
+            y = height - y - 1;
+            break;
+        case 3:
+            swap(x, y);
+            y = height - y - 1;
+            break;
+    }
 
   setAddrWindow(x,y,x+1,y+1);
 
@@ -203,11 +219,11 @@ void ST7735::initB(void) {
   writedata(0x06);  // 6 lines front porch
   writedata(0x03);  // 3 lines backporch
   delay(10);
-  
+  ////////////////////////////////////////////
   writecommand(ST7735_MADCTL);  // memory access control (directions)
-  writedata(0x08);  // row address/col address, bottom to top refresh
-  madctl = 0x08;
-
+  writedata(0x0B);  // row address/col address, bottom to top refresh
+  madctl = 0x0B; // jss
+  ///////////////////////////////////////////
   writecommand(ST7735_DISSET5);  // display settings #5
   writedata(0x15);  // 1 clock cycle nonoverlap, 2 cycle gate rise, 3 cycle oscil. equalize
   writedata(0x02);  // fix on VTL
@@ -538,10 +554,6 @@ void ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r,
   }
 }
 
-uint8_t ST7735::getRotation() {
-  return madctl;
-}
-
 // draw a triangle!
 void ST7735::drawTriangle(uint8_t x0, uint8_t y0,
                           uint8_t x1, uint8_t y1,
@@ -704,10 +716,46 @@ void ST7735::fillCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t corn
     }
 }
 
+/*
+uint8_t ST7735::getRotation() {
+    return madctl;
+}
+ */
+
+uint8_t ST7735::getRotation() {
+    return rotation;
+}
+
+/*
 void ST7735::setRotation(uint8_t m) {
   madctl = m;
   writecommand(ST7735_MADCTL);  // memory access control (directions)
   writedata(madctl);  // row address/col address, bottom to top refresh
+}
+ */
+
+void ST7735::setRotation(uint8_t m) {
+
+    m%= 4;  // cant be higher than 3
+    rotation = m;
+    switch (m) {
+        case 0:
+            _width = width; 
+            _height = height;
+            break;
+        case 1:
+            _width = height; 
+            _height = width;
+            break;
+        case 2:
+            _width = width; 
+            _height = height;
+            break;
+        case 3:
+            _width = height; 
+            _height = width;
+            break;
+    }
 }
 
 // draw a rectangle
@@ -722,9 +770,28 @@ void ST7735::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
 
 void ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
 		      uint16_t color) {
+    ///////////////////////////////////////////////////////
+    // check rotation, move pixel around if necessary
+    switch (rotation) {
+        case 1:
+            swap(x, y);
+            x = width - x - 1;
+            break;
+        case 2:
+            x = width - x - 1;
+            y = height - y - 1;
+            break;
+        case 3:
+            swap(x, y);
+            y = height - y - 1;
+            break;
+    }
+    
+  //  setAddrWindow(x,y,x+1,y+1);
+    ////////////////////////////////////////////////////////
   // smarter version
 
-  setAddrWindow(x, y, x+w-1, y+h-1);
+  setAddrWindow(x, y, x+w-1, y+h-1); // orig
 
   // setup for data
   digitalWrite(_rs, HIGH);
@@ -741,7 +808,8 @@ void ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
 
 void ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
 {
-  if (x >= width) return;
+  if (x >= _width) return;
+    
   if (y+length >= height) length = height-y-1;
 
   drawFastLine(x,y,length,color,1);
@@ -749,7 +817,7 @@ void ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t col
 
 void ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
 {
-  if (y >= height) return;
+  if (y >= _height) return;
   if (x+length >= width) length = width-x-1;
 
   drawFastLine(x,y,length,color,0);
@@ -758,11 +826,50 @@ void ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t c
 void ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length, 
 			  uint16_t color, uint8_t rotflag)
 {
+    ///////////////////////////////////////////////////////
+    uint16_t newentrymod;
+    
+    switch (rotation) {
+        case 0:
+            if (rotflag)
+                newentrymod = 0x1028;   // we want a 'vertical line'
+            else 
+                newentrymod = 0x1030;   // we want a 'horizontal line'
+            break;
+        case 1:
+            swap(x, y);
+            // first up fix the X
+            x = width - x - 1;
+            if (rotflag)
+                newentrymod = 0x1000;   // we want a 'vertical line'
+            else 
+                newentrymod = 0x1028;   // we want a 'horizontal line'
+            break;
+        case 2:
+            x = width - x - 1;
+            y = height - y - 1;
+            if (rotflag)
+                newentrymod = 0x1008;   // we want a 'vertical line'
+            else 
+                newentrymod = 0x1020;   // we want a 'horizontal line'
+            break;
+        case 3:
+            swap(x,y);
+            y = height - y - 1;
+            if (rotflag)
+                newentrymod = 0x1030;   // we want a 'vertical line'
+            else 
+                newentrymod = 0x1008;   // we want a 'horizontal line'
+            break;
+    }
+    ////////////////////////////////////////////////////////
+
   if (rotflag) {
     setAddrWindow(x, y, x, y+length);
   } else {
     setAddrWindow(x, y, x+length, y+1);
   }
+
   // setup for data
   digitalWrite(_rs, HIGH);
   digitalWrite(_cs, LOW);
@@ -772,12 +879,14 @@ void ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length,
     spiwrite(color);    
   }
   digitalWrite(_cs, HIGH);
-}
+   }
 
 
 // bresenham's algorithm - thx wikpedia
 void ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, 
 		      uint16_t color) {
+    // if you're in rotation 1 or 3, we need to swap the X and Y's
+    
   uint16_t steep = abs(y1 - y0) > abs(x1 - x0);
   if (steep) {
     swap(x0, y0);
