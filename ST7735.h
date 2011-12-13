@@ -3,10 +3,10 @@
 
 #define swap(a, b) { uint16_t t = a; a = b; b = t; }
 
-#if ARDUINO >= 100
- #include "Arduino.h"
+#if defined(ARDUINO) && ARDUINO >= 100
+#include "Arduino.h"
 #else
- #include "WProgram.h"
+#include "WProgram.h"
 #endif
 
 #define ST7735_NOP 0x0
@@ -83,7 +83,15 @@ class ST7735 {
 		  uint16_t color);
   void fillCircle(uint8_t x0, uint8_t y0, uint8_t r, 
 		  uint16_t color);
-
+  void drawTriangle(uint8_t x0, uint8_t y0,
+          uint8_t x1, uint8_t y1,
+          uint8_t x2, uint8_t y2, uint16_t color);
+  void fillTriangle(int32_t x0, int32_t y0,
+          int32_t x1, int32_t y1,
+          int32_t x2, int32_t y2, 
+          uint16_t color);
+  void drawRoundRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t radius,uint16_t color);
+  void fillRoundRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t radius, uint16_t color);
   void drawString(uint8_t x, uint8_t y, char *c, 
 		  uint16_t color, uint8_t size=1);
   void drawChar(uint8_t x, uint8_t y, char c, 
@@ -108,6 +116,8 @@ class ST7735 {
   */
 
  private:
+    void drawCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t corner, uint16_t color);
+    void fillCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t corner, uint16_t delta, uint16_t color);
   void spiwrite(uint8_t);
   //uint8_t spiread(void);
 
@@ -116,4 +126,6 @@ class ST7735 {
   uint8_t cspin, rspin, sidpin, sclkpin;
 
   uint8_t madctl;
+  uint16_t _width, _height;
+  uint8_t rotation;
 };
