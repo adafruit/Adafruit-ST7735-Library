@@ -15,6 +15,8 @@ ST7735::ST7735(uint8_t cs, uint8_t rs, uint8_t sid,
     _sid = sid;
     _sclk = sclk;
     _rst = rst;
+
+    setRotation(0);
 }
 
 ST7735::ST7735(uint8_t cs, uint8_t rs,  uint8_t rst) {
@@ -23,6 +25,8 @@ ST7735::ST7735(uint8_t cs, uint8_t rs,  uint8_t rst) {
     _sid = 0;
     _sclk = 0;
     _rst = rst;
+
+    setRotation(0);
 }
 
 
@@ -120,53 +124,53 @@ void ST7735::pushColor(uint16_t color) {
 }
 
 void ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
-    if ((x >= width) || (y >= height)) return;
+  if ((x >= TFTWIDTH) || (y >= TFTHEIGHT)) return;
     
     // check rotation, move pixel around if necessary
-    switch (rotation) {
-        case 1:
-            swap(x, y);
-            x = width - x - 1;
-            break;
-        case 2:
-            x = width - x - 1;
-            y = height - y - 1;
-            break;
-        case 3:
-            swap(x, y);
-            y = height - y - 1;
-            break;
-    }
-    
-    setAddrWindow(x,y,x+1,y+1);
-    
-    // setup for data
-    *portOutputRegister(rsport) |= rspin;
-    *portOutputRegister(csport) &= ~ cspin;
-    
-    spiwrite(color >> 8);    
-    spiwrite(color);   
-    
-    *portOutputRegister(csport) |= cspin;
-    
+  switch (rotation) {
+  case 1:
+    swap(x, y);
+    x = TFTWIDTH - x - 1;
+    break;
+  case 2:
+    x = TFTWIDTH - x - 1;
+    y = TFTHEIGHT - y - 1;
+    break;
+  case 3:
+    swap(x, y);
+    y = TFTHEIGHT - y - 1;
+    break;
+  }
+  
+  setAddrWindow(x,y,x+1,y+1);
+  
+  // setup for data
+  *portOutputRegister(rsport) |= rspin;
+  *portOutputRegister(csport) &= ~ cspin;
+  
+  spiwrite(color >> 8);    
+  spiwrite(color);   
+  
+  *portOutputRegister(csport) |= cspin;
+  
 }
 
 
 void ST7735::fillScreen(uint16_t color) {
-    setAddrWindow(0, 0, width-1, height-1);
-    
-    // setup for data
-    *portOutputRegister(rsport) |= rspin;
-    *portOutputRegister(csport) &= ~ cspin;
-    
-    for (uint8_t x=0; x < width; x++) {
-        for (uint8_t y=0; y < height; y++) {
-            spiwrite(color >> 8);    
-            spiwrite(color);    
-        }
+  setAddrWindow(0, 0, TFTWIDTH-1, TFTHEIGHT-1);
+  
+  // setup for data
+  *portOutputRegister(rsport) |= rspin;
+  *portOutputRegister(csport) &= ~ cspin;
+  
+  for (uint8_t x=0; x < TFTWIDTH; x++) {
+    for (uint8_t y=0; y < TFTHEIGHT; y++) {
+      spiwrite(color >> 8);    
+      spiwrite(color);    
     }
-    
-    *portOutputRegister(csport) |= cspin;
+  }
+  
+  *portOutputRegister(csport) |= cspin;
 }
 
 void ST7735::initB(void) {
@@ -457,6 +461,13 @@ void ST7735::initR(void) {
     delay(10);
 }
 
+uint8_t ST7735::width() {
+  return _width;
+}
+
+uint8_t ST7735::height() {
+  return _height;
+}
 
 // draw a string from memory
 
@@ -466,7 +477,7 @@ void ST7735::drawString(uint8_t x, uint8_t y, char *c,
         drawChar(x, y, c[0], color, size);
         x += size*6;
         c++;
-        if (x + 5 >= width) {
+        if (x + 5 >= _width) {
             y += 10;
             x = 0;
         }
@@ -765,20 +776,20 @@ void ST7735::setRotation(uint8_t m) {
     rotation = m;
     switch (m) {
         case 0:
-            _width = width; 
-            _height = height;
+            _width = TFTWIDTH; 
+            _height = TFTHEIGHT;
             break;
         case 1:
-            _width = height; 
-            _height = width;
+            _width = TFTHEIGHT; 
+            _height = TFTWIDTH;
             break;
         case 2:
-            _width = width; 
-            _height = height;
+            _width = TFTWIDTH; 
+            _height = TFTHEIGHT;
             break;
         case 3:
-            _width = height; 
-            _height = width;
+            _width = TFTHEIGHT; 
+            _height = TFTWIDTH;
             break;
     }
 }
@@ -814,16 +825,16 @@ void ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
 
 void ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
 {
-    if (x >= width) return;
-    if (y+length >= height) length = height-y-1;
+  if (x >= _width) return;
+  if (y+length >= _height) length = _height-y-1;
     
-    drawFastLine(x,y,length,color,1);
+  drawFastLine(x,y,length,color,1);
 }
 
 void ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
 {
-    if (y >= height) return;
-    if (x+length >= width) length = width-x-1;
+    if (y >= _height) return;
+    if (x+length >= _width) length = _width-x-1;
     
     drawFastLine(x,y,length,color,0);
 }
@@ -831,20 +842,47 @@ void ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t c
 void ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length, 
                           uint16_t color, uint8_t rotflag)
 {
-    if (rotflag) {
-        setAddrWindow(x, y, x, y+length);
+  if (rotation == 0) {
+    if (rotflag) {  
+      setAddrWindow(x, y, x, y+length);   // vertical
     } else {
-        setAddrWindow(x, y, x+length, y+1);
+      setAddrWindow(x, y, x+length, y+1); // horizontal
     }
-    // setup for data
-    digitalWrite(_rs, HIGH);
-    digitalWrite(_cs, LOW);
-    
-    while (length--) {
-        spiwrite(color >> 8);    
-        spiwrite(color);    
+  } else if (rotation == 1) {
+    swap(x, y);
+    x = TFTWIDTH - x - 1;
+    if (rotflag) {
+      setAddrWindow(x-length, y, x, y); // vertical
+    } else {
+      setAddrWindow(x, y, x, y+length); //horizontal
     }
-    digitalWrite(_cs, HIGH);
+  } else if (rotation == 2) {
+    x = TFTWIDTH - x - 1;
+    y = TFTHEIGHT - y - 1;
+    if (rotflag) {
+      setAddrWindow(x, y-length, x, y); // vertical
+    } else {
+      setAddrWindow(x-length, y, x, y+1); //horizontal
+    }
+  } else if (rotation == 3) {
+    swap(x, y);
+    y = TFTHEIGHT - y - 1;
+    if (rotflag) {
+      setAddrWindow(x, y, x+length, y); // vertical
+    } else {
+       setAddrWindow(x, y-length, x, y); // horizontal
+    }
+  }
+
+  // setup for data
+  digitalWrite(_rs, HIGH);
+  digitalWrite(_cs, LOW);
+  
+  while (length--) {
+    spiwrite(color >> 8);    
+    spiwrite(color);    
+  }
+  digitalWrite(_cs, HIGH);
 }
 
 

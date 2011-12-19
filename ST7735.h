@@ -97,8 +97,11 @@ class ST7735 {
   void drawChar(uint8_t x, uint8_t y, char c, 
 		      uint16_t color, uint8_t size=1);
 
-  static const uint8_t width = 128;
-  static const uint8_t height = 160;
+  static const uint8_t TFTWIDTH = 128;
+  static const uint8_t TFTHEIGHT = 160;
+
+  uint8_t width();
+  uint8_t height();
 
   void setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
   void setRotation(uint8_t);
