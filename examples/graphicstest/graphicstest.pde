@@ -26,6 +26,7 @@ ST7735 tft = ST7735(cs, dc, mosi, sclk, rst);
 // an output. This is much faster - also required if you want
 // to use the microSD card (see the image drawing example)
 //ST7735 tft = ST7735(cs, dc, rst);    
+float p = 3.1415926;
 
 void fillpixelbypixel(uint16_t color) {
   for (uint8_t x=0; x < tft.width(); x++) {
