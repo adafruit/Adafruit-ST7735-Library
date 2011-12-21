@@ -26,7 +26,8 @@
 // (for UNO thats sclk = 13 and sid = 11) and pin 10 must be 
 // an output. This is much faster - also required if you want
 // to use the microSD card (see the image drawing example)
-ST7735 tft = ST7735(cs, dc, rst);    
+ST7735 tft = ST7735(cs, dc, rst);
+float p = 3.141592; // value for pi
 
 /*
 void fillpixelbypixel(uint16_t color) {
@@ -57,6 +58,10 @@ void setup(void) {
   tft.fillScreen(BLACK);
   testdrawtext("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus", WHITE);
   delay(1000);
+  
+  // tft print function!
+  tftPrintTest();
+  delay(4000);
   
   //a single pixel
   tft.drawPixel(tft.width()/2, tft.height()/2, GREEN);
@@ -220,6 +225,44 @@ void testroundrects() {
   }
   color+=100;
   }
+}
+
+void tftPrintTest() {
+  tft.fillScreen(BLACK);
+  tft.setCursor(0, 30);
+  tft.setTextColor(RED);  
+  tft.setTextSize(1);
+  tft.println("Hello World!");
+  tft.setTextColor(YELLOW);
+  tft.setTextSize(2);
+  tft.println("Hello World!");
+  tft.setTextColor(GREEN);
+  tft.setTextSize(3);
+  tft.println("Hello World!");
+  tft.setTextColor(BLUE);
+  tft.setTextSize(4);
+  tft.print(1234.567);
+  delay(1500);
+  tft.goHome(); // go to 0, 0
+  tft.fillScreen(BLACK);
+  tft.setTextColor(WHITE);
+  tft.setTextSize(0);
+  tft.println("Hello World!");
+  tft.setTextSize(1);
+  tft.setTextColor(GREEN);
+  tft.print(p, 6);
+  tft.println(" Want pi?");
+  tft.println(" ");
+  tft.print(8675309, HEX); // print 8,675,309 out in HEX!
+  tft.println(" Print HEX!");
+  tft.println(" ");
+  tft.setTextColor(WHITE);
+  tft.println("Sketch has been");
+  tft.println("running for: ");
+  tft.setTextColor(MAGENTA);
+  tft.print(millis() / 1000);
+  tft.setTextColor(WHITE);
+  tft.print(" seconds.");
 }
 
 void mediabuttons() {

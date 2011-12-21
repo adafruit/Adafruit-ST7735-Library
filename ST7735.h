@@ -56,13 +56,14 @@
 #define ST7735_GMCTRN1 0xE1
 
 
-class ST7735 {
+class ST7735 : public Print {
  public:
   ST7735(uint8_t CS, uint8_t RS, uint8_t SID, 
-	 uint8_t SCLK, uint8_t RST);
-  ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
+         uint8_t SCLK, uint8_t RST);
+    ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
   void initB(void);
   void initR(void);
+    uint16_t Color565(uint8_t r, uint8_t g, uint8_t b);
 
   // drawing primitives!
   void pushColor(uint16_t color);
@@ -92,6 +93,17 @@ class ST7735 {
           uint16_t color);
   void drawRoundRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t radius,uint16_t color);
   void fillRoundRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h, uint16_t radius, uint16_t color);
+    
+    void setCursor(uint16_t x, uint16_t y);
+    void setTextColor(uint16_t c);
+    void setTextSize(uint8_t s);
+    void goHome(void);
+#if ARDUINO >= 100
+    virtual size_t write(uint8_t);
+#else
+    virtual void write(uint8_t);
+#endif
+    
   void drawString(uint8_t x, uint8_t y, char *c, 
 		  uint16_t color, uint8_t size=1);
   void drawChar(uint8_t x, uint8_t y, char c, 
@@ -108,8 +120,8 @@ class ST7735 {
   uint8_t getRotation(void);
 
   void dummyclock(void);
-  void writecommand(uint8_t);
-  void writedata(uint8_t);
+  void writecommand(uint8_t c);
+  void writedata(uint8_t d);
   /*
   // these are not for use, 8-bit protocol only!
   uint8_t readdata(void);
@@ -131,4 +143,7 @@ class ST7735 {
   uint8_t madctl;
   uint16_t _width, _height;
   uint8_t rotation;
+  uint8_t textsize;
+  uint16_t cursor_x, cursor_y;
+  uint16_t textcolor;
 };

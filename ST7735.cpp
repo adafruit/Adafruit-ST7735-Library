@@ -8,6 +8,7 @@
 #include "wiring_private.h"
 #include <SPI.h>
 
+
 ST7735::ST7735(uint8_t cs, uint8_t rs, uint8_t sid, 
                uint8_t sclk, uint8_t rst) {
     _cs = cs;
@@ -15,7 +16,7 @@ ST7735::ST7735(uint8_t cs, uint8_t rs, uint8_t sid,
     _sid = sid;
     _sclk = sclk;
     _rst = rst;
-
+    
     setRotation(0);
 }
 
@@ -308,6 +309,9 @@ void ST7735::initB(void) {
     
     writecommand(ST7735_DISPON);
     delay(500);
+    cursor_y = cursor_x = 0;
+    textsize = 1;
+    textcolor = 0xFFFF;
 }
 
 
@@ -459,6 +463,9 @@ void ST7735::initR(void) {
     
     writecommand(ST7735_NORON);  // normal display on
     delay(10);
+    cursor_y = cursor_x = 0;
+    textsize = 1;
+    textcolor = 0xFFFF;
 }
 
 uint8_t ST7735::width() {
@@ -667,6 +674,17 @@ void ST7735::fillCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t corn
             drawVerticalLine(x0-y, y0-x, 2*x+1+delta, color);
         }
     }
+}
+
+uint16_t ST7735::Color565(uint8_t r, uint8_t g, uint8_t b) {
+    uint16_t c;
+    c = r >> 3;
+    c <<= 6;
+    c |= g >> 2;
+    c <<= 5;
+    c |= b >> 3;
+    
+    return c;
 }
 
 void ST7735::drawCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t cornername,
@@ -920,6 +938,42 @@ void ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
         }
     }
 }
+
+void ST7735::setCursor(uint16_t x, uint16_t y) {
+    cursor_x = x;
+    cursor_y = y;
+}
+
+void ST7735::setTextSize(uint8_t s) {
+    textsize = s;
+}
+
+void ST7735::setTextColor(uint16_t c) {
+    textcolor = c;
+}
+
+#if ARDUINO >= 100
+size_t ST7735::write(uint8_t c) {
+#else
+    void ST7735::write(uint8_t c) {
+#endif
+        if (c == '\n') {
+            cursor_y += textsize*8;
+            cursor_x = 0;
+        } else if (c == '\r') {
+            // skip em
+        } else {
+            drawChar(cursor_x, cursor_y, c, textcolor, textsize);
+            cursor_x += textsize*6;
+        }
+#if ARDUINO >= 100
+        return 1;
+#endif
+    }
+    
+    void ST7735::goHome(void) {
+        setCursor (0,0);
+    }
 
 
 //////////
