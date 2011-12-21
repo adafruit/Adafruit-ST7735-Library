@@ -43,16 +43,22 @@ void setup(void) {
 }
 
 void loop(void) {
-  //rotatePixel();
-  //rotateLine();
-
-rotateFastline();
-/*  rotateDrawrect();
+  rotateLine();
+  rotatePixel();
+  rotateFastline();
+  rotateDrawrect();
   rotateFillrect();
   rotateDrawcircle();
   rotateFillcircle();
-  rotateText();
-*/
+  rotateTriangle();
+  rotateFillTriangle();
+  rotateRoundRect();
+  rotateFillRoundRect();
+  rotateChar();
+  rotateString();
+  
+  // rotateText(); // - alpha!
+
 }
 /*
 void rotateText() {
@@ -79,7 +85,7 @@ void rotateText() {
     tft.setRotation(tft.getRotation()+1);
   }
 }
-
+*/
 void rotateFillcircle(void) {
   for (uint8_t i=0; i<4; i++) {
     tft.fillScreen(BLACK);
@@ -137,7 +143,7 @@ void rotateDrawrect(void) {
     tft.setRotation(tft.getRotation()+1);
   }
 }
-*/
+
 
 
 void rotateFastline(void) {
@@ -174,7 +180,85 @@ void rotatePixel(void) {
     tft.fillScreen(BLACK);
     Serial.println(tft.getRotation(), DEC);
 
-    tft.drawPixel(10,20, RED);
+    tft.drawPixel(10,20, WHITE);
+    while (!Serial.available());
+    Serial.read();  Serial.read();  Serial.read();
+  
+    tft.setRotation(tft.getRotation()+1);
+  }
+}
+
+void rotateTriangle(void) {
+  for (uint8_t i=0; i<4; i++) {
+    tft.fillScreen(BLACK);
+    Serial.println(tft.getRotation(), DEC);
+
+    tft.drawTriangle(20, 10, 10, 30, 30, 30, GREEN);
+    while (!Serial.available());
+    Serial.read();  Serial.read();  Serial.read();
+  
+    tft.setRotation(tft.getRotation()+1);
+  }
+}
+
+void rotateFillTriangle(void) {
+  for (uint8_t i=0; i<4; i++) {
+    tft.fillScreen(BLACK);
+    Serial.println(tft.getRotation(), DEC);
+
+    tft.fillTriangle(20, 10, 10, 30, 30, 30, RED);
+    while (!Serial.available());
+    Serial.read();  Serial.read();  Serial.read();
+  
+    tft.setRotation(tft.getRotation()+1);
+  }
+}
+
+void rotateRoundRect(void) {
+  for (uint8_t i=0; i<4; i++) {
+    tft.fillScreen(BLACK);
+    Serial.println(tft.getRotation(), DEC);
+
+    tft.drawRoundRect(20, 10, 25, 15, 5, BLUE);
+    while (!Serial.available());
+    Serial.read();  Serial.read();  Serial.read();
+  
+    tft.setRotation(tft.getRotation()+1);
+  }
+}
+
+void rotateFillRoundRect(void) {
+  for (uint8_t i=0; i<4; i++) {
+    tft.fillScreen(BLACK);
+    Serial.println(tft.getRotation(), DEC);
+
+    tft.fillRoundRect(20, 10, 25, 15, 5, CYAN);
+    while (!Serial.available());
+    Serial.read();  Serial.read();  Serial.read();
+  
+    tft.setRotation(tft.getRotation()+1);
+  }
+}
+
+void rotateChar(void) {
+  for (uint8_t i=0; i<4; i++) {
+    tft.fillScreen(BLACK);
+    Serial.println(tft.getRotation(), DEC);
+
+    tft.drawChar(25, 15, 'A', WHITE);
+    while (!Serial.available());
+    Serial.read();  Serial.read();  Serial.read();
+  
+    tft.setRotation(tft.getRotation()+1);
+  }
+}
+
+void rotateString(void) {
+  for (uint8_t i=0; i<4; i++) {
+    tft.fillScreen(BLACK);
+    Serial.println(tft.getRotation(), DEC);
+
+    tft.drawString(8, 25, "Adafruit Industries", WHITE);
     while (!Serial.available());
     Serial.read();  Serial.read();  Serial.read();
   

@@ -85,11 +85,11 @@ void loop() {
 
 void testfastlines(uint16_t color1, uint16_t color2) {
    tft.fillScreen(BLACK);
-   for (uint16_t y=0; y < tft.height; y+=5) {
-     tft.drawHorizontalLine(0, y, tft.width, color1);
+   for (uint16_t y=0; y < tft.height(); y+=5) {
+     tft.drawHorizontalLine(0, y, tft.width(), color1);
    }
-   for (uint16_t x=0; x < tft.width; x+=5) {
-     tft.drawVerticalLine(x, 0, tft.height, color2);
+   for (uint16_t x=0; x < tft.width(); x+=5) {
+     tft.drawVerticalLine(x, 0, tft.height(), color2);
    }
 }
 

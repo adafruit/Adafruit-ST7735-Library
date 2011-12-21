@@ -508,36 +508,6 @@ void ST7735::fillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color) {
     fillCircleHelper(x0, y0, r, 3, 0, color);
 }
 
-/*
-// fill a circle
-void ST7735::fillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color) {
-    int16_t f = 1 - r;
-    int16_t ddF_x = 1;
-    int16_t ddF_y = -2 * r;
-    int16_t x = 0;
-    int16_t y = r;
-    
-    drawVerticalLine(x0, y0-r, 2*r+1, color);
-    
-    while (x<y) {
-        if (f >= 0) {
-            y--;
-            ddF_y += 2;
-            f += ddF_y;
-        }
-        x++;
-        ddF_x += 2;
-        f += ddF_x;
-        
-        drawVerticalLine(x0+x, y0-y, 2*y+1, color);
-        drawVerticalLine(x0-x, y0-y, 2*y+1, color);
-        drawVerticalLine(x0+y, y0-x, 2*x+1, color);
-        drawVerticalLine(x0-y, y0-x, 2*x+1, color);
-    }
-}
-*/
-
-
 // draw a circle outline
 void ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r, 
                         uint16_t color) {
@@ -574,22 +544,6 @@ void ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r,
         
     }
 }
-
-
-/*
-// draw a circle outline
-
-void ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r, 
-                        uint16_t color) {
-    drawPixel(x0, y0+r, color);
-    drawPixel(x0, y0-r, color);
-    drawPixel(x0+r, y0, color);
-    drawPixel(x0-r, y0, color);
-    
-    drawCircleHelper(x0, y0, r, 0xF, color);
-}
-*/
-
 
 // draw a triangle!
 void ST7735::drawTriangle(uint8_t x0, uint8_t y0,
@@ -752,23 +706,9 @@ void ST7735::drawCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t corn
     }
 }
 
-/*
- uint8_t ST7735::getRotation() {
- return madctl;
- }
- */
-
 uint8_t ST7735::getRotation() {
     return rotation;
 }
-
-/*
- void ST7735::setRotation(uint8_t m) {
- madctl = m;
- writecommand(ST7735_MADCTL);  // memory access control (directions)
- writedata(madctl);  // row address/col address, bottom to top refresh
- }
- */
 
 void ST7735::setRotation(uint8_t m) {
     
@@ -804,22 +744,74 @@ void ST7735::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
     drawVerticalLine(x+w-1, y, h, color);
 }
 
+// fill a rectangle
 void ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
                       uint16_t color) {
-    // smarter version
+  
     
-    setAddrWindow(x, y, x+w-1, y+h-1);
+   // set the Address Window!
+    
+    if (rotation == 0) {
+            setAddrWindow(x, y, x+w-1, y+h-1);
+        }
+        
+    if (rotation == 1) {
+        swap(x, y);
+        x = TFTWIDTH - x - 1;
+            setAddrWindow(x - h + 1, y, x, y + w + 1);
+        }
+        
+    if (rotation == 2) {
+        x = TFTWIDTH - x - w;
+        y = TFTHEIGHT - y - h;
+            setAddrWindow(x, y, x+w-1, y+h-1);
+        }
+        
+    if (rotation == 3) {
+        swap(x, y);
+        y = TFTHEIGHT - y - w;
+            setAddrWindow(x, y, x+h-1, y+w-1);
+        }
+
     
     // setup for data
     digitalWrite(_rs, HIGH);
     digitalWrite(_cs, LOW);
     
+    
+    if (rotation == 0) {
     for (x=0; x < w; x++) {
         for (y=0; y < h; y++) {
             spiwrite(color >> 8);    
             spiwrite(color);    
         }
     }
+    }
+    if (rotation == 1) {
+        for (x=0; x < h; x++) {
+            for (y=0; y < w; y++) {
+                spiwrite(color >> 8);    
+                spiwrite(color);    
+            }
+        }
+    }
+    if (rotation == 2) {
+        for (x=0; x < w; x++) {
+            for (y=0; y < h; y++) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                spiwrite(color >> 8);    
+                spiwrite(color);    
+            }
+        }
+    }
+    if (rotation == 3) {
+        for (x=0; x < h; x++) {
+            for (y=0; y < w; y++) {
+                spiwrite(color >> 8);    
+                spiwrite(color);    
+            }
+        }
+    }
+    
     digitalWrite(_cs, HIGH);
 }
 
@@ -848,29 +840,32 @@ void ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length,
     } else {
       setAddrWindow(x, y, x+length, y+1); // horizontal
     }
+      
   } else if (rotation == 1) {
     swap(x, y);
     x = TFTWIDTH - x - 1;
     if (rotflag) {
-      setAddrWindow(x-length, y, x, y); // vertical
+      setAddrWindow(x-length + 1, y, x, y); // vertical
     } else {
       setAddrWindow(x, y, x, y+length); //horizontal
     }
+      
   } else if (rotation == 2) {
     x = TFTWIDTH - x - 1;
     y = TFTHEIGHT - y - 1;
     if (rotflag) {
-      setAddrWindow(x, y-length, x, y); // vertical
+      setAddrWindow(x, y-length + 1, x, y); // vertical
     } else {
-      setAddrWindow(x-length, y, x, y+1); //horizontal
+      setAddrWindow(x-length + 1, y, x, y+1); //horizontal
     }
+      
   } else if (rotation == 3) {
     swap(x, y);
     y = TFTHEIGHT - y - 1;
     if (rotflag) {
       setAddrWindow(x, y, x+length, y); // vertical
     } else {
-       setAddrWindow(x, y-length, x, y); // horizontal
+       setAddrWindow(x, y-length + 1, x, y); // horizontal
     }
   }
 
