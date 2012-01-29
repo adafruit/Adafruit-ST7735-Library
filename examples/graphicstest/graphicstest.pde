@@ -58,11 +58,19 @@ void fillpixelbypixel(uint16_t color) {
 void setup(void) {
   Serial.begin(9600);
   Serial.print("hello!");
-  // If your TFT's plastic wrap has a Red Tab, use the following
+
+  // Our supplier changed the 1.8" display slightly after Jan 10, 2012
+  // so that the alignment of the TFT had to be shifted by a few pixels
+  // this just means the init code is slightly different. Check the
+  // color of the tab to see which init code to try. If the display is
+  // cut off or has extra 'random' pixels on the top & left, try the
+  // other option!
+
+  // If your TFT's plastic wrap has a Green Tab, use the following
   tft.initR(INITR_GREENTAB);               // initialize a ST7735R chip
   // If your TFT's plastic wrap has a Red Tab, use the following
   // since the display is shifted a little in memory
-  tft.initR(INITR_REDTAB);               // initialize a ST7735R chip
+  //tft.initR(INITR_REDTAB);               // initialize a ST7735R chip
 
 
   Serial.println("init");
