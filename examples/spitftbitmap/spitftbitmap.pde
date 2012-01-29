@@ -1,4 +1,22 @@
-#include <ST7735.h>
+/*************************************************** 
+  This is an example sketch for the Adafruit 1.8" SPI display.
+  This library works with the Adafruit 1.8" TFT Breakout w/SD card  
+  ----> http://www.adafruit.com/products/358  
+  as well as Adafruit raw 1.8" TFT display  
+  ----> http://www.adafruit.com/products/618
+ 
+  Check out the links above for our tutorials and wiring diagrams 
+  These displays use SPI to communicate, 4 or 5 pins are required to  
+  interface (RST is optional) 
+  Adafruit invests time and resources providing this open source code, 
+  please support Adafruit and open-source hardware by purchasing 
+  products from Adafruit!
+
+  Written by Limor Fried/Ladyada for Adafruit Industries.  
+  MIT license, all text above must be included in any redistribution
+ ****************************************************/
+
+#include <Adafruit_ST7735.h>
 #include <SD.h>
 #include <SPI.h>
 
@@ -24,7 +42,7 @@
 #define WHITE           0xFFFF
 
 // to draw images from the SD card, we will share the hardware SPI interface
-ST7735 tft = ST7735(cs, dc, rst);
+Adafruit_ST7735 tft = Adafruit_ST7735(cs, dc, rst);
 
 // For Arduino Uno/Duemilanove, etc
 //  connect the SD card with MOSI going to pin 11, MISO going to pin 12 and SCK going to pin 13 (standard)
@@ -44,8 +62,18 @@ void setup(void) {
   pinMode(cs, OUTPUT);
   digitalWrite(cs, HIGH);
      
-  // initialize a ST7735R TFT
-  tft.initR();      // change this to initB() for ST7735B TFT's
+  // Our supplier changed the 1.8" display slightly after Jan 10, 2012
+  // so that the alignment of the TFT had to be shifted by a few pixels
+  // this just means the init code is slightly different. Check the
+  // color of the tab to see which init code to try. If the display is
+  // cut off or has extra 'random' pixels on the top & left, try the
+  // other option!
+
+  // If your TFT's plastic wrap has a Green Tab, use the following
+  tft.initR(INITR_GREENTAB);               // initialize a ST7735R chip
+  // If your TFT's plastic wrap has a Red Tab, use the following
+  // since the display is shifted a little in memory
+  //tft.initR(INITR_REDTAB);               // initialize a ST7735R chip
 
   // Just do a simple test
   tft.writecommand(ST7735_DISPON);
