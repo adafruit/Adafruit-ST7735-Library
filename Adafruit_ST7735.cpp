@@ -139,9 +139,15 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
 }
 
 void Adafruit_ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
-  if ((x >= TFTWIDTH) || (y >= TFTHEIGHT)) return;
+  if ((rotation == 0) || (rotation == 2)) {
+    if ((x >= TFTWIDTH) || (y >= TFTHEIGHT)) return;
+  }
     
-    // check rotation, move pixel around if necessary
+  if ((rotation == 1) || (rotation == 3)) {
+    if ((x >= TFTHEIGHT) || (y >= TFTWIDTH)) return;
+  }
+    
+  // check rotation, move pixel around if necessary
   switch (rotation) {
   case 1:
     swap(x, y);
