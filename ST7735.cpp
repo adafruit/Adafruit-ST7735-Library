@@ -1,15 +1,29 @@
-// Graphics library by ladyada/adafruit with init code from Rossum 
-// MIT license
+/*************************************************** 
+  This is a library for the Adafruit 1.8" SPI display.
+  This library works with the Adafruit 1.8" TFT Breakout w/SD card  
+  ----> http://www.adafruit.com/products/358  
+  as well as Adafruit raw 1.8" TFT display  
+  ----> http://www.adafruit.com/products/618
+ 
+  Check out the links above for our tutorials and wiring diagrams 
+  These displays use SPI to communicate, 4 or 5 pins are required to  
+  interface (RST is optional) 
+  Adafruit invests time and resources providing this open source code, 
+  please support Adafruit and open-source hardware by purchasing 
+  products from Adafruit!
 
-#include "ST7735.h"
+  Written by Limor Fried/Ladyada for Adafruit Industries.  
+  MIT license, all text above must be included in any redistribution
+ ****************************************************/
+
+#include "Adafruit_ST7735.h"
 #include "glcdfont.c"
 #include <avr/pgmspace.h>
 #include "pins_arduino.h"
 #include "wiring_private.h"
 #include <SPI.h>
 
-
-ST7735::ST7735(uint8_t cs, uint8_t rs, uint8_t sid, 
+Adafruit_ST7735::Adafruit_ST7735(uint8_t cs, uint8_t rs, uint8_t sid, 
                uint8_t sclk, uint8_t rst) {
     _cs = cs;
     _rs = rs;
@@ -20,7 +34,7 @@ ST7735::ST7735(uint8_t cs, uint8_t rs, uint8_t sid,
     setRotation(0);
 }
 
-ST7735::ST7735(uint8_t cs, uint8_t rs,  uint8_t rst) {
+Adafruit_ST7735::Adafruit_ST7735(uint8_t cs, uint8_t rs,  uint8_t rst) {
     _cs = cs;
     _rs = rs;
     _sid = 0;
@@ -31,7 +45,7 @@ ST7735::ST7735(uint8_t cs, uint8_t rs,  uint8_t rst) {
 }
 
 
-inline void ST7735::spiwrite(uint8_t c) {
+inline void Adafruit_ST7735::spiwrite(uint8_t c) {
     
     //Serial.println(c, HEX);
     
@@ -67,7 +81,7 @@ inline void ST7735::spiwrite(uint8_t c) {
 }
 
 
-void ST7735::writecommand(uint8_t c) {
+void Adafruit_ST7735::writecommand(uint8_t c) {
     *portOutputRegister(rsport) &= ~ rspin;
     //digitalWrite(_rs, LOW);
     
@@ -82,7 +96,7 @@ void ST7735::writecommand(uint8_t c) {
 }
 
 
-void ST7735::writedata(uint8_t c) {
+void Adafruit_ST7735::writedata(uint8_t c) {
     *portOutputRegister(rsport) |= rspin;
     //digitalWrite(_rs, HIGH);
     
@@ -97,24 +111,24 @@ void ST7735::writedata(uint8_t c) {
 } 
 
 
-void ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
+void Adafruit_ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 {
     writecommand(ST7735_CASET);  // column addr set
     writedata(0x00);
-    writedata(x0+2);   // XSTART 
+    writedata(x0+colstart);   // XSTART 
     writedata(0x00);
-    writedata(x1+2);   // XEND
+    writedata(x1+colstart);   // XEND
     
     writecommand(ST7735_RASET);  // row addr set
     writedata(0x00);
-    writedata(y0+1);    // YSTART
+    writedata(y0+rowstart);    // YSTART
     writedata(0x00);
-    writedata(y1+1);    // YEND
+    writedata(y1+rowstart);    // YEND
     
     writecommand(ST7735_RAMWR);  // write to RAM
 }
 
-void ST7735::pushColor(uint16_t color) {
+void Adafruit_ST7735::pushColor(uint16_t color) {
     *portOutputRegister(rsport) |= rspin;
     *portOutputRegister(csport) &= ~ cspin;
     
@@ -124,7 +138,7 @@ void ST7735::pushColor(uint16_t color) {
     *portOutputRegister(csport) |= cspin;
 }
 
-void ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
+void Adafruit_ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
   if ((x >= TFTWIDTH) || (y >= TFTHEIGHT)) return;
     
     // check rotation, move pixel around if necessary
@@ -157,7 +171,7 @@ void ST7735::drawPixel(uint8_t x, uint8_t y,uint16_t color) {
 }
 
 
-void ST7735::fillScreen(uint16_t color) {
+void Adafruit_ST7735::fillScreen(uint16_t color) {
   setAddrWindow(0, 0, TFTWIDTH-1, TFTHEIGHT-1);
   
   // setup for data
@@ -174,7 +188,7 @@ void ST7735::fillScreen(uint16_t color) {
   *portOutputRegister(csport) |= cspin;
 }
 
-void ST7735::initB(void) {
+void Adafruit_ST7735::initB(void) {
     // set pin directions
     pinMode(_rs, OUTPUT);
     
@@ -316,7 +330,7 @@ void ST7735::initB(void) {
 
 
 
-void ST7735::initR(void) {
+void Adafruit_ST7735::initR(uint8_t options) {
     // set pin directions
     pinMode(_rs, OUTPUT);
     
@@ -411,18 +425,26 @@ void ST7735::initR(void) {
     writecommand(ST7735_COLMOD);  // set color mode
     writedata(0x05);        // 16-bit color
     
+    if (options == INITR_GREENTAB) {
+      colstart = 2;
+      rowstart = 1;
+    } else if (options == INITR_REDTAB) {
+      colstart = 0;
+      rowstart = 0;
+      
+    }
     writecommand(ST7735_CASET);  // column addr set
     writedata(0x00);
-    writedata(0x00);   // XSTART = 0
+    writedata(colstart);   // XSTART = 0
     writedata(0x00);
-    writedata(0x7F);   // XEND = 127
-    
+    writedata(0x7F+colstart);   // XEND = 127
+      
     writecommand(ST7735_RASET);  // row addr set
     writedata(0x00);
-    writedata(0x00);    // XSTART = 0
+    writedata(rowstart);    // XSTART = 0
     writedata(0x00);
-    writedata(0x9F);    // XEND = 159
-    
+    writedata(0x9F + rowstart);    // XEND = 159
+
     writecommand(ST7735_GMCTRP1);
     writedata(0x02);
     writedata(0x1c);
@@ -468,17 +490,19 @@ void ST7735::initR(void) {
     textcolor = 0xFFFF;
 }
 
-uint8_t ST7735::width() {
+
+
+uint8_t Adafruit_ST7735::width() {
   return _width;
 }
 
-uint8_t ST7735::height() {
+uint8_t Adafruit_ST7735::height() {
   return _height;
 }
 
 // draw a string from memory
 
-void ST7735::drawString(uint8_t x, uint8_t y, char *c, 
+void Adafruit_ST7735::drawString(uint8_t x, uint8_t y, char *c, 
                         uint16_t color, uint8_t size) {
     while (c[0] != 0) {
         drawChar(x, y, c[0], color, size);
@@ -491,7 +515,7 @@ void ST7735::drawString(uint8_t x, uint8_t y, char *c,
     }
 }
 // draw a character
-void ST7735::drawChar(uint8_t x, uint8_t y, char c, 
+void Adafruit_ST7735::drawChar(uint8_t x, uint8_t y, char c, 
                       uint16_t color, uint8_t size) {
     for (uint8_t i =0; i<5; i++ ) {
         uint8_t line = pgm_read_byte(font+(c*5)+i);
@@ -510,13 +534,13 @@ void ST7735::drawChar(uint8_t x, uint8_t y, char c,
 
 
 // fill a circle
-void ST7735::fillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color) {
+void Adafruit_ST7735::fillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color) {
     drawVerticalLine(x0, y0-r, 2*r+1, color);
     fillCircleHelper(x0, y0, r, 3, 0, color);
 }
 
 // draw a circle outline
-void ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r, 
+void Adafruit_ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r, 
                         uint16_t color) {
     int16_t f = 1 - r;
     int16_t ddF_x = 1;
@@ -553,7 +577,7 @@ void ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r,
 }
 
 // draw a triangle!
-void ST7735::drawTriangle(uint8_t x0, uint8_t y0,
+void Adafruit_ST7735::drawTriangle(uint8_t x0, uint8_t y0,
                           uint8_t x1, uint8_t y1,
                           uint8_t x2, uint8_t y2, uint16_t color)
 {
@@ -563,7 +587,7 @@ void ST7735::drawTriangle(uint8_t x0, uint8_t y0,
 }
 
 // fill a triangle!
-void ST7735::fillTriangle ( int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16_t color)
+void Adafruit_ST7735::fillTriangle ( int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t x2, int32_t y2, uint16_t color)
 {
     if (y0 > y1) {
         swap(y0, y1); swap(x0, x1);
@@ -620,7 +644,7 @@ void ST7735::fillTriangle ( int32_t x0, int32_t y0, int32_t x1, int32_t y1, int3
 }
 
 // draw a rounded rectangle!
-void ST7735::drawRoundRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
+void Adafruit_ST7735::drawRoundRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
                            uint16_t color) {
     // smarter version
     drawHorizontalLine(x+r, y, w-2*r, color);
@@ -635,7 +659,7 @@ void ST7735::drawRoundRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint1
 }
 
 // fill a rounded rectangle!
-void ST7735::fillRoundRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
+void Adafruit_ST7735::fillRoundRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t r,
                            uint16_t color) {
     // smarter version
     fillRect(x+r, y, w-2*r, h, color);
@@ -646,7 +670,7 @@ void ST7735::fillRoundRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint1
 }
 
 // used to do circles and roundrects!
-void ST7735::fillCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t cornername, uint16_t delta,
+void Adafruit_ST7735::fillCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t cornername, uint16_t delta,
                               uint16_t color) {
     
     int16_t f = 1 - r;
@@ -676,7 +700,7 @@ void ST7735::fillCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t corn
     }
 }
 
-uint16_t ST7735::Color565(uint8_t r, uint8_t g, uint8_t b) {
+uint16_t Adafruit_ST7735::Color565(uint8_t r, uint8_t g, uint8_t b) {
     uint16_t c;
     c = r >> 3;
     c <<= 6;
@@ -687,7 +711,7 @@ uint16_t ST7735::Color565(uint8_t r, uint8_t g, uint8_t b) {
     return c;
 }
 
-void ST7735::drawCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t cornername,
+void Adafruit_ST7735::drawCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t cornername,
                               uint16_t color) {
     int16_t f = 1 - r;
     int16_t ddF_x = 1;
@@ -724,11 +748,11 @@ void ST7735::drawCircleHelper(uint16_t x0, uint16_t y0, uint16_t r, uint8_t corn
     }
 }
 
-uint8_t ST7735::getRotation() {
+uint8_t Adafruit_ST7735::getRotation() {
     return rotation;
 }
 
-void ST7735::setRotation(uint8_t m) {
+void Adafruit_ST7735::setRotation(uint8_t m) {
     
     m%= 4;  // cant be higher than 3
     rotation = m;
@@ -753,7 +777,7 @@ void ST7735::setRotation(uint8_t m) {
 }
 
 // draw a rectangle
-void ST7735::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
+void Adafruit_ST7735::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
                       uint16_t color) {
     // smarter version
     drawHorizontalLine(x, y, w, color);
@@ -763,7 +787,7 @@ void ST7735::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
 }
 
 // fill a rectangle
-void ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
+void Adafruit_ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, 
                       uint16_t color) {
   
     
@@ -833,7 +857,7 @@ void ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
     digitalWrite(_cs, HIGH);
 }
 
-void ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
+void Adafruit_ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
 {
   if (x >= _width) return;
   if (y+length >= _height) length = _height-y-1;
@@ -841,7 +865,7 @@ void ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t col
   drawFastLine(x,y,length,color,1);
 }
 
-void ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
+void Adafruit_ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t color)
 {
     if (y >= _height) return;
     if (x+length >= _width) length = _width-x-1;
@@ -849,7 +873,7 @@ void ST7735::drawHorizontalLine(uint8_t x, uint8_t y, uint8_t length, uint16_t c
     drawFastLine(x,y,length,color,0);
 }
 
-void ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length, 
+void Adafruit_ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length, 
                           uint16_t color, uint8_t rotflag)
 {
   if (rotation == 0) {
@@ -900,7 +924,7 @@ void ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length,
 
 
 // bresenham's algorithm - thx wikpedia
-void ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, 
+void Adafruit_ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, 
                       uint16_t color) {
     uint16_t steep = abs(y1 - y0) > abs(x1 - x0);
     if (steep) {
@@ -939,23 +963,23 @@ void ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
     }
 }
 
-void ST7735::setCursor(uint16_t x, uint16_t y) {
+void Adafruit_ST7735::setCursor(uint16_t x, uint16_t y) {
     cursor_x = x;
     cursor_y = y;
 }
 
-void ST7735::setTextSize(uint8_t s) {
+void Adafruit_ST7735::setTextSize(uint8_t s) {
     textsize = s;
 }
 
-void ST7735::setTextColor(uint16_t c) {
+void Adafruit_ST7735::setTextColor(uint16_t c) {
     textcolor = c;
 }
 
 #if ARDUINO >= 100
-size_t ST7735::write(uint8_t c) {
+size_t Adafruit_ST7735::write(uint8_t c) {
 #else
-    void ST7735::write(uint8_t c) {
+    void Adafruit_ST7735::write(uint8_t c) {
 #endif
         if (c == '\n') {
             cursor_y += textsize*8;
@@ -971,14 +995,14 @@ size_t ST7735::write(uint8_t c) {
 #endif
     }
     
-    void ST7735::goHome(void) {
+    void Adafruit_ST7735::goHome(void) {
         setCursor (0,0);
     }
 
 
 //////////
 /*
- uint8_t ST7735::spiread(void) {
+ uint8_t Adafruit_ST7735::spiread(void) {
  uint8_t r = 0;
  if (_sid > 0) {
  r = shiftIn(_sid, _sclk, MSBFIRST);
@@ -999,7 +1023,7 @@ size_t ST7735::write(uint8_t c) {
  
  
  
- void ST7735::dummyclock(void) {
+ void Adafruit_ST7735::dummyclock(void) {
  
  if (_sid > 0) {
  digitalWrite(_sclk, LOW);
@@ -1009,7 +1033,7 @@ size_t ST7735::write(uint8_t c) {
  //SCLK_PORT |= _BV(SCLK);
  }
  }
- uint8_t ST7735::readdata(void) {
+ uint8_t Adafruit_ST7735::readdata(void) {
  *portOutputRegister(rsport) |= rspin;
  
  *portOutputRegister(csport) &= ~ cspin;
@@ -1022,7 +1046,7 @@ size_t ST7735::write(uint8_t c) {
  
  } 
  
- uint8_t ST7735::readcommand8(uint8_t c) {
+ uint8_t Adafruit_ST7735::readcommand8(uint8_t c) {
  digitalWrite(_rs, LOW);
  
  *portOutputRegister(csport) &= ~ cspin;
@@ -1044,7 +1068,7 @@ size_t ST7735::write(uint8_t c) {
  }
  
  
- uint16_t ST7735::readcommand16(uint8_t c) {
+ uint16_t Adafruit_ST7735::readcommand16(uint8_t c) {
  digitalWrite(_rs, LOW);
  if (_cs)
  digitalWrite(_cs, LOW);
@@ -1061,7 +1085,7 @@ size_t ST7735::write(uint8_t c) {
  return r;
  }
  
- uint32_t ST7735::readcommand32(uint8_t c) {
+ uint32_t Adafruit_ST7735::readcommand32(uint8_t c) {
  digitalWrite(_rs, LOW);
  if (_cs)
  digitalWrite(_cs, LOW);

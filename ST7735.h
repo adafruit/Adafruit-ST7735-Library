@@ -1,5 +1,20 @@
-// Graphics library by ladyada/adafruit 
-// MIT license
+/*************************************************** 
+  This is a library for the Adafruit 1.8" SPI display.
+  This library works with the Adafruit 1.8" TFT Breakout w/SD card  
+  ----> http://www.adafruit.com/products/358  
+  as well as Adafruit raw 1.8" TFT display  
+  ----> http://www.adafruit.com/products/618
+ 
+  Check out the links above for our tutorials and wiring diagrams 
+  These displays use SPI to communicate, 4 or 5 pins are required to  
+  interface (RST is optional) 
+  Adafruit invests time and resources providing this open source code, 
+  please support Adafruit and open-source hardware by purchasing 
+  products from Adafruit!
+
+  Written by Limor Fried/Ladyada for Adafruit Industries.  
+  MIT license, all text above must be included in any redistribution
+ ****************************************************/
 
 #define swap(a, b) { uint16_t t = a; a = b; b = t; }
 
@@ -8,6 +23,11 @@
 #else
 #include "WProgram.h"
 #endif
+
+// some flags for initR() :(
+#define INITR_GREENTAB 0x0
+#define INITR_REDTAB 0x1
+
 
 #define ST7735_NOP 0x0
 #define ST7735_SWRESET 0x01
@@ -28,6 +48,7 @@
 #define ST7735_RAMWR 0x2C
 #define ST7735_RAMRD 0x2E
 
+#define ST7735_PTLAR 0x30
 #define ST7735_COLMOD 0x3A
 #define ST7735_MADCTL 0x36
 
@@ -56,14 +77,15 @@
 #define ST7735_GMCTRN1 0xE1
 
 
-class ST7735 : public Print {
+class Adafruit_ST7735 : public Print {
  public:
-  ST7735(uint8_t CS, uint8_t RS, uint8_t SID, 
+  Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t SID, 
          uint8_t SCLK, uint8_t RST);
-    ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
-  void initB(void);
-  void initR(void);
-    uint16_t Color565(uint8_t r, uint8_t g, uint8_t b);
+  Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
+  void initB(void); // for ST7735B displays
+  void initR(uint8_t options = INITR_GREENTAB);  // for ST7735R
+
+  uint16_t Color565(uint8_t r, uint8_t g, uint8_t b);
 
   // drawing primitives!
   void pushColor(uint16_t color);
@@ -146,4 +168,6 @@ class ST7735 : public Print {
   uint8_t textsize;
   uint16_t cursor_x, cursor_y;
   uint16_t textcolor;
+
+  uint8_t colstart, rowstart; // some displays need this changed
 };
