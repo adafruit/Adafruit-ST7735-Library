@@ -1,3 +1,21 @@
+/*************************************************** 
+  This is an example sketch for the Adafruit 1.8" SPI display.
+  This library works with the Adafruit 1.8" TFT Breakout w/SD card  
+  ----> http://www.adafruit.com/products/358  
+  as well as Adafruit raw 1.8" TFT display  
+  ----> http://www.adafruit.com/products/618
+ 
+  Check out the links above for our tutorials and wiring diagrams 
+  These displays use SPI to communicate, 4 or 5 pins are required to  
+  interface (RST is optional) 
+  Adafruit invests time and resources providing this open source code, 
+  please support Adafruit and open-source hardware by purchasing 
+  products from Adafruit!
+
+  Written by Limor Fried/Ladyada for Adafruit Industries.  
+  MIT license, all text above must be included in any redistribution
+ ****************************************************/
+
 // Pins SCLK and MOSI are fixed in hardware, and pin 10 (or 53) 
 // must be an output
 //#define sclk 13    // for MEGAs use pin 52
@@ -16,17 +34,17 @@
 #define YELLOW          0xFFE0  
 #define WHITE           0xFFFF
 
-#include <ST7735.h>
+#include <Adafruit_ST7735.h>
 #include <SPI.h>
 
 // Option 1: use any pins but a little slower
-//ST7735 tft = ST7735(cs, dc, mosi, sclk, rst);  
+//Adafruit_ST7735 tft = Adafruit_ST7735(cs, dc, mosi, sclk, rst);  
 
 // Option 2: must use the hardware SPI pins 
 // (for UNO thats sclk = 13 and sid = 11) and pin 10 must be 
 // an output. This is much faster - also required if you want
 // to use the microSD card (see the image drawing example)
-ST7735 tft = ST7735(cs, dc, rst);
+Adafruit_ST7735 tft = Adafruit_ST7735(cs, dc, rst);
 float p = 3.141592; // value for pi
 
 /*
@@ -42,7 +60,19 @@ void fillpixelbypixel(uint16_t color) {
 void setup(void) {
   Serial.begin(9600);
   Serial.print("hello!");
-  tft.initR();               // initialize a ST7735R chip
+
+  // Our supplier changed the 1.8" display slightly after Jan 10, 2012
+  // so that the alignment of the TFT had to be shifted by a few pixels
+  // this just means the init code is slightly different. Check the
+  // color of the tab to see which init code to try. If the display is
+  // cut off or has extra 'random' pixels on the top & left, try the
+  // other option!
+
+  // If your TFT's plastic wrap has a Green Tab, use the following
+  tft.initR(INITR_GREENTAB);               // initialize a ST7735R chip
+  // If your TFT's plastic wrap has a Red Tab, use the following
+  // since the display is shifted a little in memory
+  //tft.initR(INITR_REDTAB);               // initialize a ST7735R chip
 
   Serial.println("init");
   tft.writecommand(ST7735_DISPON);
