@@ -95,6 +95,7 @@ void setup(void) {
   
   if (! bmpReadHeader(bmpFile)) { 
      Serial.println("bad bmp");
+     bmpFile.close();
      return;
   }
   
@@ -105,6 +106,7 @@ void setup(void) {
   
 
   bmpdraw(bmpFile, 0, 0);
+  bmpFile.close();
 }
 
 void loop() {
