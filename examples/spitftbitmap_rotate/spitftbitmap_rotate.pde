@@ -52,11 +52,14 @@ void setup(void) {
     return;
   }
   Serial.println("OK!");
-
-  bmpDraw("parrot.bmp", 0, 0);
 }
 
 void loop() {
+  tft.fillScreen(ST7735_BLACK); // Clear display
+  for(uint8_t i=0; i<4; i++)    // Draw 4 parrots
+    bmpDraw("parrot.bmp", tft.width() / 4 * i, tft.height() / 4 * i);
+  delay(1000);
+  tft.setRotation(tft.getRotation() + 1); // Inc rotation 90 degrees
 }
 
 // This function opens a Windows Bitmap (BMP) file and
