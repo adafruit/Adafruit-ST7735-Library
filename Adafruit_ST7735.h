@@ -16,10 +16,14 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
+#ifndef _ADAFRUIT_ST7735H_
+#define _ADAFRUIT_ST7735H_
+
 #define swap(a, b) { uint16_t t = a; a = b; b = t; }
 
 #if ARDUINO >= 100
  #include "Arduino.h"
+ #include "Print.h"
 #else
  #include "WProgram.h"
 #endif
@@ -173,3 +177,5 @@ class Adafruit_ST7735 : public Print {
            colstart, rowstart; // some displays need this changed
   uint16_t _width, _height, cursor_x, cursor_y, textcolor;
 };
+
+#endif
