@@ -19,14 +19,14 @@
 #ifndef _ADAFRUIT_ST7735H_
 #define _ADAFRUIT_ST7735H_
 
-#define swap(a, b) { uint16_t t = a; a = b; b = t; }
-
 #if ARDUINO >= 100
  #include "Arduino.h"
  #include "Print.h"
 #else
  #include "WProgram.h"
 #endif
+
+#include <Adafruit_GFX.h>
 
 // some flags for initR() :(
 #define INITR_GREENTAB 0x0
@@ -92,7 +92,7 @@
 #define ST7735_WHITE   0xFFFF
 
 
-class Adafruit_ST7735 : public Print {
+class Adafruit_ST7735 : public Adafruit_GFX {
 
  public:
 
@@ -104,7 +104,7 @@ class Adafruit_ST7735 : public Print {
            initR(uint8_t options = INITR_GREENTAB), // for ST7735R
            fillScreen(uint16_t color),
            pushColor(uint16_t color),
-           drawPixel(uint8_t x, uint8_t y, uint16_t color),
+           drawPixel(uint16_t x, uint16_t y, uint16_t color),
            drawLine(int16_t x, int16_t y, int16_t x1, int16_t y1,
              uint16_t color),
 
@@ -118,19 +118,7 @@ class Adafruit_ST7735 : public Print {
              uint16_t color),
            fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
              uint16_t color),
-           drawCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color),
-           fillCircle(uint8_t x0, uint8_t y0, uint8_t r, uint16_t color),
-           drawTriangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-             uint8_t x2, uint8_t y2, uint16_t color),
-           fillTriangle(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1,
-             uint8_t x2, uint8_t y2, uint16_t color),
-           drawRoundRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h,
-             uint16_t radius,uint16_t color),
-           fillRoundRect(uint16_t x0, uint16_t y0, uint16_t w, uint16_t h,
-             uint16_t radius, uint16_t color),
-           drawChar(uint8_t x, uint8_t y, char c, uint16_t color,
-             uint8_t size=1),
-           drawString(uint8_t x, uint8_t y, char *c, uint16_t color,
+           drawString(uint16_t x, uint16_t y, char *c, uint16_t color,
              uint8_t size=1),
            setCursor(uint16_t x, uint16_t y),
            setTextColor(uint16_t c),

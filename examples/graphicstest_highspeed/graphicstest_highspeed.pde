@@ -22,7 +22,8 @@
 #define dc   9
 #define rst  8  // you can also connect this to the Arduino reset
 
-#include <Adafruit_ST7735.h>
+#include <Adafruit_GFX.h>    // Core graphics library
+#include <Adafruit_ST7735.h> // Hardware-specific library
 #include <SPI.h>
 
 // Option 1: use any pins but a little slower

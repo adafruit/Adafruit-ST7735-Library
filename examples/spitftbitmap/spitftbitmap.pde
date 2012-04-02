@@ -16,9 +16,10 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
-#include <Adafruit_ST7735.h>
-#include <SD.h>
+#include <Adafruit_GFX.h>    // Core graphics library
+#include <Adafruit_ST7735.h> // Hardware-specific library
 #include <SPI.h>
+#include <SD.h>
 
 // TFT display and SD card will share the hardware SPI interface.
 // Hardware SPI pins are specific to the Arduino board type and

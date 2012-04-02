@@ -17,7 +17,6 @@
  ****************************************************/
 
 #include "Adafruit_ST7735.h"
-#include "glcdfont.c"
 #include <avr/pgmspace.h>
 #include <limits.h>
 #include "pins_arduino.h"
@@ -231,7 +230,8 @@ PROGMEM static prog_uchar
 // a series of LCD commands stored in PROGMEM byte array.
 void Adafruit_ST7735::commandList(prog_uchar *addr) {
 
-  uint8_t numCommands, numArgs, ms;
+  uint8_t  numCommands, numArgs;
+  uint16_t ms;
 
   numCommands = pgm_read_byte(addr++);   // Number of commands to follow
   while(numCommands--) {                 // For each command...
@@ -373,7 +373,7 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
 }
 
 
-void Adafruit_ST7735::drawPixel(uint8_t x, uint8_t y, uint16_t color) {
+void Adafruit_ST7735::drawPixel(uint16_t x, uint16_t y, uint16_t color) {
 
   if ((x >= _width) || (y >= _height)) return;
 
@@ -513,266 +513,16 @@ uint16_t color) {
 }
 
 
-// draw a circle outline
-void Adafruit_ST7735::drawCircle(uint8_t x0, uint8_t y0, uint8_t r,
- uint16_t color) {
-
-  int16_t f     = 1 - r;
-  int16_t ddF_x = 1;
-  int16_t ddF_y = -2 * r;
-  int16_t x     = 0;
-  int16_t y     = r;
-
-  drawPixel(x0  , y0+r, color);
-  drawPixel(x0  , y0-r, color);
-  drawPixel(x0+r, y0  , color);
-  drawPixel(x0-r, y0  , color);
-
-  while (x<y) {
-    if (f >= 0) {
-      y--;
-      ddF_y += 2;
-      f     += ddF_y;
-    }
-    x++;
-    ddF_x += 2;
-    f     += ddF_x;
-
-    drawPixel(x0 + x, y0 + y, color);
-    drawPixel(x0 - x, y0 + y, color);
-    drawPixel(x0 + x, y0 - y, color);
-    drawPixel(x0 - x, y0 - y, color);
-
-    drawPixel(x0 + y, y0 + x, color);
-    drawPixel(x0 - y, y0 + x, color);
-    drawPixel(x0 + y, y0 - x, color);
-    drawPixel(x0 - y, y0 - x, color);
-  }
-}
-
-
-// fill a circle
-void Adafruit_ST7735::fillCircle(uint8_t x0, uint8_t y0, uint8_t r,
- uint16_t color) {
-  drawVerticalLine(x0, y0-r, 2*r+1, color);
-  fillCircleHelper(x0, y0, r, 3, 0, color);
-}
-
-
-// draw a triangle!
-void Adafruit_ST7735::drawTriangle(uint8_t x0, uint8_t y0,
- uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color) {
-
-  drawLine(x0, y0, x1, y1, color);
-  drawLine(x1, y1, x2, y2, color);
-  drawLine(x2, y2, x0, y0, color);
-}
-
-
-// fill a triangle!
-void Adafruit_ST7735::fillTriangle ( uint8_t x0, uint8_t y0,
- uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint16_t color) {
-
-  int16_t a, b, y, last;
-
-  // Sort coordinates by Y order (y2 >= y1 >= y0)
-  if (y0 > y1) {
-    swap(y0, y1); swap(x0, x1);
-  }
-  if (y1 > y2) {
-    swap(y2, y1); swap(x2, x1);
-  }
-  if (y0 > y1) {
-    swap(y0, y1); swap(x0, x1);
-  }
-
-  if(y0 == y2) { // Handle awkward all-on-same-line case as its own thing
-    a = b = x0;
-    if(x1 < a)      a = x1;
-    else if(x1 > b) b = x1;
-    if(x2 < a)      a = x2;
-    else if(x2 > b) b = x2;
-    drawHorizontalLine(a, y0, b-a+1, color);
-    return;
-  }
-
-  int16_t
-    dx01 = x1 - x0,
-    dy01 = y1 - y0,
-    dx02 = x2 - x0,
-    dy02 = y2 - y0,
-    dx12 = x2 - x1,
-    dy12 = y2 - y1,
-    sa   = 0,
-    sb   = 0;
-
-  // For upper part of triangle, find scanline crossings for segments
-  // 0-1 and 0-2.  If y1=y2 (flat-bottomed triangle), the scanline y1
-  // is included here (and second loop will be skipped, avoiding a /0
-  // error there), otherwise scanline y1 is skipped here and handled
-  // in the second loop...which also avoids a /0 error here if y0=y1
-  // (flat-topped triangle).
-  if(y1 == y2) last = y1;   // Include y1 scanline
-  else         last = y1-1; // Skip it
-
-  for(y=y0; y<=last; y++) {
-    a   = x0 + sa / dy01;
-    b   = x0 + sb / dy02;
-    sa += dx01;
-    sb += dx02;
-    /* longhand:
-    a = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
-    b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-    */
-    if(a > b) swap(a,b);
-    drawHorizontalLine(a, y, b-a+1, color);
-  }
-
-  // For lower part of triangle, find scanline crossings for segments
-  // 0-2 and 1-2.  This loop is skipped if y1=y2.
-  sa = dx12 * (y - y1);
-  sb = dx02 * (y - y0);
-  for(; y<=y2; y++) {
-    a   = x1 + sa / dy12;
-    b   = x0 + sb / dy02;
-    sa += dx12;
-    sb += dx02;
-    /* longhand:
-    a = x1 + (x2 - x1) * (y - y1) / (y2 - y1);
-    b = x0 + (x2 - x0) * (y - y0) / (y2 - y0);
-    */
-    if(a > b) swap(a,b);
-    drawHorizontalLine(a, y, b-a+1, color);
-  }
-}
-
-
-// draw a rounded rectangle!
-void Adafruit_ST7735::drawRoundRect(uint16_t x, uint16_t y, uint16_t w,
-uint16_t h, uint16_t r, uint16_t color) {
-  // smarter version
-  drawHorizontalLine(x+r  , y    , w-2*r, color); // Top
-  drawHorizontalLine(x+r  , y+h-1, w-2*r, color); // Bottom
-  drawVerticalLine(  x    , y+r  , h-2*r, color); // Left
-  drawVerticalLine(  x+w-1, y+r  , h-2*r, color); // Right
-  // draw four corners
-  drawCircleHelper(x+r    , y+r    , r, 1, color);
-  drawCircleHelper(x+w-r-1, y+r    , r, 2, color);
-  drawCircleHelper(x+w-r-1, y+h-r-1, r, 4, color);
-  drawCircleHelper(x+r    , y+h-r-1, r, 8, color);
-}
-
-
-// fill a rounded rectangle!
-void Adafruit_ST7735::fillRoundRect(uint16_t x, uint16_t y, uint16_t w,
-uint16_t h, uint16_t r, uint16_t color) {
-  // smarter version
-  fillRect(x+r, y, w-2*r, h, color);
-
-  // draw four corners
-  fillCircleHelper(x+w-r-1, y+r, r, 1, h-2*r-1, color);
-  fillCircleHelper(x+r    , y+r, r, 2, h-2*r-1, color);
-}
-
-
-// draw a character
-void Adafruit_ST7735::drawChar(uint8_t x, uint8_t y, char c,
- uint16_t color, uint8_t size) {
-  for (uint8_t i =0; i<5; i++ ) {
-    uint8_t line = pgm_read_byte(font+(c*5)+i);
-    for (uint8_t j = 0; j<8; j++) {
-      if (line & 0x1) {
-        if (size == 1) // default size
-          drawPixel(x+i, y+j, color);
-        else {  // big size
-          fillRect(x+i*size, y+j*size, size, size, color);
-        } 
-      }
-      line >>= 1;
-    }
-  }
-}
-
-
 // draw a string from memory
-void Adafruit_ST7735::drawString(uint8_t x, uint8_t y, char *c,
+void Adafruit_ST7735::drawString(uint16_t x, uint16_t y, char *c,
  uint16_t color, uint8_t size) {
   while (c[0] != 0) {
-    drawChar(x, y, c[0], color, size);
+    drawChar(x, y, c[0], color, 0, size);
     x += size * 6;
     c++;
     if (x + 5 >= _width) {
       y += size * 8;
       x  = 0;
-    }
-  }
-}
-
-
-void Adafruit_ST7735::drawCircleHelper(uint16_t x0, uint16_t y0,
- uint16_t r, uint8_t cornername, uint16_t color) {
-  int16_t f     = 1 - r;
-  int16_t ddF_x = 1;
-  int16_t ddF_y = -2 * r;
-  int16_t x     = 0;
-  int16_t y     = r;
-
-  while (x<y) {
-    if (f >= 0) {
-      y--;
-      ddF_y += 2;
-      f     += ddF_y;
-    }
-    x++;
-    ddF_x += 2;
-    f     += ddF_x;
-    if (cornername & 0x4) {
-      drawPixel(x0 + x, y0 + y, color);
-      drawPixel(x0 + y, y0 + x, color);
-    } 
-    if (cornername & 0x2) {
-      drawPixel(x0 + x, y0 - y, color);
-      drawPixel(x0 + y, y0 - x, color);
-    }
-    if (cornername & 0x8) {
-      drawPixel(x0 - y, y0 + x, color);
-      drawPixel(x0 - x, y0 + y, color);
-    }
-    if (cornername & 0x1) {
-      drawPixel(x0 - y, y0 - x, color);
-      drawPixel(x0 - x, y0 - y, color);
-    }
-  }
-}
-
-
-// used to do circles and roundrects!
-void Adafruit_ST7735::fillCircleHelper(uint16_t x0, uint16_t y0, uint16_t r,
-uint8_t cornername, uint16_t delta, uint16_t color) {
-
-  int16_t f     = 1 - r;
-  int16_t ddF_x = 1;
-  int16_t ddF_y = -2 * r;
-  int16_t x     = 0;
-  int16_t y     = r;
-
-  while (x<y) {
-    if (f >= 0) {
-      y--;
-      ddF_y += 2;
-      f     += ddF_y;
-    }
-    x++;
-    ddF_x += 2;
-    f     += ddF_x;
-
-    if (cornername & 0x1) {
-      drawVerticalLine(x0+x, y0-y, 2*y+1+delta, color);
-      drawVerticalLine(x0+y, y0-x, 2*x+1+delta, color);
-    }
-    if (cornername & 0x2) {
-      drawVerticalLine(x0-x, y0-y, 2*y+1+delta, color);
-      drawVerticalLine(x0-y, y0-x, 2*x+1+delta, color);
     }
   }
 }
@@ -852,7 +602,7 @@ void Adafruit_ST7735::write(uint8_t c) {
   } else if (c == '\r') {
     // skip em
   } else {
-    drawChar(cursor_x, cursor_y, c, textcolor, textsize);
+    drawChar(cursor_x, cursor_y, c, textcolor, 0, textsize);
     cursor_x += textsize*6;
   }
 #if ARDUINO >= 100
