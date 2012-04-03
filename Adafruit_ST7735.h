@@ -96,49 +96,24 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
  public:
 
-  Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t SID,
-   uint8_t SCLK, uint8_t RST);
+  Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t SID, uint8_t SCLK,
+    uint8_t RST);
   Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
 
   void     initB(void),                             // for ST7735B displays
            initR(uint8_t options = INITR_GREENTAB), // for ST7735R
-           fillScreen(uint16_t color),
-           pushColor(uint16_t color),
-           drawPixel(uint16_t x, uint16_t y, uint16_t color),
-           drawLine(int16_t x, int16_t y, int16_t x1, int16_t y1,
-             uint16_t color),
-
-           drawVerticalLine(uint8_t x0, uint8_t y0, uint8_t length,
-             uint16_t color),
-           drawHorizontalLine(uint8_t x0, uint8_t y0, uint8_t length,
-             uint16_t color),
-           drawFastLine(uint8_t x0, uint8_t y0, uint8_t l, uint16_t color,
-             uint8_t flag),
-           drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
-             uint16_t color),
-           fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
-             uint16_t color),
-           drawString(uint16_t x, uint16_t y, char *c, uint16_t color,
-             uint8_t size=1),
-           setCursor(uint16_t x, uint16_t y),
-           setTextColor(uint16_t c),
-           setTextSize(uint8_t s),
-           goHome(void),
-           writecommand(uint8_t c),
-           writedata(uint8_t d),
            setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1),
-           setRotation(uint8_t);
-  uint8_t  width(),
-           height(),
-           getRotation(void);
+           pushColor(uint16_t color),
+           fillScreen(uint16_t color),
+           drawPixel(uint16_t x, uint16_t y, uint16_t color),
+           drawFastVLine(uint16_t x, uint16_t y, uint16_t h, uint16_t color),
+           drawFastHLine(uint16_t x, uint16_t y, uint16_t w, uint16_t color),
+           fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+             uint16_t color),
+           setRotation(uint8_t r),
+           invertDisplay(boolean i);
   uint16_t Color565(uint8_t r, uint8_t g, uint8_t b);
 
-#if ARDUINO >= 100
-  virtual size_t write(uint8_t);
-#else
-  virtual void   write(uint8_t);
-#endif
-    
   /* These are not for current use, 8-bit protocol only!
   uint8_t  readdata(void),
            readcommand8(uint8_t);
@@ -149,21 +124,18 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
  private:
 
-  void     drawCircleHelper(uint16_t, uint16_t, uint16_t, uint8_t, uint16_t),
-           fillCircleHelper(uint16_t, uint16_t, uint16_t, uint8_t, uint16_t,
-             uint16_t),
-           spiwrite(uint8_t),
-           commonInit(prog_uchar *cmdList),
-           commandList(prog_uchar *addr);
+  void     spiwrite(uint8_t),
+           writecommand(uint8_t c),
+           writedata(uint8_t d),
+           commandList(prog_uchar *addr),
+           commonInit(prog_uchar *cmdList);
 //uint8_t  spiread(void);
 
   boolean  hwSPI;
   volatile uint8_t *dataport, *clkport, *csport, *rsport;
   uint8_t  _cs, _rs, _rst, _sid, _sclk,
            datapinmask, clkpinmask, cspinmask, rspinmask,
-           rotation, textsize,
            colstart, rowstart; // some displays need this changed
-  uint16_t _width, _height, cursor_x, cursor_y, textcolor;
 };
 
 #endif

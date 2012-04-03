@@ -106,9 +106,9 @@ void setup(void) {
 }
 
 void loop() {
-  tft.writecommand(ST7735_INVON);
+  tft.invertDisplay(true);
   delay(500);
-  tft.writecommand(ST7735_INVOFF);
+  tft.invertDisplay(false);
   delay(500);
 }
 
@@ -147,16 +147,18 @@ void testlines(uint16_t color) {
 }
 
 void testdrawtext(char *text, uint16_t color) {
-  tft.drawString(0, 0, text, color);
+  tft.setCursor(0, 0);
+  tft.setTextColor(color);
+  tft.print(text);
 }
 
 void testfastlines(uint16_t color1, uint16_t color2) {
   tft.fillScreen(ST7735_BLACK);
   for (uint16_t y=0; y < tft.height(); y+=5) {
-    tft.drawHorizontalLine(0, y, tft.width(), color1);
+    tft.drawFastHLine(0, y, tft.width(), color1);
   }
   for (uint16_t x=0; x < tft.width(); x+=5) {
-    tft.drawVerticalLine(x, 0, tft.height(), color2);
+    tft.drawFastVLine(x, 0, tft.height(), color2);
   }
 }
 
@@ -246,7 +248,7 @@ void tftPrintTest() {
   tft.setTextSize(4);
   tft.print(1234.567);
   delay(1500);
-  tft.goHome(); // go to 0, 0
+  tft.setCursor(0, 0);
   tft.fillScreen(ST7735_BLACK);
   tft.setTextColor(ST7735_WHITE);
   tft.setTextSize(0);

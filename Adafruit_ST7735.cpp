@@ -389,58 +389,18 @@ void Adafruit_ST7735::drawPixel(uint16_t x, uint16_t y, uint16_t color) {
 }
 
 
-// bresenham's algorithm - thx wikpedia
-void Adafruit_ST7735::drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1,
-uint16_t color) {
-
-  uint16_t steep = abs(y1 - y0) > abs(x1 - x0);
-  if (steep) {
-    swap(x0, y0);
-    swap(x1, y1);
-  }
-
-  if (x0 > x1) {
-    swap(x0, x1);
-    swap(y0, y1);
-  }
-
-  uint16_t dx, dy;
-  dx = x1 - x0;
-  dy = abs(y1 - y0);
-
-  int16_t err = dx / 2;
-  int16_t ystep;
-
-  if (y0 < y1) {
-    ystep = 1;
-  } else {
-    ystep = -1;
-  }
-
-  for (; x0<=x1; x0++) {
-    if (steep) drawPixel(y0, x0, color);
-    else       drawPixel(x0, y0, color);
-    err -= dy;
-    if (err < 0) {
-      y0  += ystep;
-      err += dx;
-    }
-  }
-}
-
-
-void Adafruit_ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length,
+void Adafruit_ST7735::drawFastVLine(uint16_t x, uint16_t y, uint16_t h,
  uint16_t color) {
 
   // Rudimentary clipping
   if((x >= _width) || (y >= _height)) return;
-  if((y+length-1) >= _height) length = _height-y;
-  setAddrWindow(x, y, x, y+length-1);
+  if((y+h-1) >= _height) h = _height-y;
+  setAddrWindow(x, y, x, y+h-1);
 
   uint8_t hi = color >> 8, lo = color;
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
-  while (length--) {
+  while (h--) {
     spiwrite(hi);
     spiwrite(lo);
   }
@@ -448,49 +408,28 @@ void Adafruit_ST7735::drawVerticalLine(uint8_t x, uint8_t y, uint8_t length,
 }
 
 
-void Adafruit_ST7735::drawHorizontalLine(uint8_t x, uint8_t y,
- uint8_t length, uint16_t color) {
+void Adafruit_ST7735::drawFastHLine(uint16_t x, uint16_t y, uint16_t w,
+  uint16_t color) {
 
   // Rudimentary clipping
   if((x >= _width) || (y >= _height)) return;
-  if((x+length-1) >= _width)  length = _width-x;
-  setAddrWindow(x, y, x+length-1, y);
+  if((x+w-1) >= _width)  w = _width-x;
+  setAddrWindow(x, y, x+w-1, y);
 
   uint8_t hi = color >> 8, lo = color;
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
-  while (length--) {
+  while (w--) {
     spiwrite(hi);
     spiwrite(lo);
   }
   *csport |= cspinmask;
-}
-
-
-void Adafruit_ST7735::drawFastLine(uint8_t x, uint8_t y, uint8_t length,
- uint16_t color, uint8_t vertical) {
-  if(vertical) drawVerticalLine(  x, y, length, color);
-  else         drawHorizontalLine(x, y, length, color);
-}
-
-
-// draw a rectangle
-void Adafruit_ST7735::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
- uint16_t color) {
-  drawHorizontalLine(x, y    , w, color);       // Top edge
-  if(h > 1) {
-    drawHorizontalLine(x, y+h-1, w, color);     // Bottom edge
-    if(h > 2) {
-      drawVerticalLine(x    , y+1, h-2, color); // Left edge
-      drawVerticalLine(x+w-1, y+1, h-2, color); // Right edge
-    }
-  }
 }
 
 
 // fill a rectangle
-void Adafruit_ST7735::fillRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h,
-uint16_t color) {
+void Adafruit_ST7735::fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+  uint16_t color) {
 
   // rudimentary clipping (drawChar w/big text requires this)
   if((x >= _width) || (y >= _height)) return;
@@ -513,29 +452,9 @@ uint16_t color) {
 }
 
 
-// draw a string from memory
-void Adafruit_ST7735::drawString(uint16_t x, uint16_t y, char *c,
- uint16_t color, uint8_t size) {
-  while (c[0] != 0) {
-    drawChar(x, y, c[0], color, 0, size);
-    x += size * 6;
-    c++;
-    if (x + 5 >= _width) {
-      y += size * 8;
-      x  = 0;
-    }
-  }
-}
-
-
 // Pass 8-bit (each) R,G,B, get back 16-bit packed color
 uint16_t Adafruit_ST7735::Color565(uint8_t r, uint8_t g, uint8_t b) {
   return ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3);
-}
-
-
-uint8_t Adafruit_ST7735::getRotation() {
-  return rotation;
 }
 
 
@@ -575,54 +494,8 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
 }
 
 
-void Adafruit_ST7735::setCursor(uint16_t x, uint16_t y) {
-  cursor_x = x;
-  cursor_y = y;
-}
-
-
-void Adafruit_ST7735::setTextSize(uint8_t s) {
-  textsize = (s > 0) ? s : 1;
-}
-
-
-void Adafruit_ST7735::setTextColor(uint16_t c) {
-  textcolor = c;
-}
-
-
-#if ARDUINO >= 100
-size_t Adafruit_ST7735::write(uint8_t c) {
-#else
-void Adafruit_ST7735::write(uint8_t c) {
-#endif
-  if (c == '\n') {
-    cursor_y += textsize*8;
-    cursor_x = 0;
-  } else if (c == '\r') {
-    // skip em
-  } else {
-    drawChar(cursor_x, cursor_y, c, textcolor, 0, textsize);
-    cursor_x += textsize*6;
-  }
-#if ARDUINO >= 100
-  return 1;
-#endif
-}
-    
-
-void Adafruit_ST7735::goHome(void) {
-  setCursor (0,0);
-}
-
-
-uint8_t Adafruit_ST7735::width() {
-  return _width;
-}
-
-
-uint8_t Adafruit_ST7735::height() {
-  return _height;
+void Adafruit_ST7735::invertDisplay(boolean i) {
+  writecommand(i ? ST7735_INVON : ST7735_INVOFF);
 }
 
 

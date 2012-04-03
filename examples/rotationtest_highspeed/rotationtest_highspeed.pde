@@ -162,8 +162,8 @@ void rotateFastline(void) {
     tft.fillScreen(ST7735_BLACK);
     Serial.println(tft.getRotation(), DEC);
 
-    tft.drawHorizontalLine(0, 20, tft.width(), ST7735_RED);
-    tft.drawVerticalLine(20, 0, tft.height(), ST7735_BLUE);
+    tft.drawFastHLine(0, 20, tft.width(), ST7735_RED);
+    tft.drawFastVLine(20, 0, tft.height(), ST7735_BLUE);
 
     while (!Serial.available());
     Serial.read();  Serial.read();  Serial.read();
@@ -268,7 +268,10 @@ void rotateString(void) {
     tft.fillScreen(ST7735_BLACK);
     Serial.println(tft.getRotation(), DEC);
 
-    tft.drawString(8, 25, "Adafruit Industries", ST7735_WHITE);
+    tft.setCursor(8, 25);
+    tft.setTextSize(1);
+    tft.setTextColor(ST7735_WHITE);
+    tft.print("Adafruit Industries");
     while (!Serial.available());
     Serial.read();  Serial.read();  Serial.read();
 
