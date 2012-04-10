@@ -53,6 +53,7 @@ void setup(void) {
 
   Serial.println("init");
 
+  tft.setTextWrap(false); // Allow text to run off right edge
   tft.fillScreen(ST7735_BLACK);
 
   Serial.println("This is a test of the rotation capabilities of the TFT library!");

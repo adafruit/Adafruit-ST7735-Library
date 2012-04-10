@@ -255,12 +255,7 @@ void Adafruit_ST7735::commandList(prog_uchar *addr) {
 // Initialization code common to both 'B' and 'R' type displays
 void Adafruit_ST7735::commonInit(prog_uchar *cmdList) {
 
-  _width    = ST7735_TFTWIDTH;
-  _height   = ST7735_TFTHEIGHT;
-  rotation  = 0;
-  cursor_y  = cursor_x = 0;
-  textsize  = 1;
-  textcolor = 0xFFFF;
+  constructor(ST7735_TFTWIDTH, ST7735_TFTHEIGHT);
   colstart  = rowstart = 0; // May be overridden in init func
 
   pinMode(_rs, OUTPUT);
@@ -373,9 +368,9 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
 }
 
 
-void Adafruit_ST7735::drawPixel(uint16_t x, uint16_t y, uint16_t color) {
+void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
 
-  if ((x >= _width) || (y >= _height)) return;
+  if((x < 0) ||(x >= _width) || (y < 0) || (y >= _height)) return;
 
   setAddrWindow(x,y,x+1,y+1);
 
@@ -389,7 +384,7 @@ void Adafruit_ST7735::drawPixel(uint16_t x, uint16_t y, uint16_t color) {
 }
 
 
-void Adafruit_ST7735::drawFastVLine(uint16_t x, uint16_t y, uint16_t h,
+void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
  uint16_t color) {
 
   // Rudimentary clipping
@@ -408,7 +403,7 @@ void Adafruit_ST7735::drawFastVLine(uint16_t x, uint16_t y, uint16_t h,
 }
 
 
-void Adafruit_ST7735::drawFastHLine(uint16_t x, uint16_t y, uint16_t w,
+void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
   uint16_t color) {
 
   // Rudimentary clipping
@@ -428,7 +423,7 @@ void Adafruit_ST7735::drawFastHLine(uint16_t x, uint16_t y, uint16_t w,
 
 
 // fill a rectangle
-void Adafruit_ST7735::fillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h,
+void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
   uint16_t color) {
 
   // rudimentary clipping (drawChar w/big text requires this)
