@@ -25,8 +25,8 @@
 #else
  #include "WProgram.h"
 #endif
-
 #include <Adafruit_GFX.h>
+#include <avr/pgmspace.h>
 
 // some flags for initR() :(
 #define INITR_GREENTAB 0x0
