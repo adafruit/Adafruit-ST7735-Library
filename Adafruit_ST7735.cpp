@@ -228,7 +228,7 @@ PROGMEM static prog_uchar
 
 // Companion code to the above tables.  Reads and issues
 // a series of LCD commands stored in PROGMEM byte array.
-void Adafruit_ST7735::commandList(prog_uchar *addr) {
+void Adafruit_ST7735::commandList(uint8_t *addr) {
 
   uint8_t  numCommands, numArgs;
   uint16_t ms;
@@ -253,7 +253,7 @@ void Adafruit_ST7735::commandList(prog_uchar *addr) {
 
 
 // Initialization code common to both 'B' and 'R' type displays
-void Adafruit_ST7735::commonInit(prog_uchar *cmdList) {
+void Adafruit_ST7735::commonInit(uint8_t *cmdList) {
 
   constructor(ST7735_TFTWIDTH, ST7735_TFTHEIGHT);
   colstart  = rowstart = 0; // May be overridden in init func
