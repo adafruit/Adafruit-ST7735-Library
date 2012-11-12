@@ -94,7 +94,8 @@ void Adafruit_ST7735::writedata(uint8_t c) {
 // formatting -- storage-wise this is hundreds of bytes more compact
 // than the equivalent code.  Companion function follows.
 #define DELAY 0x80
-static uint8_t  Bcmd[] PROGMEM = {  // Initialization commands for 7735B screens
+PROGMEM static prog_uchar
+  Bcmd[] = {                  // Initialization commands for 7735B screens
     18,                       // 18 commands in list:
     ST7735_SWRESET,   DELAY,  //  1: Software reset, no args, w/delay
       50,                     //     50 ms delay
@@ -188,26 +189,26 @@ static uint8_t  Bcmd[] PROGMEM = {  // Initialization commands for 7735B screens
     ST7735_MADCTL , 1      ,  // 14: Memory access control (directions), 1 arg:
       0xC8,                   //     row addr/col addr, bottom to top refresh
     ST7735_COLMOD , 1      ,  // 15: set color mode, 1 arg, no delay:
-    0x05 };                 //     16-bit color
+      0x05 },                 //     16-bit color
 
-static uint8_t Rcmd2green[] PROGMEM =  { // Init for 7735R, part 2 (green tab only)
+  Rcmd2green[] = {            // Init for 7735R, part 2 (green tab only)
     2,                        //  2 commands in list:
     ST7735_CASET  , 4      ,  //  1: Column addr set, 4 args, no delay:
       0x00, 0x02,             //     XSTART = 0
       0x00, 0x7F+0x02,        //     XEND = 127
     ST7735_RASET  , 4      ,  //  2: Row addr set, 4 args, no delay:
       0x00, 0x01,             //     XSTART = 0
-  0x00, 0x9F+0x01 };      //     XEND = 159
-static uint8_t  Rcmd2red[] PROGMEM = { // Init for 7735R, part 2 (red tab only)
+      0x00, 0x9F+0x01 },      //     XEND = 159
+  Rcmd2red[] = {              // Init for 7735R, part 2 (red tab only)
     2,                        //  2 commands in list:
     ST7735_CASET  , 4      ,  //  1: Column addr set, 4 args, no delay:
       0x00, 0x00,             //     XSTART = 0
       0x00, 0x7F,             //     XEND = 127
     ST7735_RASET  , 4      ,  //  2: Row addr set, 4 args, no delay:
       0x00, 0x00,             //     XSTART = 0
-    0x00, 0x9F };           //     XEND = 159
+      0x00, 0x9F },           //     XEND = 159
 
-static uint8_t  Rcmd3[] PROGMEM = { // Init for 7735R, part 3 (red or green tab)
+  Rcmd3[] = {                 // Init for 7735R, part 3 (red or green tab)
     4,                        //  4 commands in list:
     ST7735_GMCTRP1, 16      , //  1: Magical unicorn dust, 16 args, no delay:
       0x02, 0x1c, 0x07, 0x12,
