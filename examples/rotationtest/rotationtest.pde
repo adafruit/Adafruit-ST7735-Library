@@ -46,9 +46,12 @@ void setup(void) {
   // color of the tab to see which init code to try. If the display is
   // cut off or has extra 'random' pixels on the top & left, try the
   // other option!
+  // If you are seeing red and green color inversion, use Black Tab
 
+  // If your TFT's plastic wrap has a Black Tab, use the following:
+  tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
   // If your TFT's plastic wrap has a Red Tab, use the following:
-  tft.initR(INITR_REDTAB);   // initialize a ST7735R chip, red tab
+  //tft.initR(INITR_REDTAB);   // initialize a ST7735R chip, red tab
   // If your TFT's plastic wrap has a Green Tab, use the following:
   //tft.initR(INITR_GREENTAB); // initialize a ST7735R chip, green tab
 
