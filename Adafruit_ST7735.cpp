@@ -23,6 +23,10 @@
 #include "wiring_private.h"
 #include <SPI.h>
 
+inline uint16_t swapcolor(uint16_t x) { 
+  return (x << 11) | (x & 0x07E0) | (x >> 11);
+}
+
 
 // Constructor when using software SPI.  All output pins are configurable.
 Adafruit_ST7735::Adafruit_ST7735(uint8_t cs, uint8_t rs, uint8_t sid,
@@ -315,6 +319,7 @@ void Adafruit_ST7735::initR(uint8_t options) {
     commandList(Rcmd2red);
   }
   commandList(Rcmd3);
+  tabcolor = options;
 }
 
 
@@ -337,36 +342,16 @@ void Adafruit_ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1,
 }
 
 
-void Adafruit_ST7735::fillScreen(uint16_t color) {
-
-  uint8_t x, y, hi = color >> 8, lo = color;
-
-  setAddrWindow(0, 0, _width-1, _height-1);
-
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
-
-  for(y=_height; y>0; y--) {
-    for(x=_width; x>0; x--) {
-      spiwrite(hi);
-      spiwrite(lo);
-    }
-  }
-
-  *csport |= cspinmask;
-}
-
-
 void Adafruit_ST7735::pushColor(uint16_t color) {
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
 
+  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
   spiwrite(color >> 8);
   spiwrite(color);
 
   *csport |= cspinmask;
 }
-
 
 void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
 
@@ -376,6 +361,8 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
 
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
+
+  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
 
   spiwrite(color >> 8);
   spiwrite(color);
@@ -391,6 +378,8 @@ void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
   if((x >= _width) || (y >= _height)) return;
   if((y+h-1) >= _height) h = _height-y;
   setAddrWindow(x, y, x, y+h-1);
+
+  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
 
   uint8_t hi = color >> 8, lo = color;
   *rsport |=  rspinmask;
@@ -411,6 +400,8 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
   if((x+w-1) >= _width)  w = _width-x;
   setAddrWindow(x, y, x+w-1, y);
 
+  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
+
   uint8_t hi = color >> 8, lo = color;
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
@@ -422,6 +413,13 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
 }
 
 
+
+void Adafruit_ST7735::fillScreen(uint16_t color) {
+  fillRect(0, 0,  _width, _height, color);
+}
+
+
+
 // fill a rectangle
 void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
   uint16_t color) {
@@ -430,6 +428,8 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
   if((x >= _width) || (y >= _height)) return;
   if((x + w - 1) >= _width)  w = _width  - x;
   if((y + h - 1) >= _height) h = _height - y;
+
+  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
 
   setAddrWindow(x, y, x+w-1, y+h-1);
 

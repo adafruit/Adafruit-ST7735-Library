@@ -31,6 +31,7 @@
 // some flags for initR() :(
 #define INITR_GREENTAB 0x0
 #define INITR_REDTAB   0x1
+#define INITR_BLACKTAB   0x2
 
 #define ST7735_TFTWIDTH  128
 #define ST7735_TFTHEIGHT 160
@@ -123,6 +124,7 @@ class Adafruit_ST7735 : public Adafruit_GFX {
   */
 
  private:
+  uint8_t  tabcolor;
 
   void     spiwrite(uint8_t),
            writecommand(uint8_t c),
