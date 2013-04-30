@@ -319,6 +319,13 @@ void Adafruit_ST7735::initR(uint8_t options) {
     commandList(Rcmd2red);
   }
   commandList(Rcmd3);
+
+  // if black, change MADCTL color filter
+  if (options == INITR_BLACKTAB) {
+    writecommand(ST7735_MADCTL);
+    writedata(0xC0);
+  }
+
   tabcolor = options;
 }
 
@@ -346,7 +353,6 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
 
-  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
   spiwrite(color >> 8);
   spiwrite(color);
 
@@ -362,8 +368,6 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
 
-  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
-
   spiwrite(color >> 8);
   spiwrite(color);
 
@@ -378,8 +382,6 @@ void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
   if((x >= _width) || (y >= _height)) return;
   if((y+h-1) >= _height) h = _height-y;
   setAddrWindow(x, y, x, y+h-1);
-
-  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
 
   uint8_t hi = color >> 8, lo = color;
   *rsport |=  rspinmask;
@@ -399,8 +401,6 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
   if((x >= _width) || (y >= _height)) return;
   if((x+w-1) >= _width)  w = _width-x;
   setAddrWindow(x, y, x+w-1, y);
-
-  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
 
   uint8_t hi = color >> 8, lo = color;
   *rsport |=  rspinmask;
@@ -429,8 +429,6 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
   if((x + w - 1) >= _width)  w = _width  - x;
   if((y + h - 1) >= _height) h = _height - y;
 
-  if (tabcolor == INITR_BLACKTAB)   color = swapcolor(color);
-
   setAddrWindow(x, y, x+w-1, y+h-1);
 
   uint8_t hi = color >> 8, lo = color;
@@ -457,7 +455,8 @@ uint16_t Adafruit_ST7735::Color565(uint8_t r, uint8_t g, uint8_t b) {
 #define MADCTL_MX  0x40
 #define MADCTL_MV  0x20
 #define MADCTL_ML  0x10
-#define MADCTL_RGB 0x08
+#define MADCTL_RGB 0x00
+#define MADCTL_BGR 0x08
 #define MADCTL_MH  0x04
 
 void Adafruit_ST7735::setRotation(uint8_t m) {
@@ -466,25 +465,41 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
   rotation = m % 4; // can't be higher than 3
   switch (rotation) {
    case 0:
-    writedata(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
-    _width  = ST7735_TFTWIDTH;
-    _height = ST7735_TFTHEIGHT;
-    break;
+     if (tabcolor == INITR_BLACKTAB) {
+       writedata(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
+     } else {
+       writedata(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
+     }
+     _width  = ST7735_TFTWIDTH;
+     _height = ST7735_TFTHEIGHT;
+     break;
    case 1:
-    writedata(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
-    _width  = ST7735_TFTHEIGHT;
-    _height = ST7735_TFTWIDTH;
-    break;
-   case 2:
-    writedata(MADCTL_RGB);
-    _width  = ST7735_TFTWIDTH;
-    _height = ST7735_TFTHEIGHT;
+     if (tabcolor == INITR_BLACKTAB) {
+       writedata(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
+     } else {
+       writedata(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
+     }
+     _width  = ST7735_TFTHEIGHT;
+     _height = ST7735_TFTWIDTH;
+     break;
+  case 2:
+     if (tabcolor == INITR_BLACKTAB) {
+       writedata(MADCTL_RGB);
+     } else {
+       writedata(MADCTL_BGR);
+     }
+     _width  = ST7735_TFTWIDTH;
+     _height = ST7735_TFTHEIGHT;
     break;
    case 3:
-    writedata(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
-    _width  = ST7735_TFTHEIGHT;
-    _height = ST7735_TFTWIDTH;
-    break;
+     if (tabcolor == INITR_BLACKTAB) {
+       writedata(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
+     } else {
+       writedata(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
+     }
+     _width  = ST7735_TFTHEIGHT;
+     _height = ST7735_TFTWIDTH;
+     break;
   }
 }
 
