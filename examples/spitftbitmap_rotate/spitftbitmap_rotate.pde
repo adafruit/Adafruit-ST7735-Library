@@ -34,6 +34,11 @@
 #define TFT_DC   9  // Data/command line for TFT
 #define TFT_RST  8  // Reset line for TFT (or connect to +5V)
 
+//Use these pins for the shield!
+//#define cs   10
+//#define dc   8
+//#define rst  0  // you can also connect this to the Arduino reset
+
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
 void setup(void) {
