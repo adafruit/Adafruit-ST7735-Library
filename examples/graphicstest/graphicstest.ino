@@ -16,16 +16,28 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
-// You can use any (4 or) 5 pins
-#define sclk 4
-#define mosi 5
-#define cs   6
-#define dc   7
-#define rst  8  // you can also connect this to the Arduino reset
+// For the breakout, you can use any (4 or) 5 pins
+//#define sclk 4
+//#define mosi 5
+//#define cs   6
+//#define dc   7
+//#define rst  8  // you can also connect this to the Arduino reset
+
+//Use these pins for the shield!
+#define sclk 13
+#define mosi 11
+#define cs   10
+#define dc   8
+#define rst  0  // you can also connect this to the Arduino reset
 
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library
 #include <SPI.h>
+
+#if defined(__SAM3X8E__)
+    #undef __FlashStringHelper::F(string_literal)
+    #define F(string_literal) string_literal
+#endif
 
 // Option 1: use any pins but a little slower
 Adafruit_ST7735 tft = Adafruit_ST7735(cs, dc, mosi, sclk, rst);
@@ -36,6 +48,28 @@ Adafruit_ST7735 tft = Adafruit_ST7735(cs, dc, mosi, sclk, rst);
 // to use the microSD card (see the image drawing example)
 //Adafruit_ST7735 tft = Adafruit_ST7735(cs, dc, rst);
 float p = 3.1415926;
+
+ 
+#define Neutral 0
+#define Press 1
+#define Up 2
+#define Down 3
+#define Right 4
+#define Left 5
+ 
+// Check the joystick position
+int CheckJoystick()
+{
+  int joystickState = analogRead(3);
+  
+  if (joystickState < 50) return Left;
+  if (joystickState < 150) return Down;
+  if (joystickState < 250) return Press;
+  if (joystickState < 500) return Right;
+  if (joystickState < 650) return Up;
+  return Neutral;
+}
+
 
 void setup(void) {
   Serial.begin(9600);
@@ -115,6 +149,25 @@ void loop() {
   delay(500);
   tft.invertDisplay(false);
   delay(500);
+  int joy = CheckJoystick();
+  switch (joy)
+  {
+    case Left:
+      Serial.println("Left");
+      break;
+    case Right:
+      Serial.println("Right");
+      break;
+    case Up:
+      Serial.println("Up");
+      break;
+    case Down:
+      Serial.println("Down");
+      break;
+    case Press:
+      Serial.println("Press");
+      break;
+  }
 }
 
 void testlines(uint16_t color) {

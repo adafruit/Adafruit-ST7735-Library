@@ -16,16 +16,28 @@
   MIT license, all text above must be included in any redistribution
  ****************************************************/
 
-// You can use any (4 or) 5 pins
-#define sclk 4
-#define mosi 5
-#define cs   6
-#define dc   7
-#define rst  8  // you can also connect this to the Arduino reset
+// For the breakout, you can use any (4 or) 5 pins
+//#define sclk 4
+//#define mosi 5
+//#define cs   6
+//#define dc   7
+//#define rst  8  // you can also connect this to the Arduino reset
+
+//Use these pins for the shield!
+#define sclk 13
+#define mosi 11
+#define cs   10
+#define dc   8
+#define rst  0  // you can also connect this to the Arduino reset
 
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library
 #include <SPI.h>
+
+#if defined(__SAM3X8E__)
+    #undef __FlashStringHelper::F(string_literal)
+    #define F(string_literal) string_literal
+#endif
 
 // Option 1: use any pins but a little slower
 Adafruit_ST7735 tft = Adafruit_ST7735(cs, dc, mosi, sclk, rst);

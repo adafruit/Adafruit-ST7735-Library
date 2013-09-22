@@ -21,6 +21,11 @@
 #include <SPI.h>
 #include <SD.h>
 
+#if defined(__SAM3X8E__)
+    #undef __FlashStringHelper::F(string_literal)
+    #define F(string_literal) string_literal
+#endif
+
 // TFT display and SD card will share the hardware SPI interface.
 // Hardware SPI pins are specific to the Arduino board type and
 // cannot be remapped to alternate pins.  For Arduino Uno,
@@ -29,6 +34,11 @@
 #define TFT_CS  10  // Chip select line for TFT display
 #define TFT_DC   9  // Data/command line for TFT
 #define TFT_RST  8  // Reset line for TFT (or connect to +5V)
+
+//Use these pins for the shield!
+//#define cs   10
+//#define dc   8
+//#define rst  0  // you can also connect this to the Arduino reset
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
