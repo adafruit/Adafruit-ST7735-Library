@@ -20,6 +20,7 @@
 #include <Adafruit_ST7735.h> // Hardware-specific library
 #include <SPI.h>
 #include <SD.h>
+
 #if defined(__SAM3X8E__)
     #undef __FlashStringHelper::F(string_literal)
     #define F(string_literal) string_literal
@@ -35,9 +36,9 @@
 #define TFT_RST  8  // Reset line for TFT (or connect to +5V)
 
 //Use these pins for the shield!
-//#define cs   10
-//#define dc   8
-//#define rst  0  // you can also connect this to the Arduino reset
+//#define TFT_CS   10
+//#define TFT_DC   8
+//#define TFT_RST  0  // you can also connect this to the Arduino reset
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
@@ -65,14 +66,11 @@ void setup(void) {
     return;
   }
   Serial.println("OK!");
+
+  bmpDraw("parrot.bmp", 0, 0);
 }
 
 void loop() {
-  tft.fillScreen(ST7735_BLACK); // Clear display
-  for(uint8_t i=0; i<4; i++)    // Draw 4 parrots
-    bmpDraw("parrot.bmp", tft.width() / 4 * i, tft.height() / 4 * i);
-  delay(1000);
-  tft.setRotation(tft.getRotation() + 1); // Inc rotation 90 degrees
 }
 
 // This function opens a Windows Bitmap (BMP) file and
