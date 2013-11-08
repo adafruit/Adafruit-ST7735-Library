@@ -141,7 +141,7 @@ void Adafruit_ST7735::writedata(uint8_t c) {
 // formatting -- storage-wise this is hundreds of bytes more compact
 // than the equivalent code.  Companion function follows.
 #define DELAY 0x80
-PROGMEM static prog_uchar
+static const uint8_t PROGMEM
   Bcmd[] = {                  // Initialization commands for 7735B screens
     18,                       // 18 commands in list:
     ST7735_SWRESET,   DELAY,  //  1: Software reset, no args, w/delay
@@ -275,7 +275,7 @@ PROGMEM static prog_uchar
 
 // Companion code to the above tables.  Reads and issues
 // a series of LCD commands stored in PROGMEM byte array.
-void Adafruit_ST7735::commandList(uint8_t *addr) {
+void Adafruit_ST7735::commandList(const uint8_t *addr) {
 
   uint8_t  numCommands, numArgs;
   uint16_t ms;
@@ -300,7 +300,7 @@ void Adafruit_ST7735::commandList(uint8_t *addr) {
 
 
 // Initialization code common to both 'B' and 'R' type displays
-void Adafruit_ST7735::commonInit(uint8_t *cmdList) {
+void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
   colstart  = rowstart = 0; // May be overridden in init func
 
   pinMode(_rs, OUTPUT);
@@ -325,7 +325,8 @@ void Adafruit_ST7735::commonInit(uint8_t *cmdList) {
 #if defined(__SAM3X8E__)
     SPI.setClockDivider(21); // 4 MHz
     //Due defaults to 4mHz (clock divider setting of 21), but we'll set it anyway 
-#endif    SPI.setBitOrder(MSBFIRST);
+#endif
+    SPI.setBitOrder(MSBFIRST);
     SPI.setDataMode(SPI_MODE0);
   } else {
     pinMode(_sclk, OUTPUT);
