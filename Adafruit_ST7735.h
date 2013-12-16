@@ -146,7 +146,7 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
   boolean  hwSPI;
 
-#ifdef __AVR__
+#if defined(__AVR__) || defined(CORE_TEENSY)
 volatile uint8_t *dataport, *clkport, *csport, *rsport;
   uint8_t  _cs, _rs, _rst, _sid, _sclk,
            datapinmask, clkpinmask, cspinmask, rspinmask,

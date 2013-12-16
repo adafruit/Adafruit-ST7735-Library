@@ -51,6 +51,10 @@ Adafruit_ST7735::Adafruit_ST7735(uint8_t cs, uint8_t rs, uint8_t rst) :
   _sid  = _sclk = 0;
 }
 
+#if defined(CORE_TEENSY) && !defined(__AVR__)
+#define __AVR__
+#endif
+
 #ifdef __AVR__
 inline void Adafruit_ST7735::spiwrite(uint8_t c) {
 
