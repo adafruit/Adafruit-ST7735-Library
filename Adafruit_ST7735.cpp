@@ -445,6 +445,33 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
 #endif
 }
 
+void Adafruit_ST7735::pushColors(uint16_t *colors, uint8_t offset, uint8_t len) {
+#ifdef __AVR__
+  *rsport |=  rspinmask;
+  *csport &= ~cspinmask;
+#endif
+#if defined(__SAM3X8E__)
+  rsport->PIO_SODR |=  rspinmask;
+  csport->PIO_CODR  |=  cspinmask;
+#endif
+  
+  colors = colors + offset*2;
+  for (uint8_t i = 0; i < len; ++i) {
+    uint16_t color = *colors;
+    spiwrite(color >> 8);
+    spiwrite(color);
+    colors++;
+  }
+
+#ifdef __AVR__
+  *csport |= cspinmask;
+#endif
+#if defined(__SAM3X8E__)
+  csport->PIO_SODR  |=  cspinmask;
+#endif
+}
+
+
 void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
 
   if((x < 0) ||(x >= _width) || (y < 0) || (y >= _height)) return;

@@ -116,6 +116,7 @@ class Adafruit_ST7735 : public Adafruit_GFX {
            initR(uint8_t options = INITR_GREENTAB), // for ST7735R
            setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1),
            pushColor(uint16_t color),
+           pushColors(uint16_t *colors, uint8_t offset, uint8_t len),
            fillScreen(uint16_t color),
            drawPixel(int16_t x, int16_t y, uint16_t color),
            drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color),
