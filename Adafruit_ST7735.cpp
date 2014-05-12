@@ -26,18 +26,17 @@ inline uint16_t swapcolor(uint16_t x) {
   return (x << 11) | (x & 0x07E0) | (x >> 11);
 }
 
+//Fast hardware SPI implementation. LCD connection:
+//Arduino pin 10 -> CS
+//Arduino pin  9 -> DC (On some LCDs marked as RS)
+//Arduino pin  8 -> RST (LCD Reset)
 
-
-
-// Constructor when using hardware SPI.  Faster, but must use SPI pins
-// specific to each board type (e.g. 11,13 for Uno, 51,52 for Mega, etc.)
-Adafruit_ST7735::Adafruit_ST7735(uint8_t cs, uint8_t rs, uint8_t rst) :
+//Hardware SPI pins is specific to each board type (e.g. 11,13 for Uno, 51,52 for Mega, etc. Check datasheet for details)
+//Atmega328-based Arduino pin 13 (sck) -> SCL LCD pin 
+//Atmega328-based Arduino pin 11 (mosi) -> SDA LCD pin
+Adafruit_ST7735::Adafruit_ST7735() :
     Adafruit_GFX(ST7735_TFTWIDTH, ST7735_TFTHEIGHT) {
-  _cs   = cs;
-  _rs   = rs;
-  _rst  = rst;
   hwSPI = true;
-  _sid  = _sclk = 0;
 }
 
 
@@ -49,24 +48,20 @@ inline void Adafruit_ST7735::spiwrite(uint8_t c) {
 
 
 void Adafruit_ST7735::writecommand(uint8_t c) {
-  *rsport &= ~rspinmask;
-  *csport &= ~cspinmask;
-
-  //Serial.print("C ");
+  DC_LOW;
+  CS_LOW;
   spiwrite(c);
 
-  *csport |= cspinmask;
+  CS_HIGH;
 }
 
 
 void Adafruit_ST7735::writedata(uint8_t c) {
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
-    
-  //Serial.print("D ");
+  DC_HIGH;
+  CS_LOW;
   spiwrite(c);
 
-  *csport |= cspinmask;
+  CS_HIGH;
 } 
 
 
@@ -238,12 +233,8 @@ void Adafruit_ST7735::commandList(const uint8_t *addr) {
 void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
   colstart  = rowstart = 0; // May be overridden in init func
 
-  pinMode(_rs, OUTPUT);
-  pinMode(_cs, OUTPUT);
-  csport    = portOutputRegister(digitalPinToPort(_cs));
-  rsport    = portOutputRegister(digitalPinToPort(_rs));
-  cspinmask = digitalPinToBitMask(_cs);
-  rspinmask = digitalPinToBitMask(_rs);
+  DC_OUTPUT;
+  CS_OUTPUT;
 
   //if(hwSPI) { // Using hardware SPI
     SPI.begin();
@@ -253,16 +244,16 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
     SPI.setDataMode(SPI_MODE0);
 
   // toggle RST low to reset; CS low so it'll listen to us
-  *csport &= ~cspinmask;
-  if (_rst) {
-    pinMode(_rst, OUTPUT);
-    digitalWrite(_rst, HIGH);
+  CS_LOW;
+  //if (_rst) {
+    RESET_OUTPUT;
+    RESET_HIGH;
     delay(500);
-    digitalWrite(_rst, LOW);
+    RESET_LOW;
     delay(500);
-    digitalWrite(_rst, HIGH);
+    RESET_HIGH;
     delay(500);
-  }
+  //}
 
   if(cmdList) commandList(cmdList);
 }
@@ -318,13 +309,13 @@ void Adafruit_ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1,
 
 void Adafruit_ST7735::pushColor(uint16_t color) {
 
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
+  DC_HIGH;
+  CS_LOW;
 
   spiwrite(color >> 8);
   spiwrite(color);
 
-  *csport |= cspinmask;
+  CS_HIGH;
 }
 
 void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
@@ -333,13 +324,13 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
 
   setAddrWindow(x,y,x+1,y+1);
 
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
+  DC_HIGH;
+  CS_LOW;
   
   spiwrite(color >> 8);
   spiwrite(color);
 
-  *csport |= cspinmask;
+  CS_HIGH;
 }
 
 
@@ -352,14 +343,14 @@ void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
   setAddrWindow(x, y, x, y+h-1);
 
   uint8_t hi = color >> 8, lo = color;
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
+  DC_HIGH;
+  CS_LOW;
 
   while (h--) {
     spiwrite(hi);
     spiwrite(lo);
   }
-  *csport |= cspinmask;
+  CS_HIGH;
 }
 
 
@@ -372,15 +363,15 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
   setAddrWindow(x, y, x+w-1, y);
 
   uint8_t hi = color >> 8, lo = color;
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
+  DC_HIGH;
+  CS_LOW;
 
   while (w--) {
     spiwrite(hi);
     spiwrite(lo);
   }
 
-  *csport |= cspinmask;
+  CS_HIGH;
 }
 
 
@@ -403,8 +394,8 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
   setAddrWindow(x, y, x+w-1, y+h-1);
 
   uint8_t hi = color >> 8, lo = color;
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
+  DC_HIGH;
+  CS_LOW;
 
   for(y=h; y>0; y--) {
     for(x=w; x>0; x--) {
@@ -413,8 +404,7 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
     }
   }
 
-
-  *csport |= cspinmask;
+  CS_HIGH;
 }
 
 

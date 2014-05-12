@@ -1,3 +1,15 @@
+It is speed-optimized version of Adafruit 1.8" SPI display library.
+Check commits in branch "speed-optimized" for details.
+My version is 2x-3x times faster than official library version!
+
+Only AVR and only hardware SPI are supported in this version.
+Connecting to Uno/Pro Mini or other Atmega328-based Arduino:
+Arduino pin 10 -> CS
+Arduino pin  9 -> DC (On some LCDs marked as RS)
+Arduino pin  8 -> RST (LCD Reset)
+Arduino pin 13 (sck) -> SCL LCD pin 
+Arduino pin 11 (mosi) -> SDA LCD pin
+
 This is a library for the Adafruit 1.8" SPI display.
 This library works with the Adafruit 1.8" TFT Breakout w/SD card
   ----> http://www.adafruit.com/products/358

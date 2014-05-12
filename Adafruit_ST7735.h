@@ -19,16 +19,26 @@
 #ifndef _ADAFRUIT_ST7735H_
 #define _ADAFRUIT_ST7735H_
 
-#if ARDUINO >= 100
- #include "Arduino.h"
- #include "Print.h"
-#else
- #include "WProgram.h"
-#endif
-
+#include "Arduino.h"
+#include "Print.h"
 #include <Adafruit_GFX.h>
 #include <avr/pgmspace.h>
 
+//Hardcoded pin definitions
+#define PIN_RESET 8
+#define RESET_OUTPUT DDRB |= B00000001
+#define RESET_HIGH PORTB |=B00000001   
+#define RESET_LOW PORTB &= B11111110
+
+#define PIN_CS 10
+#define CS_OUTPUT DDRB |= B00000100
+#define CS_HIGH PORTB |= B00000100 
+#define CS_LOW PORTB &= B11111011 
+
+#define PIN_DC 9
+#define DC_OUTPUT DDRB |= B00000010
+#define DC_HIGH PORTB |= B00000010 
+#define DC_LOW PORTB &= B11111101 
 
 // some flags for initR() :(
 #define INITR_GREENTAB 0x0
@@ -99,7 +109,7 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
  public:
 
-  Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
+  Adafruit_ST7735();
 
   void     initB(void),                             // for ST7735B displays
            initR(uint8_t options = INITR_GREENTAB), // for ST7735R
@@ -125,13 +135,10 @@ class Adafruit_ST7735 : public Adafruit_GFX {
            commandList(const uint8_t *addr),
            commonInit(const uint8_t *cmdList);
 
-
   boolean  hwSPI;
 
-volatile uint8_t *dataport, *clkport, *csport, *rsport;
-  uint8_t  _cs, _rs, _rst, _sid, _sclk,
-           datapinmask, clkpinmask, cspinmask, rspinmask,
-           colstart, rowstart; // some displays need this changed
+  uint8_t  colstart, rowstart; // some displays need this changed
+
 };
 
 #endif
