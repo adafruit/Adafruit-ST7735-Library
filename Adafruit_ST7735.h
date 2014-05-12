@@ -27,17 +27,8 @@
 #endif
 
 #include <Adafruit_GFX.h>
+#include <avr/pgmspace.h>
 
-#if defined(__SAM3X8E__)
-#include <include/pio.h>
-  #define PROGMEM
-  #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
-  #define pgm_read_word(addr) (*(const unsigned short *)(addr))
-typedef unsigned char prog_uchar;
-#endif
-#ifdef __AVR__
-  #include <avr/pgmspace.h>
-#endif
 
 // some flags for initR() :(
 #define INITR_GREENTAB 0x0
@@ -108,8 +99,6 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
  public:
 
-  Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t SID, uint8_t SCLK,
-    uint8_t RST);
   Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
 
   void     initB(void),                             // for ST7735B displays
@@ -126,13 +115,6 @@ class Adafruit_ST7735 : public Adafruit_GFX {
            invertDisplay(boolean i);
   uint16_t Color565(uint8_t r, uint8_t g, uint8_t b);
 
-  /* These are not for current use, 8-bit protocol only!
-  uint8_t  readdata(void),
-           readcommand8(uint8_t);
-  uint16_t readcommand16(uint8_t);
-  uint32_t readcommand32(uint8_t);
-  void     dummyclock(void);
-  */
 
  private:
   uint8_t  tabcolor;
@@ -142,24 +124,14 @@ class Adafruit_ST7735 : public Adafruit_GFX {
            writedata(uint8_t d),
            commandList(const uint8_t *addr),
            commonInit(const uint8_t *cmdList);
-//uint8_t  spiread(void);
+
 
   boolean  hwSPI;
 
-#if defined(__AVR__) || defined(CORE_TEENSY)
 volatile uint8_t *dataport, *clkport, *csport, *rsport;
   uint8_t  _cs, _rs, _rst, _sid, _sclk,
            datapinmask, clkpinmask, cspinmask, rspinmask,
            colstart, rowstart; // some displays need this changed
-#endif //  #ifdef __AVR__
-
-#if defined(__SAM3X8E__)
-  Pio *dataport, *clkport, *csport, *rsport;
-  uint32_t  _cs, _rs, _rst, _sid, _sclk,
-            datapinmask, clkpinmask, cspinmask, rspinmask,
-            colstart, rowstart; // some displays need this changed
-#endif //  #if defined(__SAM3X8E__)
-  
 };
 
 #endif
