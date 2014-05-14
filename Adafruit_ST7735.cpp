@@ -72,6 +72,7 @@ void Adafruit_ST7735::writedata(uint8_t c) {
 // than the equivalent code.  Companion function follows.
 #define DELAY 0x80
 static const uint8_t PROGMEM
+#ifndef SKIP_ST7735_B_TYPE
   Bcmd[] = {                  // Initialization commands for 7735B screens
     18,                       // 18 commands in list:
     ST7735_SWRESET,   DELAY,  //  1: Software reset, no args, w/delay
@@ -130,6 +131,7 @@ static const uint8_t PROGMEM
       10,                     //     10 ms delay
     ST7735_DISPON ,   DELAY,  // 18: Main screen turn on, no args, w/delay
       255 },                  //     255 = 500 ms delay
+#endif
 
   Rcmd1[] = {                 // Init for 7735R, part 1 (red or green tab)
     15,                       // 15 commands in list:
@@ -168,6 +170,7 @@ static const uint8_t PROGMEM
     ST7735_COLMOD , 1      ,  // 15: set color mode, 1 arg, no delay:
       0x05 },                 //     16-bit color
 
+#ifndef SKIP_ST7735_R_GREEN_TYPE
   Rcmd2green[] = {            // Init for 7735R, part 2 (green tab only)
     2,                        //  2 commands in list:
     ST7735_CASET  , 4      ,  //  1: Column addr set, 4 args, no delay:
@@ -176,6 +179,7 @@ static const uint8_t PROGMEM
     ST7735_RASET  , 4      ,  //  2: Row addr set, 4 args, no delay:
       0x00, 0x01,             //     XSTART = 0
       0x00, 0x9F+0x01 },      //     XEND = 159
+#endif
   Rcmd2red[] = {              // Init for 7735R, part 2 (red tab only)
     2,                        //  2 commands in list:
     ST7735_CASET  , 4      ,  //  1: Column addr set, 4 args, no delay:
@@ -244,6 +248,7 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
     SPI.setDataMode(SPI_MODE0);
 
   // toggle RST low to reset; CS low so it'll listen to us
+#ifndef RESET_PIN_NOT_USED
   CS_LOW;
   //if (_rst) {
     RESET_OUTPUT;
@@ -254,28 +259,34 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
     RESET_HIGH;
     delay(500);
   //}
-
+#endif
   if(cmdList) commandList(cmdList);
 }
 
 
 // Initialization for ST7735B screens
+#ifndef SKIP_ST7735_B_TYPE
 void Adafruit_ST7735::initB(void) {
   commonInit(Bcmd);
 }
+#endif
 
 
 // Initialization for ST7735R screens (green or red tabs)
 void Adafruit_ST7735::initR(uint8_t options) {
   commonInit(Rcmd1);
+#ifndef SKIP_ST7735_R_GREEN_TYPE
   if(options == INITR_GREENTAB) {
     commandList(Rcmd2green);
     colstart = 2;
     rowstart = 1;
   } else {
+#endif  
     // colstart, rowstart left at default '0' values
     commandList(Rcmd2red);
+#ifndef SKIP_ST7735_R_GREEN_TYPE
   }
+#endif
   commandList(Rcmd3);
 
   // if black, change MADCTL color filter
@@ -333,7 +344,7 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
   CS_HIGH;
 }
 
-
+#ifndef SKIP_VH_LINES_FUNCTIONS
 void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
  uint16_t color) {
 
@@ -373,7 +384,7 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
 
   CS_HIGH;
 }
-
+#endif
 
 
 void Adafruit_ST7735::fillScreen(uint16_t color) {
@@ -428,38 +439,54 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
   rotation = m % 4; // can't be higher than 3
   switch (rotation) {
    case 0:
+#ifndef SKIP_ST7735_R_GREEN_TYPE
      if (tabcolor == INITR_BLACKTAB) {
+#endif
        writedata(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
+#ifndef SKIP_ST7735_R_GREEN_TYPE
      } else {
        writedata(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
      }
+#endif
      _width  = ST7735_TFTWIDTH;
      _height = ST7735_TFTHEIGHT;
      break;
    case 1:
+#ifndef SKIP_ST7735_R_GREEN_TYPE
      if (tabcolor == INITR_BLACKTAB) {
+#endif
        writedata(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
+#ifndef SKIP_ST7735_R_GREEN_TYPE
      } else {
        writedata(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
      }
+#endif
      _width  = ST7735_TFTHEIGHT;
      _height = ST7735_TFTWIDTH;
      break;
   case 2:
+#ifndef SKIP_ST7735_R_GREEN_TYPE
      if (tabcolor == INITR_BLACKTAB) {
+#endif
        writedata(MADCTL_RGB);
+#ifndef SKIP_ST7735_R_GREEN_TYPE
      } else {
        writedata(MADCTL_BGR);
      }
+#endif
      _width  = ST7735_TFTWIDTH;
      _height = ST7735_TFTHEIGHT;
     break;
    case 3:
+#ifndef SKIP_ST7735_R_GREEN_TYPE
      if (tabcolor == INITR_BLACKTAB) {
+#endif
        writedata(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
+#ifndef SKIP_ST7735_R_GREEN_TYPE
      } else {
        writedata(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
      }
+#endif
      _width  = ST7735_TFTHEIGHT;
      _height = ST7735_TFTWIDTH;
      break;

@@ -24,6 +24,11 @@
 #include <Adafruit_GFX.h>
 #include <avr/pgmspace.h>
 
+//Uncomment it to reduse scetch size by 466 bytes
+//#define SKIP_ST7735_B_TYPE
+//#define SKIP_ST7735_R_GREEN_TYPE
+//#define SKIP_VH_LINES_FUNCTIONS
+
 //Hardcoded pin definitions
 #define PIN_RESET 8
 #define RESET_OUTPUT DDRB |= B00000001
@@ -111,14 +116,19 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
   Adafruit_ST7735();
 
-  void     initB(void),                             // for ST7735B displays
+  void
+#ifndef SKIP_ST7735_B_TYPE
+           initB(void),                             // for ST7735B displays
+#endif
            initR(uint8_t options = INITR_GREENTAB), // for ST7735R
            setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1),
            pushColor(uint16_t color),
            fillScreen(uint16_t color),
            drawPixel(int16_t x, int16_t y, uint16_t color),
+#ifndef SKIP_VH_LINES_FUNCTIONS
            drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color),
            drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color),
+#endif
            fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
              uint16_t color),
            setRotation(uint8_t r),
