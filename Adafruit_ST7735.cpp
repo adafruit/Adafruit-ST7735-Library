@@ -26,10 +26,10 @@ inline uint16_t swapcolor(uint16_t x) {
   return (x << 11) | (x & 0x07E0) | (x >> 11);
 }
 
-//Fast hardware SPI implementation. LCD connection:
-//Arduino pin 10 -> CS
-//Arduino pin  9 -> DC (On some LCDs marked as RS)
-//Arduino pin  8 -> RST (LCD Reset)
+//Fast hardware SPI implementation. LCD connection pins is hardcoded:
+//Arduino pin 10 -> CS (Chip select)
+//Arduino pin  9 -> DC (Data/Command select, On some LCDs marked as RS)
+//Arduino pin  8 -> RST (Reset)
 
 //Hardware SPI pins is specific to each board type (e.g. 11,13 for Uno, 51,52 for Mega, etc. Check datasheet for details)
 //Atmega328-based Arduino pin 13 (sck) -> SCL LCD pin 
@@ -344,6 +344,47 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
   CS_HIGH;
 }
 
+void Adafruit_ST7735::drawFastLine(int8_t x, int8_t y, int8_t h,int8_t l, uint16_t color) {
+  int8_t i,j,ih;
+  if(abs(h) < 5) {
+    drawLine(x, y, x+l-1, y+h, color);
+    return;
+  }
+  if((x >= _width) || (y >= _height)) return;
+  if((y+h-1) >= _height) h = _height-y;
+  if((y+h) < 0) h = -y;
+  if((x+l-1) >= _width) l = _width-x;
+  j = h/l;
+  for(i=0; i<l; i++) {
+	if(h > 0) {
+	  if(i == l-1) {
+        setAddrWindow(x+i, y+i*j, x+i, y+h-1);
+	    ih = h - i*j;
+	  } else {
+	    setAddrWindow(x+i, y+i*j, x+i, y+(i+1)*j-1);
+	    ih = j;
+	  }
+	} else {
+	  if(i == l - 1) {
+        setAddrWindow(x+i, y+h, x+i, y+i*j-1);
+	    ih =- (h - i*j);
+	  } else {
+	    setAddrWindow(x+i, y+(i+1)*j, x+i, y+i*j-1);
+	    ih =- j;
+	  }
+	}
+	uint8_t hi = color >> 8, lo = color;
+    DC_HIGH;
+    CS_LOW;
+	while (ih--) {
+	  SPDR = hi;
+      while(!(SPSR & _BV(SPIF)));
+	  SPDR = lo;
+	  while(!(SPSR & _BV(SPIF)));
+	}
+    CS_HIGH;
+  }
+}
 #ifndef SKIP_VH_LINES_FUNCTIONS
 void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
  uint16_t color) {
@@ -497,5 +538,4 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
 void Adafruit_ST7735::invertDisplay(boolean i) {
   writecommand(i ? ST7735_INVON : ST7735_INVOFF);
 }
-
 
