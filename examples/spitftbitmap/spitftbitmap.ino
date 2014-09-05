@@ -21,44 +21,29 @@
 #include <SPI.h>
 #include <SD.h>
 
-#if defined(__SAM3X8E__)
-    #undef __FlashStringHelper::F(string_literal)
-    #define F(string_literal) string_literal
-#endif
-
 // TFT display and SD card will share the hardware SPI interface.
 // Hardware SPI pins are specific to the Arduino board type and
 // cannot be remapped to alternate pins.  For Arduino Uno,
 // Duemilanove, etc., pin 11 = MOSI, pin 12 = MISO, pin 13 = SCK.
-#define SD_CS    4  // Chip select line for SD card
 #define TFT_CS  10  // Chip select line for TFT display
-#define TFT_DC   9  // Data/command line for TFT
-#define TFT_RST  8  // Reset line for TFT (or connect to +5V)
+#define TFT_RST  9  // Reset line for TFT (or see below...)
+#define TFT_DC   8  // Data/command line for TFT
 
-//Use these pins for the shield!
-//#define TFT_CS   10
-//#define TFT_DC   8
-//#define TFT_RST  0  // you can also connect this to the Arduino reset
+#define SD_CS    4  // Chip select line for SD card
+
+//Use this reset pin for the shield!
+//#define TFT_RST  0  // you can also connect this to the Arduino reset!
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
 void setup(void) {
   Serial.begin(9600);
 
-  // Our supplier changed the 1.8" display slightly after Jan 10, 2012
-  // so that the alignment of the TFT had to be shifted by a few pixels
-  // this just means the init code is slightly different. Check the
-  // color of the tab to see which init code to try. If the display is
-  // cut off or has extra 'random' pixels on the top & left, try the
-  // other option!
-  // If you are seeing red and green color inversion, use Black Tab
+  // Use this initializer if you're using a 1.8" TFT
+  tft.initR(INITR_BLACKTAB);
 
-  // If your TFT's plastic wrap has a Black Tab, use the following:
-  tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
-  // If your TFT's plastic wrap has a Red Tab, use the following:
-  //tft.initR(INITR_REDTAB);   // initialize a ST7735R chip, red tab
-  // If your TFT's plastic wrap has a Green Tab, use the following:
-  //tft.initR(INITR_GREENTAB); // initialize a ST7735R chip, green tab
+  // Use this initializer (uncomment) if you're using a 1.44" TFT
+  //tft.initR(INITR_144GREENTAB);
 
   Serial.print("Initializing SD card...");
   if (!SD.begin(SD_CS)) {
@@ -67,6 +52,7 @@ void setup(void) {
   }
   Serial.println("OK!");
 
+  // change the name here!
   bmpDraw("parrot.bmp", 0, 0);
 }
 
