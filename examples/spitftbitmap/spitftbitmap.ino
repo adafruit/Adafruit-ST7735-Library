@@ -54,9 +54,19 @@ void setup(void) {
 
   // change the name here!
   bmpDraw("parrot.bmp", 0, 0);
+  // wait 5 seconds
+  delay(5000);
 }
 
 void loop() {
+// uncomment these lines to draw bitmaps in different locations/rotations!
+/*
+  tft.fillScreen(ST7735_BLACK); // Clear display
+  for(uint8_t i=0; i<4; i++)    // Draw 4 parrots
+    bmpDraw("parrot.bmp", tft.width() / 4 * i, tft.height() / 4 * i);
+  delay(1000);
+  tft.setRotation(tft.getRotation() + 1); // Inc rotation 90 degrees
+*/
 }
 
 // This function opens a Windows Bitmap (BMP) file and
