@@ -39,13 +39,26 @@ typedef unsigned char prog_uchar;
   #include <avr/pgmspace.h>
 #endif
 
+#if defined(__SAM3X8E__)
+    #undef __FlashStringHelper::F(string_literal)
+    #define F(string_literal) string_literal
+#endif
+
 // some flags for initR() :(
 #define INITR_GREENTAB 0x0
 #define INITR_REDTAB   0x1
 #define INITR_BLACKTAB   0x2
 
+#define INITR_18GREENTAB    INITR_GREENTAB
+#define INITR_18REDTAB      INITR_REDTAB
+#define INITR_18BLACKTAB    INITR_BLACKTAB
+#define INITR_144GREENTAB   0x1
+
 #define ST7735_TFTWIDTH  128
-#define ST7735_TFTHEIGHT 160
+// for 1.44" display
+#define ST7735_TFTHEIGHT_144 128
+// for 1.8" display
+#define ST7735_TFTHEIGHT_18  160
 
 #define ST7735_NOP     0x00
 #define ST7735_SWRESET 0x01
@@ -108,9 +121,8 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
  public:
 
-  Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t SID, uint8_t SCLK,
-    uint8_t RST);
-  Adafruit_ST7735(uint8_t CS, uint8_t RS, uint8_t RST);
+  Adafruit_ST7735(int8_t CS, int8_t RS, int8_t SID, int8_t SCLK, int8_t RST = -1);
+  Adafruit_ST7735(int8_t CS, int8_t RS, int8_t RST = -1);
 
   void     initB(void),                             // for ST7735B displays
            initR(uint8_t options = INITR_GREENTAB), // for ST7735R
