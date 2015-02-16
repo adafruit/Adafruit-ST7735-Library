@@ -31,6 +31,7 @@ as well as Adafruit raw 1.8" TFT display
  #include "WProgram.h"
 #endif
 
+#include <SPI.h>
 #include <Adafruit_GFX.h>
 
 #if defined(__SAM3X8E__)
@@ -162,6 +163,9 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 //uint8_t  spiread(void);
 
   boolean  hwSPI;
+#ifdef SPI_HAS_TRANSACTION
+  SPISettings spisettings;
+#endif
 
 #if defined(__AVR__) || defined(CORE_TEENSY)
 volatile uint8_t *dataport, *clkport, *csport, *rsport;
