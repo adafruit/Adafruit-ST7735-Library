@@ -159,6 +159,7 @@ class Adafruit_ST7735 : public Adafruit_GFX {
            writecommand(uint8_t c),
            writedata(uint8_t d),
            writedata16(uint16_t d),
+           writeColor(uint16_t color, uint16_t count),
            setCS(bool level),
            setRS(bool level),
            commandList(const uint8_t *addr),
@@ -181,6 +182,7 @@ volatile uint8_t *dataport, *clkport, *csport, *rsport;
 #define ST7735_USE_GENERIC_IO
 #define ST7735_USE_HWSPI_ONLY
 #define ST7735_USE_HWSPI_WRITE16
+#define ST7735_USE_HWSPI_WRITEPATTERN
   uint8_t _cs, _rs, _rst, _sid, _sclk;
   uint8_t colstart, rowstart;
 #endif

@@ -490,19 +490,11 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
 }
 
 void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
-
   if((x < 0) ||(x >= _width) || (y < 0) || (y >= _height)) return;
 
   setAddrWindow(x,y,x+1,y+1);
-
-  setRS(true);
-  setCS(false);
-
-  spiwrite16(color);
-
-  setCS(true);
+  writedata16(color);
 }
-
 
 void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
  uint16_t color) {
@@ -511,13 +503,7 @@ void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
   if((x >= _width) || (y >= _height)) return;
   if((y+h-1) >= _height) h = _height-y;
   setAddrWindow(x, y, x, y+h-1);
-
-  setRS(true);
-  setCS(false);
-  while (h--) {
-    spiwrite16(color);
-  }
-  setCS(true);
+  writeColor(color, h);
 }
 
 
@@ -529,12 +515,7 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
   if((x+w-1) >= _width)  w = _width-x;
   setAddrWindow(x, y, x+w-1, y);
 
-  setRS(true);
-  setCS(false);
-  while (w--) {
-    spiwrite16(color);
-  }
-  setCS(true);
+  writeColor(color, w);
 }
 
 
@@ -544,6 +525,19 @@ void Adafruit_ST7735::fillScreen(uint16_t color) {
 }
 
 
+void Adafruit_ST7735::writeColor(uint16_t color, uint16_t count) {
+  setRS(true);
+  setCS(false);
+#if defined(ST7735_USE_HWSPI_WRITEPATTERN)
+  uint8_t pattern[] = { (uint8_t)(color >> 8), (uint8_t)(color >> 0) };
+  SPI.writePattern(pattern, sizeof(pattern), count);
+#else
+  for (; count != 0; count--) {
+    spiwrite16(color);
+  }
+#endif
+  setCS(true);
+}
 
 // fill a rectangle
 void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
@@ -555,15 +549,7 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
   if((y + h - 1) >= _height) h = _height - y;
 
   setAddrWindow(x, y, x+w-1, y+h-1);
-
-  setRS(true);
-  setCS(false);
-  for(y=h; y>0; y--) {
-    for(x=w; x>0; x--) {
-      spiwrite16(color);
-    }
-  }
-  setCS(true);
+  writeColor(color, w*h);
 }
 
 
