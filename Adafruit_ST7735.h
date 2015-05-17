@@ -157,6 +157,8 @@ class Adafruit_ST7735 : public Adafruit_GFX {
   void     spiwrite(uint8_t),
            writecommand(uint8_t c),
            writedata(uint8_t d),
+           setCS(bool level),
+           setRS(bool level),
            commandList(const uint8_t *addr),
            commonInit(const uint8_t *cmdList);
 //uint8_t  spiread(void);
@@ -168,15 +170,17 @@ volatile uint8_t *dataport, *clkport, *csport, *rsport;
   uint8_t  _cs, _rs, _rst, _sid, _sclk,
            datapinmask, clkpinmask, cspinmask, rspinmask,
            colstart, rowstart; // some displays need this changed
-#endif //  #ifdef __AVR__
-
-#if defined(__SAM3X8E__)
+#elif defined(__SAM3X8E__)
   Pio *dataport, *clkport, *csport, *rsport;
   uint32_t  _cs, _rs, _rst, _sid, _sclk,
             datapinmask, clkpinmask, cspinmask, rspinmask,
             colstart, rowstart; // some displays need this changed
-#endif //  #if defined(__SAM3X8E__)
-  
+#elif defined(ARDUINO_ARCH_ESP8266)
+#define ST7735_USE_GENERIC_IO
+#define ST7735_USE_HWSPI_ONLY
+  uint8_t _cs, _rs, _rst, _sid, _sclk;
+  uint8_t colstart, rowstart;
+#endif
 };
 
 #endif
