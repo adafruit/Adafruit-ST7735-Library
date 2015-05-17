@@ -99,6 +99,17 @@ inline void Adafruit_ST7735::spiwrite(uint8_t c) {
 #error Unsupported board.
 #endif
 
+#if defined(ST7735_USE_HWSPI_WRITE16)
+inline void Adafruit_ST7735::spiwrite16(uint16_t v) {
+  SPI.write16(v);
+}
+#else
+inline void Adafruit_ST7735::spiwrite16(uint16_t v) {
+  spiwrite((uint8_t)(v >> 8));
+  spiwrite((uint8_t)(v >> 0));
+}
+#endif
+
 #if defined(ST7735_USE_GENERIC_IO)
 inline void Adafruit_ST7735::setCS(bool level) {
   digitalWrite(_cs, level);
@@ -160,6 +171,16 @@ void Adafruit_ST7735::writedata(uint8_t c) {
     
   //Serial.print("D ");
   spiwrite(c);
+
+  setCS(true);
+} 
+
+void Adafruit_ST7735::writedata16(uint16_t c) {
+  setRS(true);
+  setCS(false);
+    
+  //Serial.print("D ");
+  spiwrite16(c);
 
   setCS(true);
 } 
@@ -448,16 +469,12 @@ void Adafruit_ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1,
  uint8_t y1) {
 
   writecommand(ST7735_CASET); // Column addr set
-  writedata(0x00);
-  writedata(x0+colstart);     // XSTART 
-  writedata(0x00);
-  writedata(x1+colstart);     // XEND
+  writedata16(x0+colstart);     // XSTART 
+  writedata16(x1+colstart);     // XEND
 
   writecommand(ST7735_RASET); // Row addr set
-  writedata(0x00);
-  writedata(y0+rowstart);     // YSTART
-  writedata(0x00);
-  writedata(y1+rowstart);     // YEND
+  writedata16(y0+rowstart);     // YSTART
+  writedata16(y1+rowstart);     // YEND
 
   writecommand(ST7735_RAMWR); // write to RAM
 }
@@ -467,8 +484,7 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
   setRS(true);
   setCS(false);
   
-  spiwrite(color >> 8);
-  spiwrite(color);
+  spiwrite16(color);
 
   setCS(true);
 }
@@ -481,9 +497,8 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
 
   setRS(true);
   setCS(false);
-  
-  spiwrite(color >> 8);
-  spiwrite(color);
+
+  spiwrite16(color);
 
   setCS(true);
 }
@@ -497,13 +512,10 @@ void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
   if((y+h-1) >= _height) h = _height-y;
   setAddrWindow(x, y, x, y+h-1);
 
-  uint8_t hi = color >> 8, lo = color;
-
   setRS(true);
   setCS(false);
   while (h--) {
-    spiwrite(hi);
-    spiwrite(lo);
+    spiwrite16(color);
   }
   setCS(true);
 }
@@ -517,12 +529,10 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
   if((x+w-1) >= _width)  w = _width-x;
   setAddrWindow(x, y, x+w-1, y);
 
-  uint8_t hi = color >> 8, lo = color;
   setRS(true);
   setCS(false);
   while (w--) {
-    spiwrite(hi);
-    spiwrite(lo);
+    spiwrite16(color);
   }
   setCS(true);
 }
@@ -546,13 +556,11 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 
   setAddrWindow(x, y, x+w-1, y+h-1);
 
-  uint8_t hi = color >> 8, lo = color;
   setRS(true);
   setCS(false);
   for(y=h; y>0; y--) {
     for(x=w; x>0; x--) {
-      spiwrite(hi);
-      spiwrite(lo);
+      spiwrite16(color);
     }
   }
   setCS(true);
