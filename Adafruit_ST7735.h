@@ -34,14 +34,15 @@ as well as Adafruit raw 1.8" TFT display
 #include <Adafruit_GFX.h>
 
 #if defined(__SAM3X8E__)
-#include <include/pio.h>
+  #include <include/pio.h>
   #define PROGMEM
   #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
   #define pgm_read_word(addr) (*(const unsigned short *)(addr))
-typedef unsigned char prog_uchar;
-#endif
-#ifdef __AVR__
+  typedef unsigned char prog_uchar;
+#elif defined(__AVR__)
   #include <avr/pgmspace.h>
+#elif defined(ESP8266)
+  #include <pgmspace.h>
 #endif
 
 #if defined(__SAM3X8E__)
