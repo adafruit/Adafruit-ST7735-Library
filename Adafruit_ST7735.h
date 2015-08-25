@@ -172,7 +172,7 @@ volatile uint8_t *dataport, *clkport, *csport, *rsport;
 #endif //  #ifdef __AVR__
 
 #if defined(__SAM3X8E__)
-  Pio *dataport, *clkport, *csport, *rsport;
+  volatile RwReg  *dataport, *clkport, *csport, *rsport;
   uint32_t  _cs, _rs, _rst, _sid, _sclk,
             datapinmask, clkpinmask, cspinmask, rspinmask,
             colstart, rowstart; // some displays need this changed
