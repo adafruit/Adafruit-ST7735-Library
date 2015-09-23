@@ -177,7 +177,7 @@ volatile uint8_t *dataport, *clkport, *csport, *rsport;
             datapinmask, clkpinmask, cspinmask, rspinmask,
             colstart, rowstart; // some displays need this changed
   int32_t   _rst;  // Must use signed type since a -1 sentinel is assigned.
-#endif //  #if defined(__SAM3X8E__)
+#endif //  #if defined(__arm__)
 
 };
 
