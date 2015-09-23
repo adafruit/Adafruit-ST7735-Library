@@ -119,7 +119,7 @@ as well as Adafruit raw 1.8" TFT display
 #define	ST7735_GREEN   0x07E0
 #define ST7735_CYAN    0x07FF
 #define ST7735_MAGENTA 0xF81F
-#define ST7735_YELLOW  0xFFE0  
+#define ST7735_YELLOW  0xFFE0
 #define ST7735_WHITE   0xFFFF
 
 
@@ -171,13 +171,14 @@ volatile uint8_t *dataport, *clkport, *csport, *rsport;
            colstart, rowstart; // some displays need this changed
 #endif //  #ifdef __AVR__
 
-#if defined(__SAM3X8E__)
+#if defined(__arm__)
   volatile RwReg  *dataport, *clkport, *csport, *rsport;
-  uint32_t  _cs, _rs, _rst, _sid, _sclk,
+  uint32_t  _cs, _rs, _sid, _sclk,
             datapinmask, clkpinmask, cspinmask, rspinmask,
             colstart, rowstart; // some displays need this changed
+  int32_t   _rst;  // Must use signed type since a -1 sentinel is assigned.
 #endif //  #if defined(__SAM3X8E__)
-  
+
 };
 
 #endif
