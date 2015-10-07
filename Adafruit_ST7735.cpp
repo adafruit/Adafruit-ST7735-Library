@@ -23,9 +23,11 @@ as well as Adafruit raw 1.8" TFT display
 
 #include "Adafruit_ST7735.h"
 #include <limits.h>
-#include "pins_arduino.h"
-#include "wiring_private.h"
-#include <SPI.h>
+#ifndef PARTICLE
+ #include "pins_arduino.h"
+ #include "wiring_private.h"
+ #include <SPI.h>
+#endif
 
 inline uint16_t swapcolor(uint16_t x) { 
   return (x << 11) | (x & 0x07E0) | (x >> 11);
@@ -82,18 +84,31 @@ inline void Adafruit_ST7735::spiwrite(uint8_t c) {
       SPCR = SPCRbackup;
 //      SPDR = c;
 //      while(!(SPSR & _BV(SPIF)));
-#elif defined (__arm__)
+#elif defined (__SAM3X8E__)
       SPI.setClockDivider(21); //4MHz
       SPI.setDataMode(SPI_MODE0);
+      SPI.transfer(c);
+#elif defined (PARTICLE)
+      SPI.setClockSpeed(15, MHZ);
+      SPI.setDataMode(SPI_MODE0);
+      SPI.transfer(c);
+#else
       SPI.transfer(c);
 #endif
   } else {
     // Fast SPI bitbang swiped from LPD8806 library
     for(uint8_t bit = 0x80; bit; bit >>= 1) {
+#ifdef PARTICLE
+      if(c & bit) pinSetFast(_sid);
+      else        pinResetFast(_sid);
+      pinSetFast(_sclk);
+      pinResetFast(_sclk);
+#else
       if(c & bit) *dataport |=  datapinmask;
       else        *dataport &= ~datapinmask;
       *clkport |=  clkpinmask;
       *clkport &= ~clkpinmask;
+#endif
     }
   }
 }
@@ -103,13 +118,22 @@ void Adafruit_ST7735::writecommand(uint8_t c) {
 #if defined (SPI_HAS_TRANSACTION)
   SPI.beginTransaction(mySPISettings);
 #endif
+#ifdef PARTICLE
+  pinResetFast(_rs);
+  pinResetFast(_cs);
+#else
   *rsport &= ~rspinmask;
   *csport &= ~cspinmask;
 
+#endif
   //Serial.print("C ");
   spiwrite(c);
 
+#ifdef PARTICLE
+  pinSetFast(_cs);
+#else
   *csport |= cspinmask;
+#endif
 #if defined (SPI_HAS_TRANSACTION)
     SPI.endTransaction();
 #endif
@@ -120,13 +144,22 @@ void Adafruit_ST7735::writedata(uint8_t c) {
 #if defined (SPI_HAS_TRANSACTION)
     SPI.beginTransaction(mySPISettings);
 #endif
+#ifdef PARTICLE
+  pinSetFast(_rs);
+  pinResetFast(_cs);
+#else
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
+#endif
     
   //Serial.print("D ");
   spiwrite(c);
 
+#ifdef PARTICLE
+  pinSetFast(_cs);
+#else
   *csport |= cspinmask;
+#endif
 #if defined (SPI_HAS_TRANSACTION)
     SPI.endTransaction();
 #endif
@@ -311,10 +344,12 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
 
   pinMode(_rs, OUTPUT);
   pinMode(_cs, OUTPUT);
+#ifndef PARTICLE
   csport    = portOutputRegister(digitalPinToPort(_cs));
   rsport    = portOutputRegister(digitalPinToPort(_rs));
   cspinmask = digitalPinToBitMask(_cs);
   rspinmask = digitalPinToBitMask(_rs);
+#endif
 
   if(hwSPI) { // Using hardware SPI
 #if defined (SPI_HAS_TRANSACTION)
@@ -332,20 +367,32 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
     SPI.begin();
     SPI.setClockDivider(21); //4MHz
     SPI.setDataMode(SPI_MODE0);
+#elif defined (PARTICLE)
+    SPI.begin();
+    SPI.setClockSpeed(15, MHZ);
+    SPI.setDataMode(SPI_MODE0);
+#else
+    SPI.begin();
 #endif
   } else {
     pinMode(_sclk, OUTPUT);
     pinMode(_sid , OUTPUT);
+#ifndef PARTICLE
     clkport     = portOutputRegister(digitalPinToPort(_sclk));
     dataport    = portOutputRegister(digitalPinToPort(_sid));
     clkpinmask  = digitalPinToBitMask(_sclk);
     datapinmask = digitalPinToBitMask(_sid);
     *clkport   &= ~clkpinmask;
     *dataport  &= ~datapinmask;
+#endif
   }
 
   // toggle RST low to reset; CS low so it'll listen to us
+#ifdef PARTICLE
+  pinResetFast(_cs);
+#else
   *csport &= ~cspinmask;
+#endif
   if (_rst) {
     pinMode(_rst, OUTPUT);
     digitalWrite(_rst, HIGH);
@@ -417,13 +464,23 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
 #if defined (SPI_HAS_TRANSACTION)
     SPI.beginTransaction(mySPISettings);
 #endif
+#ifdef PARTICLE
+  pinSetFast(_rs);
+  pinResetFast(_cs);
+#else
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
-  
+
+#endif
+
   spiwrite(color >> 8);
   spiwrite(color);
 
+#ifdef PARTICLE
+    pinSetFast(_cs);
+#else
   *csport |= cspinmask;
+#endif
 #if defined (SPI_HAS_TRANSACTION)
     SPI.endTransaction();
 #endif
@@ -438,13 +495,22 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
 #if defined (SPI_HAS_TRANSACTION)
     SPI.beginTransaction(mySPISettings);
 #endif
+#ifdef PARTICLE
+  pinSetFast(_rs);
+  pinResetFast(_cs);
+#else
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
+#endif
   
   spiwrite(color >> 8);
   spiwrite(color);
 
+#ifdef PARTICLE
+  pinSetFast(_cs);
+#else
   *csport |= cspinmask;
+#endif
 #if defined (SPI_HAS_TRANSACTION)
     SPI.endTransaction();
 #endif
@@ -464,13 +530,23 @@ void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
 #if defined (SPI_HAS_TRANSACTION)
     SPI.beginTransaction(mySPISettings);
 #endif
+#ifdef PARTICLE
+  pinSetFast(_rs);
+  pinResetFast(_cs);
+#else
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
+#endif
   while (h--) {
     spiwrite(hi);
     spiwrite(lo);
   }
+
+#ifdef PARTICLE
+  pinSetFast(_cs);
+#else
   *csport |= cspinmask;
+#endif
 #if defined (SPI_HAS_TRANSACTION)
     SPI.endTransaction();
 #endif
@@ -490,13 +566,22 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
 #if defined (SPI_HAS_TRANSACTION)
     SPI.beginTransaction(mySPISettings);
 #endif
+#ifdef PARTICLE
+  pinSetFast(_rs);
+  pinResetFast(_cs);
+#else
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
+#endif
   while (w--) {
     spiwrite(hi);
     spiwrite(lo);
   }
+#ifdef PARTICLE
+  pinSetFast(_cs);
+#else
   *csport |= cspinmask;
+#endif
 #if defined (SPI_HAS_TRANSACTION)
     SPI.endTransaction();
 #endif
@@ -526,8 +611,14 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 #if defined (SPI_HAS_TRANSACTION)
     SPI.beginTransaction(mySPISettings);
 #endif
+#ifdef PARTICLE
+  pinSetFast(_rs);
+  pinResetFast(_cs);
+#else
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
+#endif
+
   for(y=h; y>0; y--) {
     for(x=w; x>0; x--) {
       spiwrite(hi);
@@ -535,7 +626,11 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
     }
   }
 
+#ifdef PARTICLE
+  pinSetFast(_cs);
+#else
   *csport |= cspinmask;
+#endif
 #if defined (SPI_HAS_TRANSACTION)
     SPI.endTransaction();
 #endif
