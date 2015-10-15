@@ -165,19 +165,17 @@ class Adafruit_ST7735 : public Adafruit_GFX {
   boolean  hwSPI;
 
 #if defined(__AVR__) || defined(CORE_TEENSY)
-volatile uint8_t *dataport, *clkport, *csport, *rsport;
+  volatile uint8_t *dataport, *clkport, *csport, *rsport;
   uint8_t  _cs, _rs, _rst, _sid, _sclk,
            datapinmask, clkpinmask, cspinmask, rspinmask,
            colstart, rowstart; // some displays need this changed
-#endif //  #ifdef __AVR__
-
-#if defined(__arm__)
+#elif defined(__arm__)
   volatile RwReg  *dataport, *clkport, *csport, *rsport;
   uint32_t  _cs, _rs, _sid, _sclk,
             datapinmask, clkpinmask, cspinmask, rspinmask,
             colstart, rowstart; // some displays need this changed
   int32_t   _rst;  // Must use signed type since a -1 sentinel is assigned.
-#endif //  #if defined(__arm__)
+#endif
 
 };
 
