@@ -24,31 +24,9 @@ as well as Adafruit raw 1.8" TFT display
 #ifndef _ADAFRUIT_ST7735H_
 #define _ADAFRUIT_ST7735H_
 
-#if ARDUINO >= 100
- #include "Arduino.h"
- #include "Print.h"
-#else
- #include "WProgram.h"
-#endif
-
+#include "utility/PlatformShim.h"
+#include "utility/SPIShim.h"
 #include <Adafruit_GFX.h>
-
-#if defined(__SAM3X8E__)
-  #include <include/pio.h>
-  #define PROGMEM
-  #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
-  #define pgm_read_word(addr) (*(const unsigned short *)(addr))
-  typedef unsigned char prog_uchar;
-#elif defined(__AVR__)
-  #include <avr/pgmspace.h>
-#elif defined(ESP8266)
-  #include <pgmspace.h>
-#endif
-
-#if defined(__SAM3X8E__)
-    #undef __FlashStringHelper::F(string_literal)
-    #define F(string_literal) string_literal
-#endif
 
 // some flags for initR() :(
 #define INITR_GREENTAB 0x0
@@ -127,8 +105,9 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
  public:
 
-  Adafruit_ST7735(int8_t CS, int8_t RS, int8_t SID, int8_t SCLK, int8_t RST = -1);
-  Adafruit_ST7735(int8_t CS, int8_t RS, int8_t RST = -1);
+  Adafruit_ST7735(PinType CS, PinType RS, PinType SID, PinType SCLK,
+                  OptionalPinType RST = -1);
+  Adafruit_ST7735(PinType CS, PinType RS, OptionalPinType RST = -1);
 
   void     initB(void),                             // for ST7735B displays
            initR(uint8_t options = INITR_GREENTAB), // for ST7735R
@@ -163,20 +142,11 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 //uint8_t  spiread(void);
 
   boolean  hwSPI;
-
-#if defined(__AVR__) || defined(CORE_TEENSY)
-  volatile uint8_t *dataport, *clkport, *csport, *rsport;
-  uint8_t  _cs, _rs, _rst, _sid, _sclk,
-           datapinmask, clkpinmask, cspinmask, rspinmask,
-           colstart, rowstart; // some displays need this changed
-#elif defined(__arm__)
-  volatile RwReg  *dataport, *clkport, *csport, *rsport;
-  uint32_t  _cs, _rs, _sid, _sclk,
-            datapinmask, clkpinmask, cspinmask, rspinmask,
-            colstart, rowstart; // some displays need this changed
-  int32_t   _rst;  // Must use signed type since a -1 sentinel is assigned.
-#endif
-
+  volatile PortSizeType *dataport, *clkport, *csport, *rsport;
+  PinType               _cs, _rs, _sid, _sclk;
+  PortSizeType          datapinmask, clkpinmask, cspinmask, rspinmask;
+  OptionalPinType       _rst;
+  uint8_t               colstart, rowstart;
 };
 
 #endif
