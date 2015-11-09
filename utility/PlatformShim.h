@@ -57,6 +57,11 @@
   typedef RwReg PortSizeType;
   typedef uint32_t PinType;
   typedef int32_t OptionalPinType;
+#elif defined(ESP8266)
+  // Assume 32-bit types on ESP8266 platform.
+  typedef uint32_t PortSizeType;
+  typedef uint32_t PinType;
+  typedef int32_t OptionalPinType;
 #else
   #error Unknown platform.  Make sure the right board type is selected!
 #endif
