@@ -175,6 +175,12 @@ class Adafruit_ST7735 : public Adafruit_GFX {
             datapinmask, clkpinmask, cspinmask, rspinmask,
             colstart, rowstart; // some displays need this changed
   int32_t   _rst;  // Must use signed type since a -1 sentinel is assigned.
+#elif defined(ESP8266)
+    volatile uint32_t *dataport, *clkport, *csport, *rsport;
+    uint32_t  _cs, _rs, _rst, _sid, _sclk,
+    datapinmask, clkpinmask, cspinmask, rspinmask,
+    colstart, rowstart; // some displays need this changed
+
 #endif
 
 };
