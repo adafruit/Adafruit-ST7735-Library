@@ -151,7 +151,14 @@ class Adafruit_ST7735 : public Adafruit_GFX {
   uint32_t readcommand32(uint8_t);
   void     dummyclock(void);
   */
-
+ protected:
+#if defined(__AVR__) || defined(CORE_TEENSY)
+  void setRowColStart(uint8_t startRow, uint8_t startCol );
+#elif defined(__arm__)
+  void setRowColStart(uint32_t startRow, uint32_t startCol );
+#elif defined(ESP8266)
+  void setRowColStart(uint32_t startRow, uint32_t startCol );
+#endif
  private:
   uint8_t  tabcolor;
 

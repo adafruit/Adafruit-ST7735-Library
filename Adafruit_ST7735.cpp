@@ -393,7 +393,16 @@ void Adafruit_ST7735::initR(uint8_t options) {
   tabcolor = options;
 }
 
-
+#if defined(__AVR__) || defined(CORE_TEENSY)
+void Adafruit_ST7735::setRowColStart(uint8_t startRow, uint8_t startCol ) {
+#elif defined(__arm__)
+void Adafruit_ST7735::setRowColStart(uint32_t startRow, uint32_t startCol ) {
+#elif defined(ESP8266)
+void Adafruit_ST7735::setRowColStart(uint32_t startRow, uint32_t startCol ) {
+#endif
+	rowstart=startRow;
+	colstart=startCol;
+}
 void Adafruit_ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1,
  uint8_t y1) {
 
