@@ -27,6 +27,8 @@ as well as Adafruit raw 1.8" TFT display
 #if ARDUINO >= 100
  #include "Arduino.h"
  #include "Print.h"
+#elif PARTICLE
+ #include "Particle.h"
 #else
  #include "WProgram.h"
 #endif
@@ -48,6 +50,10 @@ as well as Adafruit raw 1.8" TFT display
 #if defined(__SAM3X8E__)
     #undef __FlashStringHelper::F(string_literal)
     #define F(string_literal) string_literal
+#endif
+
+#if defined(PARTICLE)
+typedef uint32_t RwReg;
 #endif
 
 // some flags for initR() :(

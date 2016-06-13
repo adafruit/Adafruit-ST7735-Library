@@ -1,0 +1,7 @@
+{
+    "name": "Adafruit ST7735",
+    "author": "Adafruit <info@adafruit.com>",
+    "license": "MIT",
+    "version": "1.0.4",
+    "description": "This is a library for the Adafruit ST7735 based SPI displays."
+}
