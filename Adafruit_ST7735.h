@@ -45,26 +45,39 @@ as well as Adafruit raw 1.8" TFT display
   #include <pgmspace.h>
 #endif
 
+#if defined(ARDUINO_STM32_FEATHER)
+typedef volatile uint32 RwReg;
+#endif
+
+#if defined(ARDUINO_FEATHER52) || defined(ESP8266)
+typedef volatile uint32_t RwReg;
+#endif
+
 #if defined(__SAM3X8E__)
     #undef __FlashStringHelper::F(string_literal)
     #define F(string_literal) string_literal
 #endif
 
 // some flags for initR() :(
-#define INITR_GREENTAB 0x0
-#define INITR_REDTAB   0x1
+#define INITR_GREENTAB   0x0
+#define INITR_REDTAB     0x1
 #define INITR_BLACKTAB   0x2
 
 #define INITR_18GREENTAB    INITR_GREENTAB
 #define INITR_18REDTAB      INITR_REDTAB
 #define INITR_18BLACKTAB    INITR_BLACKTAB
 #define INITR_144GREENTAB   0x1
+#define INITR_MINI160x80    0x4
 
-#define ST7735_TFTWIDTH  128
+
+// for 1.44 and mini
+#define ST7735_TFTWIDTH_128  128
+// for mini
+#define ST7735_TFTWIDTH_80   80
 // for 1.44" display
-#define ST7735_TFTHEIGHT_144 128
-// for 1.8" display
-#define ST7735_TFTHEIGHT_18  160
+#define ST7735_TFTHEIGHT_128 128
+// for 1.8" and mini display
+#define ST7735_TFTHEIGHT_160  160
 
 #define ST7735_NOP     0x00
 #define ST7735_SWRESET 0x01
@@ -164,25 +177,17 @@ class Adafruit_ST7735 : public Adafruit_GFX {
 
   boolean  hwSPI;
 
-#if defined(__AVR__) || defined(CORE_TEENSY)
+  int8_t  _cs, _rs, _rst, _sid, _sclk;
+  uint8_t colstart, rowstart, xstart, ystart; // some displays need this changed
+
+#if defined(__AVR__) || defined(CORE_TEENSY)  // 8 bit!
   volatile uint8_t *dataport, *clkport, *csport, *rsport;
-  uint8_t  _cs, _rs, _rst, _sid, _sclk,
-           datapinmask, clkpinmask, cspinmask, rspinmask,
-           colstart, rowstart; // some displays need this changed
-#elif defined(__arm__)
+  uint8_t  datapinmask, clkpinmask, cspinmask, rspinmask;
+#else    // 32 bit!
   volatile RwReg  *dataport, *clkport, *csport, *rsport;
-  uint32_t  _cs, _rs, _sid, _sclk,
-            datapinmask, clkpinmask, cspinmask, rspinmask,
-            colstart, rowstart; // some displays need this changed
-  int32_t   _rst;  // Must use signed type since a -1 sentinel is assigned.
-#elif defined(ESP8266)
-    volatile uint32_t *dataport, *clkport, *csport, *rsport;
-    uint32_t  _cs, _rs, _rst, _sid, _sclk,
-    datapinmask, clkpinmask, cspinmask, rspinmask,
-    colstart, rowstart; // some displays need this changed
-
+  uint32_t  datapinmask, clkpinmask, cspinmask, rspinmask;
 #endif
-
 };
+
 
 #endif

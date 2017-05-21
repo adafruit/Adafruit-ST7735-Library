@@ -39,10 +39,15 @@ inline uint16_t swapcolor(uint16_t x) {
 #endif
 
 
+#if defined(CORE_TEENSY) && !defined(__AVR__)
+  #define __AVR__
+#endif
+
+
 
 // Constructor when using software SPI.  All output pins are configurable.
 Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t rs, int8_t sid, int8_t sclk, int8_t rst) 
-  : Adafruit_GFX(ST7735_TFTWIDTH, ST7735_TFTHEIGHT_18)
+  : Adafruit_GFX(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160)
 {
   _cs   = cs;
   _rs   = rs;
@@ -52,21 +57,17 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t rs, int8_t sid, int8_t sclk, 
   hwSPI = false;
 }
 
-
 // Constructor when using hardware SPI.  Faster, but must use SPI pins
 // specific to each board type (e.g. 11,13 for Uno, 51,52 for Mega, etc.)
 Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t rs, int8_t rst) 
-  : Adafruit_GFX(ST7735_TFTWIDTH, ST7735_TFTHEIGHT_18) {
+  : Adafruit_GFX(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160) {
   _cs   = cs;
   _rs   = rs;
   _rst  = rst;
   hwSPI = true;
-  _sid  = _sclk = 0;
+  _sid  = _sclk = -1;
 }
 
-#if defined(CORE_TEENSY) && !defined(__AVR__)
-#define __AVR__
-#endif
 
 inline void Adafruit_ST7735::spiwrite(uint8_t c) {
 
@@ -80,8 +81,6 @@ inline void Adafruit_ST7735::spiwrite(uint8_t c) {
       SPCR = mySPCR;
       SPI.transfer(c);
       SPCR = SPCRbackup;
-//      SPDR = c;
-//      while(!(SPSR & _BV(SPIF)));
 #elif defined (__arm__)
       SPI.setClockDivider(21); //4MHz
       SPI.setDataMode(SPI_MODE0);
@@ -243,6 +242,7 @@ static const uint8_t PROGMEM
     ST7735_RASET  , 4      ,  //  2: Row addr set, 4 args, no delay:
       0x00, 0x01,             //     XSTART = 0
       0x00, 0x9F+0x01 },      //     XEND = 159
+
   Rcmd2red[] = {              // Init for 7735R, part 2 (red tab only)
     2,                        //  2 commands in list:
     ST7735_CASET  , 4      ,  //  1: Column addr set, 4 args, no delay:
@@ -260,6 +260,16 @@ static const uint8_t PROGMEM
     ST7735_RASET  , 4      ,  //  2: Row addr set, 4 args, no delay:
       0x00, 0x00,             //     XSTART = 0
       0x00, 0x7F },           //     XEND = 127
+
+  Rcmd2green160x80[] = {              // Init for 7735R, part 2 (mini 160x80)
+    2,                        //  2 commands in list:
+    ST7735_CASET  , 4      ,  //  1: Column addr set, 4 args, no delay:
+      0x00, 0x00,             //     XSTART = 0
+      0x00, 0x7F,             //     XEND = 79
+    ST7735_RASET  , 4      ,  //  2: Row addr set, 4 args, no delay:
+      0x00, 0x00,             //     XSTART = 0
+      0x00, 0x9F },           //     XEND = 159
+
 
   Rcmd3[] = {                 // Init for 7735R, part 3 (red or green tab)
     4,                        //  4 commands in list:
@@ -307,7 +317,7 @@ void Adafruit_ST7735::commandList(const uint8_t *addr) {
 
 // Initialization code common to both 'B' and 'R' type displays
 void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
-  colstart  = rowstart = 0; // May be overridden in init func
+  ystart = xstart = colstart  = rowstart = 0; // May be overridden in init func
 
   pinMode(_rs, OUTPUT);
   pinMode(_cs, OUTPUT);
@@ -346,7 +356,7 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
 
   // toggle RST low to reset; CS low so it'll listen to us
   *csport &= ~cspinmask;
-  if (_rst) {
+  if (_rst != -1) {
     pinMode(_rst, OUTPUT);
     digitalWrite(_rst, HIGH);
     delay(500);
@@ -363,6 +373,8 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
 // Initialization for ST7735B screens
 void Adafruit_ST7735::initB(void) {
   commonInit(Bcmd);
+
+  setRotation(0);
 }
 
 
@@ -374,10 +386,17 @@ void Adafruit_ST7735::initR(uint8_t options) {
     colstart = 2;
     rowstart = 1;
   } else if(options == INITR_144GREENTAB) {
-    _height = ST7735_TFTHEIGHT_144;
+    _height = ST7735_TFTHEIGHT_128;
+    _width = ST7735_TFTWIDTH_128;
     commandList(Rcmd2green144);
     colstart = 2;
     rowstart = 3;
+  } else if(options == INITR_MINI160x80) {
+    _height = ST7735_TFTHEIGHT_160;
+    _width = ST7735_TFTWIDTH_80;
+    commandList(Rcmd2green160x80);
+    colstart = 24;
+    rowstart = 0;
   } else {
     // colstart, rowstart left at default '0' values
     commandList(Rcmd2red);
@@ -385,12 +404,14 @@ void Adafruit_ST7735::initR(uint8_t options) {
   commandList(Rcmd3);
 
   // if black, change MADCTL color filter
-  if (options == INITR_BLACKTAB) {
+  if ((options == INITR_BLACKTAB) || (options == INITR_MINI160x80)) {
     writecommand(ST7735_MADCTL);
     writedata(0xC0);
   }
 
   tabcolor = options;
+
+  setRotation(0);
 }
 
 
@@ -399,15 +420,15 @@ void Adafruit_ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1,
 
   writecommand(ST7735_CASET); // Column addr set
   writedata(0x00);
-  writedata(x0+colstart);     // XSTART 
+  writedata(x0+xstart);     // XSTART 
   writedata(0x00);
-  writedata(x1+colstart);     // XEND
+  writedata(x1+xstart);     // XEND
 
   writecommand(ST7735_RASET); // Row addr set
   writedata(0x00);
-  writedata(y0+rowstart);     // YSTART
+  writedata(y0+ystart);     // YSTART
   writedata(0x00);
-  writedata(y1+rowstart);     // YEND
+  writedata(y1+ystart);     // YEND
 
   writecommand(ST7735_RAMWR); // write to RAM
 }
@@ -562,58 +583,84 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
   rotation = m % 4; // can't be higher than 3
   switch (rotation) {
    case 0:
-     if (tabcolor == INITR_BLACKTAB) {
+     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
        writedata(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
      } else {
        writedata(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
      }
-     _width  = ST7735_TFTWIDTH;
 
-     if (tabcolor == INITR_144GREENTAB) 
-       _height = ST7735_TFTHEIGHT_144;
-     else
-       _height = ST7735_TFTHEIGHT_18;
-
+     if (tabcolor == INITR_144GREENTAB) {
+       _height = ST7735_TFTHEIGHT_128;
+       _width  = ST7735_TFTWIDTH_128;
+     } else if (tabcolor == INITR_MINI160x80)  {
+       _height = ST7735_TFTHEIGHT_160;
+       _width = ST7735_TFTWIDTH_80;
+     } else {
+       _height = ST7735_TFTHEIGHT_160;
+       _width  = ST7735_TFTWIDTH_128;
+     }
+     xstart = colstart;
+     ystart = rowstart;
      break;
    case 1:
-     if (tabcolor == INITR_BLACKTAB) {
+     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
        writedata(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
      } else {
        writedata(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
      }
 
-     if (tabcolor == INITR_144GREENTAB) 
-       _width = ST7735_TFTHEIGHT_144;
-     else
-       _width = ST7735_TFTHEIGHT_18;
-
-     _height = ST7735_TFTWIDTH;
+     if (tabcolor == INITR_144GREENTAB)  {
+       _width = ST7735_TFTHEIGHT_128;
+       _height = ST7735_TFTWIDTH_128;
+     } else if (tabcolor == INITR_MINI160x80)  {
+       _width = ST7735_TFTHEIGHT_160;
+       _height = ST7735_TFTWIDTH_80;
+     } else {
+       _width = ST7735_TFTHEIGHT_160;
+       _height = ST7735_TFTWIDTH_128;
+     }
+     ystart = colstart;
+     xstart = rowstart;
      break;
   case 2:
-     if (tabcolor == INITR_BLACKTAB) {
+     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
        writedata(MADCTL_RGB);
      } else {
        writedata(MADCTL_BGR);
      }
-     _width  = ST7735_TFTWIDTH;
-     if (tabcolor == INITR_144GREENTAB) 
-       _height = ST7735_TFTHEIGHT_144;
-     else
-       _height = ST7735_TFTHEIGHT_18;
 
-    break;
+     if (tabcolor == INITR_144GREENTAB) {
+       _height = ST7735_TFTHEIGHT_128;
+       _width  = ST7735_TFTWIDTH_128;
+     } else if (tabcolor == INITR_MINI160x80)  {
+       _height = ST7735_TFTHEIGHT_160;
+       _width = ST7735_TFTWIDTH_80;
+     } else {
+       _height = ST7735_TFTHEIGHT_160;
+       _width  = ST7735_TFTWIDTH_128;
+     }
+     xstart = colstart;
+     ystart = rowstart;
+     break;
    case 3:
-     if (tabcolor == INITR_BLACKTAB) {
+     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
        writedata(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
      } else {
        writedata(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
      }
-     if (tabcolor == INITR_144GREENTAB) 
-       _width = ST7735_TFTHEIGHT_144;
-     else
-       _width = ST7735_TFTHEIGHT_18;
 
-     _height = ST7735_TFTWIDTH;
+     if (tabcolor == INITR_144GREENTAB)  {
+       _width = ST7735_TFTHEIGHT_128;
+       _height = ST7735_TFTWIDTH_128;
+     } else if (tabcolor == INITR_MINI160x80)  {
+       _width = ST7735_TFTHEIGHT_160;
+       _height = ST7735_TFTWIDTH_80;
+     } else {
+       _width = ST7735_TFTHEIGHT_160;
+       _height = ST7735_TFTWIDTH_128;
+     }
+     ystart = colstart;
+     xstart = rowstart;
      break;
   }
 }
