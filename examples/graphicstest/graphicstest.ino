@@ -208,7 +208,7 @@ void testtriangles() {
   int x = tft.height()-1;
   int y = 0;
   int z = tft.width();
-  for(t = 0 ; t <= 15; t+=1) {
+  for(t = 0 ; t <= 15; t++) {
     tft.drawTriangle(w, y, y, x, z, x, color);
     x-=4;
     y+=4;
