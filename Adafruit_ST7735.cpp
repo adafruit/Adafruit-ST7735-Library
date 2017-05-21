@@ -100,34 +100,32 @@ inline void Adafruit_ST7735::spiwrite(uint8_t c) {
 
 void Adafruit_ST7735::writecommand(uint8_t c) {
 #if defined (SPI_HAS_TRANSACTION)
-  SPI.beginTransaction(mySPISettings);
+  if (hwSPI)    SPI.beginTransaction(mySPISettings);
 #endif
   *rsport &= ~rspinmask;
   *csport &= ~cspinmask;
 
-  //Serial.print("C ");
   spiwrite(c);
 
   *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.endTransaction();
+  if (hwSPI)    SPI.endTransaction();
 #endif
 }
 
 
 void Adafruit_ST7735::writedata(uint8_t c) {
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.beginTransaction(mySPISettings);
+  if (hwSPI)    SPI.beginTransaction(mySPISettings);
 #endif
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
     
-  //Serial.print("D ");
   spiwrite(c);
 
   *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.endTransaction();
+  if (hwSPI)    SPI.endTransaction();
 #endif
 }
 
@@ -436,7 +434,7 @@ void Adafruit_ST7735::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1,
 
 void Adafruit_ST7735::pushColor(uint16_t color) {
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.beginTransaction(mySPISettings);
+  if (hwSPI)    SPI.beginTransaction(mySPISettings);
 #endif
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
@@ -446,7 +444,7 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
 
   *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.endTransaction();
+  if (hwSPI)    SPI.endTransaction();
 #endif
 }
 
@@ -457,7 +455,7 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
   setAddrWindow(x,y,x+1,y+1);
 
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.beginTransaction(mySPISettings);
+  if (hwSPI)     SPI.beginTransaction(mySPISettings);
 #endif
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
@@ -467,7 +465,7 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
 
   *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.endTransaction();
+  if (hwSPI)     SPI.endTransaction();
 #endif
 }
 
@@ -483,7 +481,7 @@ void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
   uint8_t hi = color >> 8, lo = color;
     
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.beginTransaction(mySPISettings);
+  if (hwSPI)      SPI.beginTransaction(mySPISettings);
 #endif
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
@@ -493,7 +491,7 @@ void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
   }
   *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.endTransaction();
+  if (hwSPI)      SPI.endTransaction();
 #endif
 }
 
@@ -509,7 +507,7 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
   uint8_t hi = color >> 8, lo = color;
 
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.beginTransaction(mySPISettings);
+  if (hwSPI)      SPI.beginTransaction(mySPISettings);
 #endif
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
@@ -519,7 +517,7 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
   }
   *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.endTransaction();
+  if (hwSPI)      SPI.endTransaction();
 #endif
 }
 
@@ -545,7 +543,7 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
   uint8_t hi = color >> 8, lo = color;
     
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.beginTransaction(mySPISettings);
+  if (hwSPI)      SPI.beginTransaction(mySPISettings);
 #endif
   *rsport |=  rspinmask;
   *csport &= ~cspinmask;
@@ -558,7 +556,7 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 
   *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
-    SPI.endTransaction();
+  if (hwSPI)      SPI.endTransaction();
 #endif
 }
 
