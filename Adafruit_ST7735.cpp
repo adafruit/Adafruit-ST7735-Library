@@ -39,18 +39,12 @@ inline uint16_t swapcolor(uint16_t x) {
 #endif
 
 
-#if defined(CORE_TEENSY) && !defined(__AVR__)
-  #define __AVR__
-#endif
-
-
-
 // Constructor when using software SPI.  All output pins are configurable.
-Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t rs, int8_t sid, int8_t sclk, int8_t rst) 
+Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t sid, int8_t sclk, int8_t rst) 
   : Adafruit_GFX(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160)
 {
   _cs   = cs;
-  _rs   = rs;
+  _dc   = dc;
   _sid  = sid;
   _sclk = sclk;
   _rst  = rst;
@@ -59,15 +53,14 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t rs, int8_t sid, int8_t sclk, 
 
 // Constructor when using hardware SPI.  Faster, but must use SPI pins
 // specific to each board type (e.g. 11,13 for Uno, 51,52 for Mega, etc.)
-Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t rs, int8_t rst) 
+Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst) 
   : Adafruit_GFX(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160) {
   _cs   = cs;
-  _rs   = rs;
+  _dc   = dc;
   _rst  = rst;
   hwSPI = true;
   _sid  = _sclk = -1;
 }
-
 
 inline void Adafruit_ST7735::spiwrite(uint8_t c) {
 
@@ -87,12 +80,20 @@ inline void Adafruit_ST7735::spiwrite(uint8_t c) {
       SPI.transfer(c);
 #endif
   } else {
+
     // Fast SPI bitbang swiped from LPD8806 library
     for(uint8_t bit = 0x80; bit; bit >>= 1) {
+#if defined(USE_FAST_IO)
       if(c & bit) *dataport |=  datapinmask;
       else        *dataport &= ~datapinmask;
       *clkport |=  clkpinmask;
       *clkport &= ~clkpinmask;
+#else
+      if(c & bit) digitalWrite(_sid, HIGH);
+      else        digitalWrite(_sid, LOW);
+      digitalWrite(_sclk, HIGH);
+      digitalWrite(_sclk, LOW);
+#endif
     }
   }
 }
@@ -102,12 +103,12 @@ void Adafruit_ST7735::writecommand(uint8_t c) {
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)    SPI.beginTransaction(mySPISettings);
 #endif
-  *rsport &= ~rspinmask;
-  *csport &= ~cspinmask;
+  DC_LOW();
+  CS_LOW();
 
   spiwrite(c);
 
-  *csport |= cspinmask;
+  CS_HIGH();
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)    SPI.endTransaction();
 #endif
@@ -118,12 +119,12 @@ void Adafruit_ST7735::writedata(uint8_t c) {
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)    SPI.beginTransaction(mySPISettings);
 #endif
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
+  DC_HIGH();
+  CS_LOW();
     
   spiwrite(c);
 
-  *csport |= cspinmask;
+  CS_HIGH();
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)    SPI.endTransaction();
 #endif
@@ -317,12 +318,15 @@ void Adafruit_ST7735::commandList(const uint8_t *addr) {
 void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
   ystart = xstart = colstart  = rowstart = 0; // May be overridden in init func
 
-  pinMode(_rs, OUTPUT);
+  pinMode(_dc, OUTPUT);
   pinMode(_cs, OUTPUT);
+
+#if defined(USE_FAST_IO)
   csport    = portOutputRegister(digitalPinToPort(_cs));
-  rsport    = portOutputRegister(digitalPinToPort(_rs));
+  dcport    = portOutputRegister(digitalPinToPort(_dc));
   cspinmask = digitalPinToBitMask(_cs);
-  rspinmask = digitalPinToBitMask(_rs);
+  dcpinmask = digitalPinToBitMask(_dc);
+#endif
 
   if(hwSPI) { // Using hardware SPI
 #if defined (SPI_HAS_TRANSACTION)
@@ -344,16 +348,19 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
   } else {
     pinMode(_sclk, OUTPUT);
     pinMode(_sid , OUTPUT);
+    digitalWrite(_sclk, LOW);
+    digitalWrite(_sid, LOW);
+
+#if defined(USE_FAST_IO)
     clkport     = portOutputRegister(digitalPinToPort(_sclk));
     dataport    = portOutputRegister(digitalPinToPort(_sid));
     clkpinmask  = digitalPinToBitMask(_sclk);
     datapinmask = digitalPinToBitMask(_sid);
-    *clkport   &= ~clkpinmask;
-    *dataport  &= ~datapinmask;
+#endif
   }
 
   // toggle RST low to reset; CS low so it'll listen to us
-  *csport &= ~cspinmask;
+  CS_LOW();
   if (_rst != -1) {
     pinMode(_rst, OUTPUT);
     digitalWrite(_rst, HIGH);
@@ -436,13 +443,13 @@ void Adafruit_ST7735::pushColor(uint16_t color) {
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)    SPI.beginTransaction(mySPISettings);
 #endif
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
-  
+
+  DC_HIGH();
+  CS_LOW();
   spiwrite(color >> 8);
   spiwrite(color);
+  CS_HIGH();
 
-  *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)    SPI.endTransaction();
 #endif
@@ -457,13 +464,13 @@ void Adafruit_ST7735::drawPixel(int16_t x, int16_t y, uint16_t color) {
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)     SPI.beginTransaction(mySPISettings);
 #endif
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
-  
+
+  DC_HIGH();
+  CS_LOW();
   spiwrite(color >> 8);
   spiwrite(color);
+  CS_HIGH();
 
-  *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)     SPI.endTransaction();
 #endif
@@ -483,13 +490,15 @@ void Adafruit_ST7735::drawFastVLine(int16_t x, int16_t y, int16_t h,
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)      SPI.beginTransaction(mySPISettings);
 #endif
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
+
+  DC_HIGH();
+  CS_LOW();
   while (h--) {
     spiwrite(hi);
     spiwrite(lo);
   }
-  *csport |= cspinmask;
+  CS_HIGH();
+
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)      SPI.endTransaction();
 #endif
@@ -509,13 +518,15 @@ void Adafruit_ST7735::drawFastHLine(int16_t x, int16_t y, int16_t w,
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)      SPI.beginTransaction(mySPISettings);
 #endif
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
+
+  DC_HIGH();
+  CS_LOW();
   while (w--) {
     spiwrite(hi);
     spiwrite(lo);
   }
-  *csport |= cspinmask;
+  CS_HIGH();
+
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)      SPI.endTransaction();
 #endif
@@ -545,16 +556,17 @@ void Adafruit_ST7735::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)      SPI.beginTransaction(mySPISettings);
 #endif
-  *rsport |=  rspinmask;
-  *csport &= ~cspinmask;
+
+  DC_HIGH();
+  CS_LOW();
   for(y=h; y>0; y--) {
     for(x=w; x>0; x--) {
       spiwrite(hi);
       spiwrite(lo);
     }
   }
+  CS_HIGH();
 
-  *csport |= cspinmask;
 #if defined (SPI_HAS_TRANSACTION)
   if (hwSPI)      SPI.endTransaction();
 #endif
@@ -667,6 +679,43 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
 void Adafruit_ST7735::invertDisplay(boolean i) {
   writecommand(i ? ST7735_INVON : ST7735_INVOFF);
 }
+
+
+/******** low level bit twiddling **********/
+
+
+inline void Adafruit_ST7735::CS_HIGH(void) {
+#if defined(USE_FAST_IO)
+  *csport |= cspinmask;
+#else
+  digitalWrite(_cs, HIGH);
+#endif
+}
+
+inline void Adafruit_ST7735::CS_LOW(void) {
+#if defined(USE_FAST_IO)
+  *csport &= ~cspinmask;
+#else
+  digitalWrite(_cs, LOW);
+#endif
+}
+
+inline void Adafruit_ST7735::DC_HIGH(void) {
+#if defined(USE_FAST_IO)
+  *dcport |= dcpinmask;
+#else
+  digitalWrite(_dc, HIGH);
+#endif
+}
+
+inline void Adafruit_ST7735::DC_LOW(void) {
+#if defined(USE_FAST_IO)
+  *dcport &= ~dcpinmask;
+#else
+  digitalWrite(_dc, LOW);
+#endif
+}
+
 
 
 ////////// stuff not actively being used, but kept for posterity

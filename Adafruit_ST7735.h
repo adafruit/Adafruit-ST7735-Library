@@ -24,38 +24,36 @@ as well as Adafruit raw 1.8" TFT display
 #ifndef _ADAFRUIT_ST7735H_
 #define _ADAFRUIT_ST7735H_
 
-#if ARDUINO >= 100
- #include "Arduino.h"
- #include "Print.h"
-#else
- #include "WProgram.h"
-#endif
-
+#include "Arduino.h"
+#include "Print.h"
 #include <Adafruit_GFX.h>
 
-#if defined(__SAM3X8E__)
+
+#if defined(CORE_TEENSY) && !defined(__AVR__)
+  #define __AVR__
+#endif
+
+
+#if defined(__AVR__)
+  #include <avr/pgmspace.h>
+  #define USE_FAST_IO
+  typedef volatile uint8_t RwReg;
+#elif defined(ARDUINO_STM32_FEATHER)
+  typedef volatile uint32 RwReg;
+  #define USE_FAST_IO
+#elif defined(ARDUINO_FEATHER52)
+  typedef volatile uint32_t RwReg;
+  #define USE_FAST_IO
+#elif defined(ESP8266)
+  #include <pgmspace.h>
+#elif defined(__SAM3X8E__)
+  #undef __FlashStringHelper::F(string_literal)
+  #define F(string_literal) string_literal
   #include <include/pio.h>
   #define PROGMEM
   #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
   #define pgm_read_word(addr) (*(const unsigned short *)(addr))
   typedef unsigned char prog_uchar;
-#elif defined(__AVR__)
-  #include <avr/pgmspace.h>
-#elif defined(ESP8266)
-  #include <pgmspace.h>
-#endif
-
-#if defined(ARDUINO_STM32_FEATHER)
-typedef volatile uint32 RwReg;
-#endif
-
-#if defined(ARDUINO_FEATHER52) || defined(ESP8266)
-typedef volatile uint32_t RwReg;
-#endif
-
-#if defined(__SAM3X8E__)
-    #undef __FlashStringHelper::F(string_literal)
-    #define F(string_literal) string_literal
 #endif
 
 // some flags for initR() :(
@@ -175,18 +173,27 @@ class Adafruit_ST7735 : public Adafruit_GFX {
            commonInit(const uint8_t *cmdList);
 //uint8_t  spiread(void);
 
+
+  inline void CS_HIGH(void);
+  inline void CS_LOW(void);
+  inline void DC_HIGH(void);
+  inline void DC_LOW(void);
+
   boolean  hwSPI;
 
-  int8_t  _cs, _rs, _rst, _sid, _sclk;
+  int8_t  _cs, _dc, _rst, _sid, _sclk;
   uint8_t colstart, rowstart, xstart, ystart; // some displays need this changed
 
-#if defined(__AVR__) || defined(CORE_TEENSY)  // 8 bit!
-  volatile uint8_t *dataport, *clkport, *csport, *rsport;
-  uint8_t  datapinmask, clkpinmask, cspinmask, rspinmask;
-#else    // 32 bit!
-  volatile RwReg  *dataport, *clkport, *csport, *rsport;
-  uint32_t  datapinmask, clkpinmask, cspinmask, rspinmask;
+#if defined(USE_FAST_IO)
+  volatile RwReg  *dataport, *clkport, *csport, *dcport;
+
+  #if defined(__AVR__) || defined(CORE_TEENSY)  // 8 bit!
+    uint8_t  datapinmask, clkpinmask, cspinmask, dcpinmask;
+  #else    // 32 bit!
+    uint32_t  datapinmask, clkpinmask, cspinmask, dcpinmask;
+  #endif
 #endif
+
 };
 
 
