@@ -38,7 +38,6 @@ inline uint16_t swapcolor(uint16_t x) {
   static uint8_t mySPCR;
 #endif
 
-
 // Constructor when using software SPI.  All output pins are configurable.
 Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t sid, int8_t sclk, int8_t rst) 
   : Adafruit_GFX(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160)
