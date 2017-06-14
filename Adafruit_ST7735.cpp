@@ -33,11 +33,10 @@ inline uint16_t swapcolor(uint16_t x) {
 
 #if defined (SPI_HAS_TRANSACTION)
   static SPISettings mySPISettings;
-#elif defined (__AVR__)
+#elif defined (__AVR__) || defined(CORE_TEENSY)
   static uint8_t SPCRbackup;
   static uint8_t mySPCR;
 #endif
-
 
 // Constructor when using software SPI.  All output pins are configurable.
 Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t sid, int8_t sclk, int8_t rst) 
@@ -69,7 +68,7 @@ inline void Adafruit_ST7735::spiwrite(uint8_t c) {
   if (hwSPI) {
 #if defined (SPI_HAS_TRANSACTION)
       SPI.transfer(c);
-#elif defined (__AVR__)
+#elif defined (__AVR__) || defined(CORE_TEENSY)
       SPCRbackup = SPCR;
       SPCR = mySPCR;
       SPI.transfer(c);
@@ -332,7 +331,7 @@ void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
 #if defined (SPI_HAS_TRANSACTION)
     SPI.begin();
     mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
-#elif defined (__AVR__)
+#elif defined (__AVR__) || defined(CORE_TEENSY)
     SPCRbackup = SPCR;
     SPI.begin();
     SPI.setClockDivider(SPI_CLOCK_DIV4);

@@ -28,13 +28,7 @@ as well as Adafruit raw 1.8" TFT display
 #include "Print.h"
 #include <Adafruit_GFX.h>
 
-
-#if defined(CORE_TEENSY) && !defined(__AVR__)
-  #define __AVR__
-#endif
-
-
-#if defined(__AVR__)
+#if defined(__AVR__) || defined(CORE_TEENSY)
   #include <avr/pgmspace.h>
   #define USE_FAST_IO
   typedef volatile uint8_t RwReg;
