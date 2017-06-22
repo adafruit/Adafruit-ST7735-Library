@@ -37,7 +37,7 @@ as well as Adafruit raw 1.8" TFT display
 #define SD_CS    4  // Chip select line for SD card
 
 //Use this reset pin for the shield!
-//#define TFT_RST  0  // you can also connect this to the Arduino reset!
+//#define TFT_RST  -1  // you can also connect this to the Arduino reset!
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
@@ -49,6 +49,9 @@ void setup(void) {
 
   // Use this initializer (uncomment) if you're using a 1.44" TFT
   //tft.initR(INITR_144GREENTAB);
+
+  // Use this initializer (uncomment) if you're using a 0.96" 180x60 TFT
+  //tft.initR(INITR_MINI160x80);   // initialize a ST7735S chip, mini display
 
   Serial.print("Initializing SD card...");
   if (!SD.begin(SD_CS)) {
