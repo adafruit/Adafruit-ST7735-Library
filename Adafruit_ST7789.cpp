@@ -1,0 +1,88 @@
+#include "Adafruit_ST77xx.h"
+#include "Adafruit_ST7789.h"
+
+// Rather than a bazillion writecommand() and writedata() calls, screen
+// initialization commands and arguments are organized in these tables
+// stored in PROGMEM.  The table may look bulky, but that's mostly the
+// formatting -- storage-wise this is hundreds of bytes more compact
+// than the equivalent code.  Companion function follows.
+
+#define ST7789_240x240_XSTART 0
+#define ST7789_240x240_YSTART 80
+
+static const uint8_t PROGMEM
+  cmd_240x240[] = {                  // Initialization commands for 7735B screens
+    10,                       // 18 commands in list:
+    ST77XX_SWRESET,   ST_CMD_DELAY,  //  1: Software reset, no args, w/delay
+      150,                     //    150 ms delay
+    ST77XX_SLPOUT ,   ST_CMD_DELAY,  //  2: Out of sleep mode, no args, w/delay
+      255,                    //     255 = 500 ms delay
+    ST77XX_COLMOD , 1+ST_CMD_DELAY,  //  3: Set color mode, 1 arg + delay:
+      0x55,                   //     16-bit color
+      10,                     //     10 ms delay
+    ST77XX_MADCTL , 1      ,  //  5: Memory access ctrl (directions), 1 arg:
+      0x08,                   //     Row addr/col addr, bottom to top refresh
+    ST77XX_CASET  , 4      ,  // 15: Column addr set, 4 args, no delay:
+      0x00, ST7789_240x240_XSTART,             //     XSTART = 0
+    (240+ST7789_240x240_XSTART) >> 8, (240+ST7789_240x240_XSTART) & 0xFF,             //      XEND = 240
+    ST77XX_RASET  , 4      ,  // 16: Row addr set, 4 args, no delay:
+      0x00, ST7789_240x240_YSTART,             //     YSTART = 0
+      (240+ST7789_240x240_YSTART) >> 8, (240+ST7789_240x240_YSTART) & 0xFF,             //      YEND = 240
+    ST77XX_INVON ,   ST_CMD_DELAY,  // hack
+      10,
+    ST77XX_NORON  ,   ST_CMD_DELAY,  // 17: Normal display on, no args, w/delay
+      10,                     //     10 ms delay
+    ST77XX_DISPON ,   ST_CMD_DELAY,  // 18: Main screen turn on, no args, w/delay
+    255 };                  //     255 = 500 ms delay
+
+
+
+
+// Initialization for ST7735B screens
+void Adafruit_ST7789::init(uint16_t width, uint16_t height) {
+  commonInit(NULL);
+
+  _colstart = ST7789_240x240_XSTART;
+  _rowstart = ST7789_240x240_YSTART;
+  _height = 240;
+  _width = 240;
+
+  displayInit(cmd_240x240);
+
+  setRotation(0);
+}
+
+
+
+void Adafruit_ST7789::setRotation(uint8_t m) {
+
+  writecommand(ST77XX_MADCTL);
+  rotation = m % 4; // can't be higher than 3
+  switch (rotation) {
+   case 0:
+     writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST77XX_MADCTL_RGB);
+
+     _xstart = _colstart;
+     _ystart = _rowstart;
+     break;
+   case 1:
+     writedata(ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
+
+     _ystart = _colstart;
+     _xstart = _rowstart;
+     break;
+  case 2:
+     writedata(ST77XX_MADCTL_RGB);
+ 
+     _xstart = _colstart;
+     _ystart = _rowstart;
+     break;
+
+   case 3:
+     writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
+
+     _ystart = _colstart;
+     _xstart = _rowstart;
+     break;
+  }
+}
