@@ -176,7 +176,7 @@ void Adafruit_ST77xx::commonInit(const uint8_t *cmdList) {
   if(_hwSPI) { // Using hardware SPI
 #if defined (SPI_HAS_TRANSACTION)
     SPI.begin();
-    mySPISettings = SPISettings(8000000, MSBFIRST, SPI_MODE0);
+    mySPISettings = SPISettings(24000000, MSBFIRST, SPI_MODE0);
 #elif defined (__AVR__) || defined(CORE_TEENSY)
     SPCRbackup = SPCR;
     SPI.begin();
@@ -218,6 +218,41 @@ void Adafruit_ST77xx::commonInit(const uint8_t *cmdList) {
 
   if(cmdList) 
     displayInit(cmdList);
+}
+
+
+
+void Adafruit_ST77xx::setRotation(uint8_t m) {
+
+  writecommand(ST77XX_MADCTL);
+  rotation = m % 4; // can't be higher than 3
+  switch (rotation) {
+   case 0:
+     writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST77XX_MADCTL_RGB);
+
+     _xstart = _colstart;
+     _ystart = _rowstart;
+     break;
+   case 1:
+     writedata(ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
+
+     _ystart = _colstart;
+     _xstart = _rowstart;
+     break;
+  case 2:
+     writedata(ST77XX_MADCTL_RGB);
+ 
+     _xstart = _colstart;
+     _ystart = _rowstart;
+     break;
+
+   case 3:
+     writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
+
+     _ystart = _colstart;
+     _xstart = _rowstart;
+     break;
+  }
 }
 
 void Adafruit_ST77xx::setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1,

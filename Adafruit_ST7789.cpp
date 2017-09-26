@@ -68,8 +68,8 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
    case 1:
      writedata(ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
 
-     _ystart = _colstart;
      _xstart = _rowstart;
+     _ystart = _colstart;
      break;
   case 2:
      writedata(ST77XX_MADCTL_RGB);
@@ -81,8 +81,8 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
    case 3:
      writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
 
-     _ystart = _colstart;
      _xstart = _rowstart;
+     _ystart = _colstart;
      break;
   }
 }
