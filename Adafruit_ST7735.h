@@ -176,7 +176,11 @@ class Adafruit_ST7735 : public Adafruit_GFX {
   boolean  hwSPI;
 
   int8_t  _cs, _dc, _rst, _sid, _sclk;
-  uint8_t colstart, rowstart, xstart, ystart; // some displays need this changed
+
+  // some displays need these changed
+  uint8_t colstart, rowstart;
+  uint8_t colstart2, rowstart2;
+  uint8_t xstart, ystart;
 
 #if defined(USE_FAST_IO)
   volatile RwReg  *dataport, *clkport, *csport, *dcport;

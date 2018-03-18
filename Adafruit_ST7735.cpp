@@ -315,7 +315,10 @@ void Adafruit_ST7735::commandList(const uint8_t *addr) {
 
 // Initialization code common to both 'B' and 'R' type displays
 void Adafruit_ST7735::commonInit(const uint8_t *cmdList) {
-  ystart = xstart = colstart  = rowstart = 0; // May be overridden in init func
+  // May be overridden in init func
+  colstart = rowstart = 0;
+  colstart2 = rowstart2 = 0;
+  xstart = ystart = 0;
 
   pinMode(_dc, OUTPUT);
   pinMode(_cs, OUTPUT);
@@ -387,20 +390,20 @@ void Adafruit_ST7735::initR(uint8_t options) {
   commonInit(Rcmd1);
   if(options == INITR_GREENTAB) {
     commandList(Rcmd2green);
-    colstart = 2;
-    rowstart = 1;
+    colstart = colstart2 = 2;
+    rowstart = rowstart2 = 1;
   } else if(options == INITR_144GREENTAB) {
     _height = ST7735_TFTHEIGHT_128;
     _width = ST7735_TFTWIDTH_128;
     commandList(Rcmd2green144);
-    colstart = 2;
-    rowstart = 3;
+    colstart = colstart2 = 2;
+    rowstart = 3; rowstart2 = 1;
   } else if(options == INITR_MINI160x80) {
     _height = ST7735_TFTHEIGHT_160;
     _width = ST7735_TFTWIDTH_80;
     commandList(Rcmd2green160x80);
-    colstart = 24;
-    rowstart = 0;
+    colstart = colstart2 = 24;
+    rowstart = rowstart2 = 0;
   } else {
     // colstart, rowstart left at default '0' values
     commandList(Rcmd2red);
@@ -628,7 +631,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
        _width = ST7735_TFTHEIGHT_160;
        _height = ST7735_TFTWIDTH_128;
      }
-     ystart = colstart;
+     ystart = colstart2;
      xstart = rowstart;
      break;
   case 2:
@@ -648,8 +651,8 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
        _height = ST7735_TFTHEIGHT_160;
        _width  = ST7735_TFTWIDTH_128;
      }
-     xstart = colstart;
-     ystart = rowstart;
+     xstart = colstart2;
+     ystart = rowstart2;
      break;
    case 3:
      if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
@@ -669,7 +672,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
        _height = ST7735_TFTWIDTH_128;
      }
      ystart = colstart;
-     xstart = rowstart;
+     xstart = rowstart2;
      break;
   }
 }
