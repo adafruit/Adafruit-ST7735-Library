@@ -54,6 +54,7 @@ as well as Adafruit raw 1.8" TFT display
 #define INITR_GREENTAB   0x0
 #define INITR_REDTAB     0x1
 #define INITR_BLACKTAB   0x2
+#define INITR_DEEKROBOT  0x3
 
 #define INITR_18GREENTAB    INITR_GREENTAB
 #define INITR_18REDTAB      INITR_REDTAB
