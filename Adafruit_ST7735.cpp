@@ -401,6 +401,10 @@ void Adafruit_ST7735::initR(uint8_t options) {
     commandList(Rcmd2green160x80);
     colstart = 24;
     rowstart = 0;
+  } else if(options == INITR_DEEKROBOT) {
+    commandList(Rcmd2green);
+    colstart = 2;
+    rowstart = 1;
   } else {
     // colstart, rowstart left at default '0' values
     commandList(Rcmd2red);
@@ -408,7 +412,7 @@ void Adafruit_ST7735::initR(uint8_t options) {
   commandList(Rcmd3);
 
   // if black, change MADCTL color filter
-  if ((options == INITR_BLACKTAB) || (options == INITR_MINI160x80)) {
+  if ((options == INITR_BLACKTAB) || (options == INITR_MINI160x80) || (options == INITR_DEEKROBOT)) {
     writecommand(ST7735_MADCTL);
     writedata(0xC0);
   }
@@ -592,7 +596,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
   rotation = m % 4; // can't be higher than 3
   switch (rotation) {
    case 0:
-     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
+     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80) || (tabcolor == INITR_DEEKROBOT)) {
        writedata(MADCTL_MX | MADCTL_MY | MADCTL_RGB);
      } else {
        writedata(MADCTL_MX | MADCTL_MY | MADCTL_BGR);
@@ -612,7 +616,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
      ystart = rowstart;
      break;
    case 1:
-     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
+     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80 || (tabcolor == INITR_DEEKROBOT))) {
        writedata(MADCTL_MY | MADCTL_MV | MADCTL_RGB);
      } else {
        writedata(MADCTL_MY | MADCTL_MV | MADCTL_BGR);
@@ -632,7 +636,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
      xstart = rowstart;
      break;
   case 2:
-     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
+     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80) || (tabcolor == INITR_DEEKROBOT)) {
        writedata(MADCTL_RGB);
      } else {
        writedata(MADCTL_BGR);
@@ -652,7 +656,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
      ystart = rowstart;
      break;
    case 3:
-     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
+     if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80) || (tabcolor == INITR_DEEKROBOT)) {
        writedata(MADCTL_MX | MADCTL_MV | MADCTL_RGB);
      } else {
        writedata(MADCTL_MX | MADCTL_MV | MADCTL_BGR);
