@@ -58,7 +58,7 @@ void setup(void) {
   Serial.print("Hello! ST77xx TFT Test");
 
   // Use this initializer if you're using a 1.8" TFT
-  //tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
+  tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
 
   // Use this initializer (uncomment) if you're using a 1.44" TFT
   //tft.initR(INITR_144GREENTAB);   // initialize a ST7735S chip, black tab
