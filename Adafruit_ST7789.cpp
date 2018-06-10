@@ -44,6 +44,8 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height) {
 
   _colstart = ST7789_240x240_XSTART;
   _rowstart = ST7789_240x240_YSTART;
+  _colstart2 = ST7789_240x240_XSTART;
+  _rowstart2 = 0;
   _height = 240;
   _width = 240;
 
@@ -73,16 +75,16 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
      break;
   case 2:
      writedata(ST77XX_MADCTL_RGB);
- 
-     _xstart = _colstart;
-     _ystart = _rowstart;
+
+     _xstart = _colstart2;
+     _ystart = _rowstart2;
      break;
 
    case 3:
      writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
 
-     _xstart = _rowstart;
-     _ystart = _colstart;
+     _xstart = _rowstart2;
+     _ystart = _colstart2;
      break;
   }
 }
