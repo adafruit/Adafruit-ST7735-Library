@@ -23,8 +23,10 @@ as well as Adafruit raw 1.8" TFT display
 
 #include "Adafruit_ST77xx.h"
 #include <limits.h>
-#include "pins_arduino.h"
-#include "wiring_private.h"
+#ifndef ARDUINO_STM32_FEATHER
+  #include "pins_arduino.h"
+  #include "wiring_private.h"
+#endif
 #include <SPI.h>
 
 inline uint16_t swapcolor(uint16_t x) { 
