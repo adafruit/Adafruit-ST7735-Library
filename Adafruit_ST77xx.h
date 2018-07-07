@@ -138,7 +138,7 @@ class Adafruit_ST77xx : public Adafruit_GFX {
 
 
  protected:
-  uint8_t  _colstart, _rowstart, _xstart, _ystart; // some displays need this changed
+  uint8_t  _colstart, _rowstart, _rowstart2, _xstart, _ystart; // some displays need this changed
 
   void     displayInit(const uint8_t *addr);
   void     spiwrite(uint8_t),
