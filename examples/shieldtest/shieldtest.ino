@@ -221,7 +221,7 @@ void bmpDraw(char *filename, uint8_t x, uint8_t y) {
             b = sdbuffer[buffidx++];
             g = sdbuffer[buffidx++];
             r = sdbuffer[buffidx++];
-            tft.pushColor(tft.Color565(r,g,b));
+            tft.pushColor(tft.color565(r,g,b));
           } // end pixel
         } // end scanline
         Serial.print("Loaded in ");
