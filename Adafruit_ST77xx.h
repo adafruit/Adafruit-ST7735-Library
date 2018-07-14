@@ -86,7 +86,7 @@ as well as Adafruit raw 1.8" TFT display
 #define ST77XX_YELLOW  0xFFE0
 #define ST77XX_WHITE   0xFFFF
 
-
+/// Subclass of SPITFT type display for ST77xx displays (there's a lot in common!)
 class Adafruit_ST77xx : public Adafruit_SPITFT {
 
  public:
@@ -99,7 +99,8 @@ class Adafruit_ST77xx : public Adafruit_SPITFT {
   void      setRotation(uint8_t r);
 
  protected:
-  uint8_t  _colstart, _rowstart; // some displays need this changed
+  uint8_t  _colstart,     ///< Some displays need this changed to offset
+    _rowstart;            ///< Some displays need this changed to offset
 
   void     begin(uint32_t freq = 0);
   void     commonInit(const uint8_t *cmdList);

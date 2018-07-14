@@ -160,9 +160,11 @@ static const uint8_t PROGMEM
 
 
 
-
-
-// Initialization for ST7735B screens
+/**************************************************************************/
+/*!
+    @brief   Initialization code common to all ST7735B displays
+*/
+/**************************************************************************/
 void Adafruit_ST7735::initB(void) {
   commonInit(Bcmd);
 
@@ -170,7 +172,12 @@ void Adafruit_ST7735::initB(void) {
 }
 
 
-// Initialization for ST7735R screens (green or red tabs)
+/**************************************************************************/
+/*!
+    @brief   Initialization code common to all ST7735R displays
+    @param   options  Tab color from adafruit purchase
+*/
+/**************************************************************************/
 void Adafruit_ST7735::initR(uint8_t options) {
   commonInit(Rcmd1);
   if(options == INITR_GREENTAB) {
@@ -209,7 +216,12 @@ void Adafruit_ST7735::initR(uint8_t options) {
 }
 
 
-
+/**************************************************************************/
+/*!
+    @brief   Set origin of (0,0) and orientation of TFT display
+    @param   m  The index for rotation, from 0-3 inclusive
+*/
+/**************************************************************************/
 void Adafruit_ST7735::setRotation(uint8_t m) {
   uint8_t madctl = 0;
 

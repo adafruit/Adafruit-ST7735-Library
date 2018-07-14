@@ -61,8 +61,13 @@ Adafruit_ST77xx::Adafruit_ST77xx(int8_t cs, int8_t dc, int8_t rst)
 
 }
 
-// Companion code to the above tables.  Reads and issues
-// a series of LCD commands stored in PROGMEM byte array.
+
+/**************************************************************************/
+/*!
+    @brief   Companion code to the initiliazation tables. Reads and issues a series of LCD commands stored in PROGMEM byte array.
+    @param    addr  Flash memory array with commands and data to send
+*/
+/**************************************************************************/
 void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
 
   uint8_t  numCommands, numArgs;
@@ -88,6 +93,13 @@ void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
   endWrite();
 }
 
+/**************************************************************************/
+/*!
+    @brief   Initialize ST77xx chip
+    Connects to the ST77XX over SPI and sends initialization procedure commands
+    @param    freq  Desired SPI clock frequency
+*/
+/**************************************************************************/
 void Adafruit_ST77xx::begin(uint32_t freq) {
   if (!freq){
     freq = SPI_DEFAULT_FREQ;
@@ -104,7 +116,12 @@ void Adafruit_ST77xx::begin(uint32_t freq) {
   initSPI(freq);
 }
 
-// Initialization code common to all ST77XX displays
+/**************************************************************************/
+/*!
+    @brief   Initialization code common to all ST77XX displays
+    @param   cmdList Flash memory array with commands and data to send
+*/
+/**************************************************************************/
 void Adafruit_ST77xx::commonInit(const uint8_t *cmdList) {
   begin();
 
@@ -113,6 +130,15 @@ void Adafruit_ST77xx::commonInit(const uint8_t *cmdList) {
   }
 }
 
+/**************************************************************************/
+/*!
+  @brief   SPI displays set an address window rectangle for blitting pixels
+  @param  x  Top left corner x coordinate
+  @param  y  Top left corner x coordinate
+  @param  w  Width of window
+  @param  h  Height of window
+*/
+/**************************************************************************/
 void Adafruit_ST77xx::setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
   x += _xstart;
   y += _ystart;
@@ -128,6 +154,13 @@ void Adafruit_ST77xx::setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t
   writeCommand(ST77XX_RAMWR); // write to RAM
 }
 
+
+/**************************************************************************/
+/*!
+    @brief   Set origin of (0,0) and orientation of TFT display
+    @param   m  The index for rotation, from 0-3 inclusive
+*/
+/**************************************************************************/
 void Adafruit_ST77xx::setRotation(uint8_t m) {
   uint8_t madctl = 0;
 

@@ -45,12 +45,33 @@
 #define ST7735_YELLOW  0xFFE0
 #define ST7735_WHITE   0xFFFF
 
+
+/// Subclass of ST77XX type display for ST7735B and ST7735R TFT Drivers
 class Adafruit_ST7735 : public Adafruit_ST77xx {
 
  public:
- Adafruit_ST7735(int8_t cs, int8_t dc, int8_t sid, int8_t sclk, int8_t rst) : 
+
+/**************************************************************************/
+/*!
+    @brief  Instantiate Adafruit ST7735 driver with software SPI
+    @param    cs    Chip select pin #
+    @param    dc    Data/Command pin #
+    @param    mosi  SPI MOSI pin #
+    @param    sclk  SPI Clock pin #
+    @param    rst   Reset pin # (optional, pass -1 if unused)
+*/
+/**************************************************************************/
+  Adafruit_ST7735(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk, int8_t rst) : 
   Adafruit_ST77xx(cs, dc, sid, sclk, rst) {}
   
+/**************************************************************************/
+/*!
+    @brief  Instantiate Adafruit ST7735 driver with hardware SPI
+    @param    cs    Chip select pin #
+    @param    dc    Data/Command pin #
+    @param    rst   Reset pin # (optional, pass -1 if unused)
+*/
+/**************************************************************************/
  Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst) : 
   Adafruit_ST77xx(cs, dc, rst) {}
   

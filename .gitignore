@@ -1,3 +1,6 @@
 *.cpp~
 *.h~
 *.ino~
+Doxyfile*
+doxygen_sqlite3.db
+html

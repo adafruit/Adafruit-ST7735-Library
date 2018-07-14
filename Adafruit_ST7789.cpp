@@ -37,8 +37,13 @@ static const uint8_t PROGMEM
 
 
 
-
-// Initialization for ST7735B screens
+/**************************************************************************/
+/*!
+    @brief   Initialization code common to all ST7789 displays
+    @param   width Display width
+    @param   height Display height
+*/
+/**************************************************************************/
 void Adafruit_ST7789::init(uint16_t width, uint16_t height) {
   commonInit(NULL);
 
@@ -53,7 +58,12 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height) {
 }
 
 
-
+/**************************************************************************/
+/*!
+    @brief   Set origin of (0,0) and orientation of TFT display
+    @param   m  The index for rotation, from 0-3 inclusive
+*/
+/**************************************************************************/
 void Adafruit_ST7789::setRotation(uint8_t m) {
   uint8_t madctl = 0;
 
