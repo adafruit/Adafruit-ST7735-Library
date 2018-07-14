@@ -55,34 +55,40 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height) {
 
 
 void Adafruit_ST7789::setRotation(uint8_t m) {
+  uint8_t madctl = 0;
 
-  writecommand(ST77XX_MADCTL);
   rotation = m % 4; // can't be higher than 3
+
   switch (rotation) {
    case 0:
-     writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST77XX_MADCTL_RGB);
+     madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST77XX_MADCTL_RGB;
 
      _xstart = _colstart;
      _ystart = _rowstart;
      break;
    case 1:
-     writedata(ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
+     madctl = ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
 
      _xstart = _rowstart;
      _ystart = _colstart;
      break;
   case 2:
-     writedata(ST77XX_MADCTL_RGB);
+     madctl = ST77XX_MADCTL_RGB;
  
      _xstart = _colstart;
      _ystart = _rowstart;
      break;
 
    case 3:
-     writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
+     madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
 
      _xstart = _rowstart;
      _ystart = _colstart;
      break;
   }
+
+  startWrite();
+  writeCommand(ST77XX_MADCTL);
+  spiWrite(madctl);
+  endWrite();
 }

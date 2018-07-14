@@ -27,29 +27,8 @@ as well as Adafruit raw 1.8" TFT display
 #include "Arduino.h"
 #include "Print.h"
 #include <Adafruit_GFX.h>
-
-#if defined(__AVR__) || defined(CORE_TEENSY)
-  #include <avr/pgmspace.h>
-  #define USE_FAST_IO
-  typedef volatile uint8_t RwReg;
-#elif defined(ARDUINO_STM32_FEATHER)
-  typedef volatile uint32 RwReg;
-  #define USE_FAST_IO
-#elif defined(ARDUINO_FEATHER52)
-  typedef volatile uint32_t RwReg;
-  #define USE_FAST_IO
-#elif defined(ESP8266)
-  #include <pgmspace.h>
-#elif defined(__SAM3X8E__)
-  #undef __FlashStringHelper::F(string_literal)
-  #define F(string_literal) string_literal
-  #include <include/pio.h>
-  #define PROGMEM
-  #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
-  #define pgm_read_word(addr) (*(const unsigned short *)(addr))
-  typedef unsigned char prog_uchar;
-#endif
-
+#include <Adafruit_SPITFT.h>
+#include <Adafruit_SPITFT_Macros.h>
 
 // for 1.44 and mini
 #define ST7735_TFTWIDTH_128  128
@@ -108,66 +87,25 @@ as well as Adafruit raw 1.8" TFT display
 #define ST77XX_WHITE   0xFFFF
 
 
-class Adafruit_ST77xx : public Adafruit_GFX {
+class Adafruit_ST77xx : public Adafruit_SPITFT {
 
  public:
 
-  Adafruit_ST77xx(int8_t CS, int8_t RS, int8_t SID, int8_t SCLK, int8_t RST = -1);
+  Adafruit_ST77xx(int8_t _CS, int8_t _DC, int8_t _MOSI, int8_t _SCLK, int8_t _RST = -1, int8_t _MISO = -1);
   Adafruit_ST77xx(int8_t CS, int8_t RS, int8_t RST = -1);
 
-  void     setAddrWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1),
-           pushColor(uint16_t color),
-           fillScreen(uint16_t color),
-           drawPixel(int16_t x, int16_t y, uint16_t color),
-           drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color),
-           drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color),
-           fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
-             uint16_t color),
-           setRotation(uint8_t r),
-           invertDisplay(boolean i);
-  uint16_t Color565(uint8_t r, uint8_t g, uint8_t b);
-  uint16_t color565(uint8_t r, uint8_t g, uint8_t b) { return Color565(r, g, b); } // sigh
-
-  /* These are not for current use, 8-bit protocol only!
-  uint8_t  readdata(void),
-           readcommand8(uint8_t);
-  uint16_t readcommand16(uint8_t);
-  uint32_t readcommand32(uint8_t);
-  void     dummyclock(void);
-  */
-
+  // Transaction API not used by GFX
+  void      setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+  void      setRotation(uint8_t r);
 
  protected:
-  uint8_t  _colstart, _rowstart, _xstart, _ystart; // some displays need this changed
+  uint8_t  _colstart, _rowstart; // some displays need this changed
 
+  void     begin(uint32_t freq = 0);
+  void     commonInit(const uint8_t *cmdList);
   void     displayInit(const uint8_t *addr);
-  void     spiwrite(uint8_t),
-           writecommand(uint8_t c),
-           writedata(uint8_t d),
-           commonInit(const uint8_t *cmdList);
-//uint8_t  spiread(void);
-
 
  private:
-
-  inline void CS_HIGH(void);
-  inline void CS_LOW(void);
-  inline void DC_HIGH(void);
-  inline void DC_LOW(void);
-
-  boolean  _hwSPI;
-
-  int8_t  _cs, _dc, _rst, _sid, _sclk;
-
-#if defined(USE_FAST_IO)
-  volatile RwReg  *dataport, *clkport, *csport, *dcport;
-
-  #if defined(__AVR__) || defined(CORE_TEENSY)  // 8 bit!
-    uint8_t  datapinmask, clkpinmask, cspinmask, dcpinmask;
-  #else    // 32 bit!
-    uint32_t  datapinmask, clkpinmask, cspinmask, dcpinmask;
-  #endif
-#endif
 
 };
 
