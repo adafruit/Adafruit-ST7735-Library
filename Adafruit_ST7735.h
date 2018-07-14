@@ -62,7 +62,7 @@ class Adafruit_ST7735 : public Adafruit_ST77xx {
 */
 /**************************************************************************/
   Adafruit_ST7735(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk, int8_t rst) : 
-  Adafruit_ST77xx(cs, dc, sid, sclk, rst) {}
+  Adafruit_ST77xx(cs, dc, mosi, sclk, rst) {}
   
 /**************************************************************************/
 /*!
