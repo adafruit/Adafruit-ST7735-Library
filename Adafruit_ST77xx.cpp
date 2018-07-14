@@ -96,9 +96,7 @@ void Adafruit_ST77xx::begin(uint32_t freq) {
 
   _ystart = _xstart = 0;
   _colstart = _rowstart = 0; // May be overridden in init func
-  xSetCommand = ST77XX_CASET;
-  ySetCommand = ST77XX_RASET;
-  RAMwriteCommand = ST77XX_RAMWR;
+
 
   invertOnCommand = ST77XX_INVON;
   invertOffCommand = ST77XX_INVOFF;
@@ -115,7 +113,20 @@ void Adafruit_ST77xx::commonInit(const uint8_t *cmdList) {
   }
 }
 
+void Adafruit_ST77xx::setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+  x += _xstart;
+  y += _ystart;
+  uint32_t xa = ((uint32_t)x << 16) | (x+w-1);
+  uint32_t ya = ((uint32_t)y << 16) | (y+h-1); 
 
+  writeCommand(ST77XX_CASET); // Column addr set
+  SPI_WRITE32(xa);
+
+  writeCommand(ST77XX_RASET); // Row addr set
+  SPI_WRITE32(ya);
+
+  writeCommand(ST77XX_RAMWR); // write to RAM
+}
 
 void Adafruit_ST77xx::setRotation(uint8_t m) {
   uint8_t madctl = 0;
