@@ -197,27 +197,36 @@ void Adafruit_ST7735::initR(uint8_t options) {
 
   // if black, change MADCTL color filter
   if ((options == INITR_BLACKTAB) || (options == INITR_MINI160x80)) {
-    writecommand(ST77XX_MADCTL);
-    writedata(0xC0);
+    startWrite();
+    writeCommand(ST77XX_MADCTL);
+    spiWrite(0xC0);
+    endWrite();
   }
 
   tabcolor = options;
 
   setRotation(0);
+
+  Serial.print("xstart: "); Serial.println(_xstart);
+  Serial.print("ystart: "); Serial.println(_ystart);
+  Serial.print("rstart: "); Serial.println(_rowstart);
+  Serial.print("cstart: "); Serial.println(_colstart);
+
 }
 
 
 
 void Adafruit_ST7735::setRotation(uint8_t m) {
+  uint8_t madctl = 0;
 
-  writecommand(ST77XX_MADCTL);
   rotation = m % 4; // can't be higher than 3
+
   switch (rotation) {
    case 0:
      if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
-       writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST77XX_MADCTL_RGB);
+       madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST77XX_MADCTL_RGB;
      } else {
-       writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST7735_MADCTL_BGR);
+       madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST7735_MADCTL_BGR;
      }
 
      if (tabcolor == INITR_144GREENTAB) {
@@ -235,9 +244,9 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
      break;
    case 1:
      if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
-       writedata(ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
+       madctl = ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
      } else {
-       writedata(ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST7735_MADCTL_BGR);
+       madctl = ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST7735_MADCTL_BGR;
      }
 
      if (tabcolor == INITR_144GREENTAB)  {
@@ -255,9 +264,9 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
      break;
   case 2:
      if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
-       writedata(ST77XX_MADCTL_RGB);
+       madctl = ST77XX_MADCTL_RGB;
      } else {
-       writedata(ST7735_MADCTL_BGR);
+       madctl = ST7735_MADCTL_BGR;
      }
 
      if (tabcolor == INITR_144GREENTAB) {
@@ -275,9 +284,9 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
      break;
    case 3:
      if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_MINI160x80)) {
-       writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB);
+       madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
      } else {
-       writedata(ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST7735_MADCTL_BGR);
+       madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST7735_MADCTL_BGR;
      }
 
      if (tabcolor == INITR_144GREENTAB)  {
@@ -294,4 +303,14 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
      _xstart = _rowstart;
      break;
   }
+
+  Serial.print("xstart: "); Serial.println(_xstart);
+  Serial.print("ystart: "); Serial.println(_ystart);
+  Serial.print("rstart: "); Serial.println(_rowstart);
+  Serial.print("cstart: "); Serial.println(_colstart);
+
+  startWrite();
+  writeCommand(ST77XX_MADCTL);
+  spiWrite(madctl);
+  endWrite();
 }
