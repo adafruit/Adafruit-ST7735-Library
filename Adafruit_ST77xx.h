@@ -99,7 +99,7 @@ class Adafruit_ST77xx : public Adafruit_SPITFT {
   void      setRotation(uint8_t r);
 
  protected:
-  uint8_t  _colstart, _rowstart, _xstart, _ystart; // some displays need this changed
+  uint8_t  _colstart, _rowstart; // some displays need this changed
 
   void     begin(uint32_t freq = 0);
   void     commonInit(const uint8_t *cmdList);

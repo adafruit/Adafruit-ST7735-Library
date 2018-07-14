@@ -206,12 +206,6 @@ void Adafruit_ST7735::initR(uint8_t options) {
   tabcolor = options;
 
   setRotation(0);
-
-  Serial.print("xstart: "); Serial.println(_xstart);
-  Serial.print("ystart: "); Serial.println(_ystart);
-  Serial.print("rstart: "); Serial.println(_rowstart);
-  Serial.print("cstart: "); Serial.println(_colstart);
-
 }
 
 
@@ -303,11 +297,6 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
      _xstart = _rowstart;
      break;
   }
-
-  Serial.print("xstart: "); Serial.println(_xstart);
-  Serial.print("ystart: "); Serial.println(_ystart);
-  Serial.print("rstart: "); Serial.println(_rowstart);
-  Serial.print("cstart: "); Serial.println(_colstart);
 
   startWrite();
   writeCommand(ST77XX_MADCTL);
