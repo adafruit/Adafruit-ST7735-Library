@@ -109,15 +109,18 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a08cb96ba1a8c3de34af9007dcbbd4aa4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___s_t77xx.html#a08cb96ba1a8c3de34af9007dcbbd4aa4">displayInit</a> (const uint8_t *addr)</td></tr>
 <tr class="memdesc:a08cb96ba1a8c3de34af9007dcbbd4aa4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Companion code to the initiliazation tables. Reads and issues a series of LCD commands stored in PROGMEM byte array.  <a href="#a08cb96ba1a8c3de34af9007dcbbd4aa4">More...</a><br /></td></tr>
 <tr class="separator:a08cb96ba1a8c3de34af9007dcbbd4aa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85f0d11066485d51d2bc2bb35ac80726"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___s_t77xx.html#a85f0d11066485d51d2bc2bb35ac80726">setColRowStart</a> (int8_t col, int8_t row)</td></tr>
+<tr class="memdesc:a85f0d11066485d51d2bc2bb35ac80726"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set origin of (0,0) of display with offsets.  <a href="#a85f0d11066485d51d2bc2bb35ac80726">More...</a><br /></td></tr>
+<tr class="separator:a85f0d11066485d51d2bc2bb35ac80726"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:ad88f0a92e6d38be19041e793a8b400ea"><td class="memItemLeft" align="right" valign="top"><a id="ad88f0a92e6d38be19041e793a8b400ea"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___s_t77xx.html#ad88f0a92e6d38be19041e793a8b400ea">_colstart</a></td></tr>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___s_t77xx.html#ad88f0a92e6d38be19041e793a8b400ea">_colstart</a> = 0</td></tr>
 <tr class="memdesc:ad88f0a92e6d38be19041e793a8b400ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Some displays need this changed to offset. <br /></td></tr>
 <tr class="separator:ad88f0a92e6d38be19041e793a8b400ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b93050a888d6c1d3ce86abfcdf47d33"><td class="memItemLeft" align="right" valign="top"><a id="a0b93050a888d6c1d3ce86abfcdf47d33"></a>
-uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___s_t77xx.html#a0b93050a888d6c1d3ce86abfcdf47d33">_rowstart</a></td></tr>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___s_t77xx.html#a0b93050a888d6c1d3ce86abfcdf47d33">_rowstart</a> = 0</td></tr>
 <tr class="memdesc:a0b93050a888d6c1d3ce86abfcdf47d33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Some displays need this changed to offset. <br /></td></tr>
 <tr class="separator:a0b93050a888d6c1d3ce86abfcdf47d33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -407,6 +410,51 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">addr</td><td>Flash memory array with commands and data to send </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a85f0d11066485d51d2bc2bb35ac80726"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85f0d11066485d51d2bc2bb35ac80726">&#9670;&nbsp;</a></span>setColRowStart()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Adafruit_ST77xx::setColRowStart </td>
+          <td>(</td>
+          <td class="paramtype">int8_t&#160;</td>
+          <td class="paramname"><em>col</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int8_t&#160;</td>
+          <td class="paramname"><em>row</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set origin of (0,0) of display with offsets. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">col</td><td>The offset from 0 for the column address </td></tr>
+    <tr><td class="paramname">row</td><td>The offset from 0 for the row address </td></tr>
   </table>
   </dd>
 </dl>
