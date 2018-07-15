@@ -1,0 +1,14 @@
+{
+  "name": "Adafruit-Arduino-ST7735",
+  "keywords": "display, tft, graphics, spi",
+  "description": "A library for the Adafruit 1.8\" SPI display",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/adafruit/Adafruit-ST7735-Library.git"
+  },
+  "dependencies":
+  [
+    "Adafruit-Arduino-GFX"
+  ]
+}
