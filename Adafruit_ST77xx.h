@@ -99,12 +99,13 @@ class Adafruit_ST77xx : public Adafruit_SPITFT {
   void      setRotation(uint8_t r);
 
  protected:
-  uint8_t  _colstart,     ///< Some displays need this changed to offset
-    _rowstart;            ///< Some displays need this changed to offset
+  uint8_t  _colstart = 0,     ///< Some displays need this changed to offset
+    _rowstart = 0;            ///< Some displays need this changed to offset
 
   void     begin(uint32_t freq = 0);
   void     commonInit(const uint8_t *cmdList);
   void     displayInit(const uint8_t *addr);
+  void     setColRowStart(int8_t col, int8_t row);
 
  private:
 

@@ -57,8 +57,8 @@ Adafruit_ST77xx::Adafruit_ST77xx(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk,
 */
 /**************************************************************************/
 Adafruit_ST77xx::Adafruit_ST77xx(int8_t cs, int8_t dc, int8_t rst) 
-  : Adafruit_SPITFT(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, cs, dc, rst) {
-
+  : Adafruit_SPITFT(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, cs, dc, rst)
+{
 }
 
 
@@ -105,10 +105,6 @@ void Adafruit_ST77xx::begin(uint32_t freq) {
     freq = SPI_DEFAULT_FREQ;
   }
   _freq = freq;
-
-  _ystart = _xstart = 0;
-  _colstart = _rowstart = 0; // May be overridden in init func
-
 
   invertOnCommand = ST77XX_INVON;
   invertOffCommand = ST77XX_INVOFF;
@@ -200,6 +196,18 @@ void Adafruit_ST77xx::setRotation(uint8_t m) {
   endWrite();
 }
 
+
+/**************************************************************************/
+/*!
+    @brief   Set origin of (0,0) of display with offsets
+    @param   col  The offset from 0 for the column address
+    @param   row  The offset from 0 for the row address
+*/
+/**************************************************************************/
+void Adafruit_ST77xx::setColRowStart(int8_t col, int8_t row) {
+  _colstart = col;
+  _rowstart = row;
+}
 
 ////////// stuff not actively being used, but kept for posterity
 /*
