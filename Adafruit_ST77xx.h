@@ -100,12 +100,8 @@ class Adafruit_ST77xx : public Adafruit_SPITFT {
   void      setRotation(uint8_t r);
 
  protected:
-  uint8_t  _colstart        = 0,  ///< Some displays need this offset changed
-           _rowstart        = 0,  ///< Some displays need this offset changed
-           _xstart          = 0,  ///< Sometimes this varies with rotation
-           _ystart          = 0,  ///< Sometimes this varies with rotation
-           invertOnCommand  = ST77XX_INVON,  ///< Command for inverse on
-           invertOffCommand = ST77XX_INVOFF; ///< Command for inverse off
+  uint8_t  _colstart = 0,     ///< Some displays need this changed to offset
+    _rowstart = 0;            ///< Some displays need this changed to offset
 
   void     begin(uint32_t freq = 0);
   void     commonInit(const uint8_t *cmdList);
