@@ -11,8 +11,8 @@
 #define ST7789_240x240_YSTART 80
 
 static const uint8_t PROGMEM
-  cmd_240x240[] = {                  // Initialization commands for 7735B screens
-    10,                       // 18 commands in list:
+  cmd_240x240[] =            // Initialization commands for 7789 screens
+    9,                       // 9 commands in list:
     ST77XX_SWRESET,   ST_CMD_DELAY,  //  1: Software reset, no args, w/delay
       150,                     //    150 ms delay
     ST77XX_SLPOUT ,   ST_CMD_DELAY,  //  2: Out of sleep mode, no args, w/delay

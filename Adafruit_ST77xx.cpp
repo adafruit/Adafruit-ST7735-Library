@@ -73,9 +73,10 @@ void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
   uint8_t  numCommands, numArgs;
   uint16_t ms;
 
-  startWrite();
   numCommands = pgm_read_byte(addr++);   // Number of commands to follow
   while(numCommands--) {                 // For each command...
+    startWrite();
+
     writeCommand(pgm_read_byte(addr++)); //   Read, issue command
     numArgs  = pgm_read_byte(addr++);    //   Number of args to follow
     ms       = numArgs & ST_CMD_DELAY;   //   If hibit set, delay follows args
@@ -83,6 +84,7 @@ void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
     while(numArgs--) {                   //   For each argument...
       spiWrite(pgm_read_byte(addr++));  //     Read, issue argument
     }
+    endWrite();
 
     if(ms) {
       ms = pgm_read_byte(addr++); // Read post-command delay time (ms)
@@ -90,7 +92,6 @@ void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
       delay(ms);
     }
   }
-  endWrite();
 }
 
 /**************************************************************************/
