@@ -85,15 +85,15 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
   case 2:
      madctl = ST77XX_MADCTL_RGB;
  
-     _xstart = _colstart;
-     _ystart = _rowstart;
+     _xstart = 0;
+     _ystart = 0;
      break;
 
    case 3:
      madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
 
-     _xstart = _rowstart;
-     _ystart = _colstart;
+     _xstart = 0;
+     _ystart = 0;
      break;
   }
 
