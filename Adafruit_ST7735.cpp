@@ -189,7 +189,7 @@ void Adafruit_ST7735::initR(uint8_t options) {
     _width = ST7735_TFTWIDTH_128;
     displayInit(Rcmd2green144);
     _colstart = 2;
-    _rowstart = 3;
+    _rowstart = 1;
   } else if(options == INITR_MINI160x80) {
     _height = ST7735_TFTHEIGHT_160;
     _width = ST7735_TFTWIDTH_80;
