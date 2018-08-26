@@ -39,7 +39,15 @@ Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
 void setup(void) {
   Serial.begin(9600);
+  while (!Serial);
+  
+  // start by disabling both SD and TFT
+  pinMode(TFT_CS, OUTPUT);
+  digitalWrite(TFT_CS, HIGH);
+  pinMode(SD_CS, OUTPUT);
+  digitalWrite(SD_CS, HIGH);
 
+  // Start seesaw helper chip
   if (!ss.begin()){
     Serial.println("seesaw could not be initialized!");
     while(1);
@@ -55,8 +63,19 @@ void setup(void) {
   // Initialize 1.8" TFT
   tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
 
-  Serial.println("OK!");
+  Serial.println("TFT OK!");
   tft.fillScreen(ST77XX_CYAN);
+
+  Serial.print("Initializing SD card...");
+  if (!SD.begin(SD_CS)) {
+    Serial.println("failed!");
+  } else {
+    Serial.println("OK!");
+    File root = SD.open("/");
+    printDirectory(root, 0);
+    root.close();
+    bmpDraw("/parrot.bmp", 0, 0);
+  }
 
   // Set backlight on fully
   // ss.setBacklight(TFTSHIELD_BACKLIGHT_ON);
@@ -75,6 +94,7 @@ void setup(void) {
   tft.fillScreen(ST77XX_BLUE);
   delay(100);
   tft.fillScreen(ST77XX_BLACK);
+ 
   tft.setTextSize(1);
   tft.setTextColor(ST77XX_WHITE);
   tft.setCursor(0, 0);
@@ -135,10 +155,7 @@ void loop() {
     tft.print("SELECT");
   }
   if (buttonhistory == 0x7F) {
-    Serial.print("Initializing SD card...");
-    if (SD.begin(SD_CS)) {
-      bmpDraw("parrot.bmp", 0, 0);
-    }
+    bmpDraw("/parrot.bmp", 0, 0);
     while (1) {
       tft.invertDisplay(true);
       delay(500);
@@ -159,7 +176,7 @@ void loop() {
 
 #define BUFFPIXEL 20
 
-void bmpDraw(char *filename, uint8_t x, uint8_t y) {
+void bmpDraw(char *filename, uint8_t x, uint16_t y) {
 
   File     bmpFile;
   int      bmpWidth, bmpHeight;   // W+H in pixels
@@ -177,33 +194,33 @@ void bmpDraw(char *filename, uint8_t x, uint8_t y) {
   if((x >= tft.width()) || (y >= tft.height())) return;
 
   Serial.println();
-  Serial.print("Loading image '");
+  Serial.print(F("Loading image '"));
   Serial.print(filename);
   Serial.println('\'');
 
   // Open requested file on SD card
   if ((bmpFile = SD.open(filename)) == NULL) {
-    Serial.print("File not found");
+    Serial.print(F("File not found"));
     return;
   }
 
   // Parse BMP header
   if(read16(bmpFile) == 0x4D42) { // BMP signature
-    Serial.print("File size: "); Serial.println(read32(bmpFile));
+    Serial.print(F("File size: ")); Serial.println(read32(bmpFile));
     (void)read32(bmpFile); // Read & ignore creator bytes
     bmpImageoffset = read32(bmpFile); // Start of image data
-    Serial.print("Image Offset: "); Serial.println(bmpImageoffset, DEC);
+    Serial.print(F("Image Offset: ")); Serial.println(bmpImageoffset, DEC);
     // Read DIB header
-    Serial.print("Header size: "); Serial.println(read32(bmpFile));
+    Serial.print(F("Header size: ")); Serial.println(read32(bmpFile));
     bmpWidth  = read32(bmpFile);
     bmpHeight = read32(bmpFile);
     if(read16(bmpFile) == 1) { // # planes -- must be '1'
       bmpDepth = read16(bmpFile); // bits per pixel
-      Serial.print("Bit Depth: "); Serial.println(bmpDepth);
+      Serial.print(F("Bit Depth: ")); Serial.println(bmpDepth);
       if((bmpDepth == 24) && (read32(bmpFile) == 0)) { // 0 = uncompressed
 
         goodBmp = true; // Supported BMP format -- proceed!
-        Serial.print("Image size: ");
+        Serial.print(F("Image size: "));
         Serial.print(bmpWidth);
         Serial.print('x');
         Serial.println(bmpHeight);
@@ -225,7 +242,9 @@ void bmpDraw(char *filename, uint8_t x, uint8_t y) {
         if((y+h-1) >= tft.height()) h = tft.height() - y;
 
         // Set TFT address window to clipped image bounds
-        tft.setAddrWindow(x, y, x+w-1, y+h-1);
+        tft.startWrite();
+        tft.setAddrWindow(x, y, w, h);
+        tft.endWrite();
 
         for (row=0; row<h; row++) { // For each scanline...
 
@@ -258,7 +277,8 @@ void bmpDraw(char *filename, uint8_t x, uint8_t y) {
             tft.pushColor(tft.color565(r,g,b));
           } // end pixel
         } // end scanline
-        Serial.print("Loaded in ");
+        tft.endWrite();
+        Serial.print(F("Loaded in "));
         Serial.print(millis() - startTime);
         Serial.println(" ms");
       } // end goodBmp
@@ -266,8 +286,9 @@ void bmpDraw(char *filename, uint8_t x, uint8_t y) {
   }
 
   bmpFile.close();
-  if(!goodBmp) Serial.println("BMP format not recognized.");
+  if(!goodBmp) Serial.println(F("BMP format not recognized."));
 }
+
 
 // These read 16- and 32-bit types from the SD card file.
 // BMP data is stored little-endian, Arduino is little-endian too.
@@ -288,3 +309,29 @@ uint32_t read32(File f) {
   ((uint8_t *)&result)[3] = f.read(); // MSB
   return result;
 }
+
+
+void printDirectory(File dir, int numTabs) {
+  while (true) {
+
+    File entry =  dir.openNextFile();
+    if (! entry) {
+      // no more files
+      break;
+    }
+    for (uint8_t i = 0; i < numTabs; i++) {
+      Serial.print('\t');
+    }
+    Serial.print(entry.name());
+    if (entry.isDirectory()) {
+      Serial.println("/");
+      printDirectory(entry, numTabs + 1);
+    } else {
+      // files have sizes, directories do not
+      Serial.print("\t\t");
+      Serial.println(entry.size(), DEC);
+    }
+    entry.close();
+  }
+}
+
