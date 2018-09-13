@@ -27,6 +27,18 @@ class Adafruit_ST7789 : public Adafruit_ST77xx {
 /**************************************************************************/
  Adafruit_ST7789(int8_t cs, int8_t dc, int8_t rst) : 
   Adafruit_ST77xx(cs, dc, rst) {}
+
+/**************************************************************************/
+/*!
+    @brief  Instantiate Adafruit ST7789 driver with user selected hardware SPI
+    @param    cs    Chip select pin #
+    @param    dc    Data/Command pin #
+    @param    spiClass   A pointer to the SPIClass to use for HW SPI
+    @param    rst   Reset pin # (optional, pass -1 if unused)
+*/
+/**************************************************************************/
+ Adafruit_ST7789(int8_t cs, int8_t dc, SPIClass *spiClass, int8_t rst) :
+  Adafruit_ST77xx(cs, dc, spiClass, rst) {}
   
   // the tab types are so weird we need to do this 'by hand'
   void  setRotation(uint8_t m);

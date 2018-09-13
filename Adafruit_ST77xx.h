@@ -94,6 +94,7 @@ class Adafruit_ST77xx : public Adafruit_SPITFT {
 
   Adafruit_ST77xx(int8_t _CS, int8_t _DC, int8_t _MOSI, int8_t _SCLK, int8_t _RST = -1, int8_t _MISO = -1);
   Adafruit_ST77xx(int8_t CS, int8_t RS, int8_t RST = -1);
+  Adafruit_ST77xx(int8_t CS, int8_t RS, SPIClass *spiClass, int8_t RST = -1);
 
   // Transaction API not used by GFX
   void      setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
