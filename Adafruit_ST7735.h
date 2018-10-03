@@ -1,3 +1,6 @@
+#ifndef _ADAFRUIT_ST7735H_
+#define _ADAFRUIT_ST7735H_
+
 #include "Adafruit_ST77xx.h"
 
 
@@ -84,3 +87,5 @@ class Adafruit_ST7735 : public Adafruit_ST77xx {
  private:
   uint8_t  tabcolor;
 };
+
+#endif // _ADAFRUIT_ST7735H_
