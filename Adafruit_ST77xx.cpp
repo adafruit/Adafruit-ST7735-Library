@@ -61,6 +61,19 @@ Adafruit_ST77xx::Adafruit_ST77xx(int8_t cs, int8_t dc, int8_t rst)
 {
 }
 
+/**************************************************************************/
+/*!
+    @brief  Instantiate Adafruit ST77XX driver with selectable hardware SPI
+    @param    spiClass A pointer to an SPI device to use (e.g. &SPI1)
+    @param    cs    Chip select pin #
+    @param    dc    Data/Command pin #
+    @param    rst   Reset pin # (optional, pass -1 if unused)
+*/
+/**************************************************************************/
+Adafruit_ST77xx::Adafruit_ST77xx(SPIClass *spiClass, int8_t cs, int8_t dc, int8_t rst) 
+  : Adafruit_SPITFT(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, spiClass, cs, dc, rst)
+{
+}
 
 /**************************************************************************/
 /*!
