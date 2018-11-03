@@ -91,6 +91,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:afaaaaaf0fc2152162b4524422cc1f63a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___s_t77xx.html#afaaaaaf0fc2152162b4524422cc1f63a">Adafruit_ST77xx</a> (int8_t CS, int8_t RS, int8_t RST=-1)</td></tr>
 <tr class="memdesc:afaaaaaf0fc2152162b4524422cc1f63a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantiate Adafruit ST77XX driver with hardware SPI.  <a href="#afaaaaaf0fc2152162b4524422cc1f63a">More...</a><br /></td></tr>
 <tr class="separator:afaaaaaf0fc2152162b4524422cc1f63a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27f336f61a3e709e1b76e58b5f3b830a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___s_t77xx.html#a27f336f61a3e709e1b76e58b5f3b830a">Adafruit_ST77xx</a> (SPIClass *spiClass, int8_t CS, int8_t RS, int8_t RST=-1)</td></tr>
+<tr class="memdesc:a27f336f61a3e709e1b76e58b5f3b830a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Instantiate Adafruit ST77XX driver with selectable hardware SPI.  <a href="#a27f336f61a3e709e1b76e58b5f3b830a">More...</a><br /></td></tr>
+<tr class="separator:a27f336f61a3e709e1b76e58b5f3b830a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa707809b8a4c5b7ab5ea90e310e84cfc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_adafruit___s_t77xx.html#aa707809b8a4c5b7ab5ea90e310e84cfc">setAddrWindow</a> (uint16_t x, uint16_t y, uint16_t w, uint16_t h)</td></tr>
 <tr class="memdesc:aa707809b8a4c5b7ab5ea90e310e84cfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">SPI displays set an address window rectangle for blitting pixels.  <a href="#aa707809b8a4c5b7ab5ea90e310e84cfc">More...</a><br /></td></tr>
 <tr class="separator:aa707809b8a4c5b7ab5ea90e310e84cfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -128,7 +131,7 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <div class="textblock"><p>Subclass of SPITFT type display for ST77xx displays (there's a lot in common!) </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8b6411ce92ae567df28903d88c43fb97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b6411ce92ae567df28903d88c43fb97">&#9670;&nbsp;</a></span>Adafruit_ST77xx() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b6411ce92ae567df28903d88c43fb97">&#9670;&nbsp;</a></span>Adafruit_ST77xx() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -193,7 +196,7 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 </div>
 </div>
 <a id="afaaaaaf0fc2152162b4524422cc1f63a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afaaaaaf0fc2152162b4524422cc1f63a">&#9670;&nbsp;</a></span>Adafruit_ST77xx() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#afaaaaaf0fc2152162b4524422cc1f63a">&#9670;&nbsp;</a></span>Adafruit_ST77xx() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -227,6 +230,57 @@ uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="c
 <p>Instantiate Adafruit ST77XX driver with hardware SPI. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">cs</td><td>Chip select pin # </td></tr>
+    <tr><td class="paramname">dc</td><td>Data/Command pin # </td></tr>
+    <tr><td class="paramname">rst</td><td>Reset pin # (optional, pass -1 if unused) </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a27f336f61a3e709e1b76e58b5f3b830a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27f336f61a3e709e1b76e58b5f3b830a">&#9670;&nbsp;</a></span>Adafruit_ST77xx() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Adafruit_ST77xx::Adafruit_ST77xx </td>
+          <td>(</td>
+          <td class="paramtype">SPIClass *&#160;</td>
+          <td class="paramname"><em>spiClass</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int8_t&#160;</td>
+          <td class="paramname"><em>cs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int8_t&#160;</td>
+          <td class="paramname"><em>dc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int8_t&#160;</td>
+          <td class="paramname"><em>rst</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Instantiate Adafruit ST77XX driver with selectable hardware SPI. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">spiClass</td><td>A pointer to an SPI device to use (e.g. &amp;SPI1) </td></tr>
     <tr><td class="paramname">cs</td><td>Chip select pin # </td></tr>
     <tr><td class="paramname">dc</td><td>Data/Command pin # </td></tr>
     <tr><td class="paramname">rst</td><td>Reset pin # (optional, pass -1 if unused) </td></tr>
