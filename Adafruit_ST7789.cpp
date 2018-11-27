@@ -63,12 +63,12 @@ static const uint8_t PROGMEM
       0x00,
       ST7789_240x240_XSTART,        //     XSTART = 0
       (240+ST7789_240x240_XSTART)>>8,
-      (240+ST7789_240x240_XSTART),  //     XEND = 240
+      (240+ST7789_240x240_XSTART)&0xFF,  //     XEND = 240
     ST77XX_RASET  , 4,              //  6: Row addr set, 4 args, no delay:
       0x00,
-      ST7789_240x240_YSTART,        //     YSTART = 0
+      ST7789_240x240_YSTART,             //     YSTART = 0
       (240+ST7789_240x240_YSTART)>>8,
-      (240+ST7789_240x240_YSTART),  //     YEND = 240
+      (240+ST7789_240x240_YSTART)&0xFF,  //     YEND = 240
     ST77XX_INVON  ,   ST_CMD_DELAY,  //  7: hack
       10,
     ST77XX_NORON  ,   ST_CMD_DELAY, //  8: Normal display on, no args, w/delay
