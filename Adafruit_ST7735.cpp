@@ -221,7 +221,7 @@ void Adafruit_ST7735::initR(uint8_t options) {
     _width    = ST7735_TFTWIDTH_128;
     displayInit(Rcmd2green144);
     _colstart = 2;
-    _rowstart = 1;
+    _rowstart = 3; // For default rotation 0
   } else if(options == INITR_MINI160x80) {
     _height   = ST7735_TFTHEIGHT_160;
     _width    = ST7735_TFTWIDTH_80;
@@ -264,6 +264,12 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
   uint8_t madctl = 0;
 
   rotation = m & 3; // can't be higher than 3
+
+  // For ST7735 with GREEN TAB (including HalloWing)...
+  if((tabcolor == INITR_144GREENTAB) || (tabcolor == INITR_HALLOWING)) {
+    // ..._rowstart is 3 for rotations 0&1, 1 for rotations 2&3
+    _rowstart = (rotation < 2) ? 3 : 1;
+  }
 
   switch (rotation) {
    case 0:
