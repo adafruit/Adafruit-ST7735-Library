@@ -97,6 +97,7 @@ void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
     while(numArgs--) {                   // For each argument...
       spiWrite(pgm_read_byte(addr++));   // Read, issue argument
     }
+    SPI_CS_HIGH(); SPI_CS_LOW();  // ST7789 needs chip deselect after each
 
     if(ms) {
       ms = pgm_read_byte(addr++); // Read post-command delay time (ms)
