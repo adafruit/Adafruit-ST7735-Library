@@ -60,6 +60,7 @@ Adafruit_ST77xx::Adafruit_ST77xx(int8_t cs, int8_t dc, int8_t rst) :
   Adafruit_SPITFT(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, cs, dc, rst) {
 }
 
+#if !defined(ESP8266)
 /**************************************************************************/
 /*!
     @brief  Instantiate Adafruit ST77XX driver with selectable hardware SPI
@@ -73,6 +74,7 @@ Adafruit_ST77xx::Adafruit_ST77xx(SPIClass *spiClass, int8_t cs, int8_t dc,
   int8_t rst) : Adafruit_SPITFT(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160,
   spiClass, cs, dc, rst) {
 }
+#endif // end !ESP8266
 
 /**************************************************************************/
 /*!

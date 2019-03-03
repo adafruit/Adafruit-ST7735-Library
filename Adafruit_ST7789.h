@@ -9,7 +9,9 @@ class Adafruit_ST7789 : public Adafruit_ST77xx {
     Adafruit_ST7789(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk,
       int8_t rst = -1);
     Adafruit_ST7789(int8_t cs, int8_t dc, int8_t rst);
+#if !defined(ESP8266)
     Adafruit_ST7789(SPIClass *spiClass, int8_t cs, int8_t dc, int8_t rst);
+#endif // end !ESP8266
 
     void setRotation(uint8_t m);
     void init(uint16_t width, uint16_t height);

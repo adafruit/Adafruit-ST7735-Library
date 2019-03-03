@@ -25,6 +25,7 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst) :
   Adafruit_ST77xx(cs, dc, rst) {
 }
 
+#if !defined(ESP8266)
 /*!
     @brief  Instantiate Adafruit ST7735 driver with selectable hardware SPI
     @param  spiClass  Pointer to an SPI device to use (e.g. &SPI1)
@@ -35,6 +36,7 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst) :
 Adafruit_ST7735::Adafruit_ST7735(SPIClass *spiClass, int8_t cs, int8_t dc,
   int8_t rst) : Adafruit_ST77xx(spiClass, cs, dc, rst) {
 }
+#endif // end !ESP8266
 
 // SCREEN INITIALIZATION ***************************************************
 
