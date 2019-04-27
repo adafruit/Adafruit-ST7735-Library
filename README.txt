@@ -6,8 +6,10 @@ This is a library for several Adafruit displays based on ST77* drivers.
     ----> https://www.adafruit.com/product/802
   The 1.44" TFT breakout
     ----> https://www.adafruit.com/product/2088
-  as well as Adafruit raw 1.8" TFT display
-    ----> http://www.adafruit.com/products/618
+  Adafruit raw 1.8" TFT display
+  ----> http://www.adafruit.com/products/618
+  as well as the Waveshare TFT LCD
+    ----> https://www.waveshare.com/1.8inch-lcd-module.htm
  
 Check out the links above for our tutorials and wiring diagrams.
 These displays use SPI to communicate, 4 or 5 pins are required to

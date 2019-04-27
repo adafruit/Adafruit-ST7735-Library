@@ -7,8 +7,10 @@ The 1.8" TFT shield
   ----> https://www.adafruit.com/product/802
 The 1.44" TFT breakout
   ----> https://www.adafruit.com/product/2088
-as well as Adafruit raw 1.8" TFT display
+Adafruit raw 1.8" TFT display
   ----> http://www.adafruit.com/products/618
+as well as the Waveshare TFT LCD
+  ----> https://www.waveshare.com/1.8inch-lcd-module.htm
 
   Check out the links above for our tutorials and wiring diagrams
   These displays use SPI to communicate, 4 or 5 pins are required to
@@ -59,6 +61,8 @@ void setup(void) {
 
   // Use this initializer if you're using a 1.8" TFT
   tft.initR(INITR_BLACKTAB);
+  // If initializer above works, but the screen is 2 rows and 1 column off on the top and right sides - use this one (uncomment):
+  //tft.initR(INITR_WAVESHARE);
 
   // Use this initializer (uncomment) if you're using a 1.44" TFT
   //tft.initR(INITR_144GREENTAB);

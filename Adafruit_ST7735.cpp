@@ -230,6 +230,9 @@ void Adafruit_ST7735::initR(uint8_t options) {
     displayInit(Rcmd2green160x80);
     _colstart = 24;
     _rowstart = 0;
+  } else if(options == INITR_WAVESHARE) {
+	_colstart = 2;
+    _rowstart = 1;
   } else {
     // colstart, rowstart left at default '0' values
     displayInit(Rcmd2red);
@@ -237,7 +240,7 @@ void Adafruit_ST7735::initR(uint8_t options) {
   displayInit(Rcmd3);
 
   // Black tab, change MADCTL color filter
-  if((options == INITR_BLACKTAB) || (options == INITR_MINI160x80)) {
+  if((options == INITR_BLACKTAB) || (options == INITR_MINI160x80) || (options == INITR_WAVESHARE)) {
     startWrite();
     writeCommand(ST77XX_MADCTL);
     spiWrite(0xC0);
