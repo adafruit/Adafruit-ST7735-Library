@@ -32,6 +32,10 @@
   #define TFT_RST       37 // Display reset
   #define TFT_DC        38 // Display data/command select
   #define TFT_BACKLIGHT  7 // Display backlight pin
+#elif defined(ESP8266)
+  #define TFT_CS         4
+  #define TFT_RST        16                                            
+  #define TFT_DC         5
 #else
   // For the breakout board, you can use any 2 or 3 pins.
   // These pins will also work for the 1.8" TFT shield.

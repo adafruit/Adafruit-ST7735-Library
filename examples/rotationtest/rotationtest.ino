@@ -292,4 +292,3 @@ void rotateString(void) {
     tft.setRotation(tft.getRotation()+1);
   }
 }
-
