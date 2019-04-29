@@ -131,8 +131,6 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
      _ystart = 0;
      break;
   }
-  startWrite();
-  writeCommand(ST77XX_MADCTL);
-  spiWrite(madctl);
-  endWrite();
+
+  sendCommand(ST77XX_MADCTL, &madctl, 1);
 }

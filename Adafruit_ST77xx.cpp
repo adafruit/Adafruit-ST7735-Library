@@ -85,20 +85,17 @@ Adafruit_ST77xx::Adafruit_ST77xx(SPIClass *spiClass, int8_t cs, int8_t dc,
 /**************************************************************************/
 void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
 
-  uint8_t  numCommands, numArgs;
+  uint8_t  numCommands, cmd, numArgs;
   uint16_t ms;
 
-  startWrite();
   numCommands = pgm_read_byte(addr++);   // Number of commands to follow
   while(numCommands--) {                 // For each command...
-
-    writeCommand(pgm_read_byte(addr++)); // Read, issue command
+    cmd = pgm_read_byte(addr++);         // Read command
     numArgs  = pgm_read_byte(addr++);    // Number of args to follow
     ms       = numArgs & ST_CMD_DELAY;   // If hibit set, delay follows args
     numArgs &= ~ST_CMD_DELAY;            // Mask out delay bit
-    while(numArgs--) {                   // For each argument...
-      spiWrite(pgm_read_byte(addr++));   // Read, issue argument
-    }
+    sendCommand(cmd, addr, numArgs);
+    addr += numArgs;
     SPI_CS_HIGH(); SPI_CS_LOW();  // ST7789 needs chip deselect after each
 
     if(ms) {
@@ -107,7 +104,6 @@ void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
       delay(ms);
     }
   }
-  endWrite();
 }
 
 /**************************************************************************/
@@ -201,10 +197,8 @@ void Adafruit_ST77xx::setRotation(uint8_t m) {
      _xstart = _rowstart;
      break;
   }
-  startWrite();
-  writeCommand(ST77XX_MADCTL);
-  spiWrite(madctl);
-  endWrite();
+  
+  sendCommand(ST77XX_MADCTL, &madctl, 1);
 }
 
 /**************************************************************************/
