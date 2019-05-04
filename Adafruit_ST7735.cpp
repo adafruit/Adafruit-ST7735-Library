@@ -238,7 +238,8 @@ void Adafruit_ST7735::initR(uint8_t options) {
 
   // Black tab, change MADCTL color filter
   if((options == INITR_BLACKTAB) || (options == INITR_MINI160x80)) {
-    sendCommand(ST77XX_MADCTL, (uint8_t *) 0xC0, 1);
+    uint8_t data = 0xC0;
+    sendCommand(ST77XX_MADCTL, &data, 1);
   }
 
   if(options == INITR_HALLOWING) {
