@@ -96,7 +96,6 @@ void Adafruit_ST77xx::displayInit(const uint8_t *addr) {
     numArgs &= ~ST_CMD_DELAY;            // Mask out delay bit
     sendCommand(cmd, addr, numArgs);
     addr += numArgs;
-    SPI_CS_HIGH(); SPI_CS_LOW();  // ST7789 needs chip deselect after each
 
     if(ms) {
       ms = pgm_read_byte(addr++); // Read post-command delay time (ms)
