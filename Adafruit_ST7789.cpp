@@ -12,7 +12,8 @@
     @param  rst   Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t mosi,
-  int8_t sclk, int8_t rst) : Adafruit_ST77xx(cs, dc, mosi, sclk, rst) {
+  int8_t sclk, int8_t rst) : Adafruit_ST77xx(240, 240, cs, dc, mosi, sclk,
+  rst) {
 }
 
 /*!
@@ -22,7 +23,7 @@ Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t mosi,
     @param  rst  Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t rst) :
-  Adafruit_ST77xx(cs, dc, rst) {
+  Adafruit_ST77xx(240, 240, cs, dc, rst) {
 }
 
 #if !defined(ESP8266)
@@ -34,7 +35,7 @@ Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t rst) :
     @param  rst       Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7789::Adafruit_ST7789(SPIClass *spiClass, int8_t cs, int8_t dc,
-  int8_t rst) : Adafruit_ST77xx(spiClass, cs, dc, rst) {
+  int8_t rst) : Adafruit_ST77xx(240, 240, spiClass, cs, dc, rst) {
 }
 #endif // end !ESP8266
 
@@ -83,15 +84,30 @@ static const uint8_t PROGMEM
     @brief  Initialization code common to all ST7789 displays
     @param  width  Display width
     @param  height Display height
+    @param  mode   SPI data mode; one of SPI_MODE0, SPI_MODE1, SPI_MODE2
+                   or SPI_MODE3 (do NOT pass the numbers 0,1,2 or 3 -- use
+                   the defines only, the values are NOT the same!)
 */
 /**************************************************************************/
-void Adafruit_ST7789::init(uint16_t width, uint16_t height) {
+void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
+  // Save SPI data mode. commonInit() calls begin() (in Adafruit_ST77xx.cpp),
+  // which in turn calls initSPI() (in Adafruit_SPITFT.cpp), passing it the
+  // value of spiMode. It's done this way because begin() really should not
+  // be modified at this point to accept an SPI mode -- it's a virtual
+  // function required in every Adafruit_SPITFT subclass and would require
+  // updating EVERY such library...whereas, at the moment, we know that
+  // certain ST7789 displays are the only thing that may need a non-default
+  // SPI mode, hence this roundabout approach...
+  spiMode = mode;
+  // (Might get added similarly to other display types as needed on a
+  // case-by-case basis.)
+
   commonInit(NULL);
 
   _colstart = ST7789_240x240_XSTART;
   _rowstart = ST7789_240x240_YSTART;
-  _height   = 240;
-  _width    = 240;
+  _width    = width;
+  _height   = height;
 
   displayInit(cmd_240x240);
 

@@ -12,7 +12,8 @@
     @param  rst   Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t mosi,
-  int8_t sclk, int8_t rst) : Adafruit_ST77xx(cs, dc, mosi, sclk, rst) {
+  int8_t sclk, int8_t rst) : Adafruit_ST77xx(ST7735_TFTWIDTH_128,
+  ST7735_TFTHEIGHT_160, cs, dc, mosi, sclk, rst) {
 }
 
 /*!
@@ -22,7 +23,7 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t mosi,
     @param  rst  Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst) :
-  Adafruit_ST77xx(cs, dc, rst) {
+  Adafruit_ST77xx(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, cs, dc, rst) {
 }
 
 #if !defined(ESP8266)
@@ -34,7 +35,8 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst) :
     @param  rst       Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7735::Adafruit_ST7735(SPIClass *spiClass, int8_t cs, int8_t dc,
-  int8_t rst) : Adafruit_ST77xx(spiClass, cs, dc, rst) {
+  int8_t rst) : Adafruit_ST77xx(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160,
+  spiClass, cs, dc, rst) {
 }
 #endif // end !ESP8266
 
