@@ -97,7 +97,7 @@ class Adafruit_ST77xx : public Adafruit_SPITFT {
 
     void setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
     void setRotation(uint8_t r);
-
+    void enableDisplay(boolean enable);
   protected:
     uint8_t _colstart = 0, ///< Some displays need this changed to offset
             _rowstart = 0, ///< Some displays need this changed to offset

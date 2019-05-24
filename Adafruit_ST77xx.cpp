@@ -218,6 +218,18 @@ void Adafruit_ST77xx::setColRowStart(int8_t col, int8_t row) {
   _rowstart = row;
 }
 
+
+/**************************************************************************/
+/*!
+ @brief  Change whether display is on or off
+ @param  enable True if you want the display ON, false OFF
+ */
+/**************************************************************************/
+void Adafruit_ST77xx::enableDisplay(boolean enable) {
+  sendCommand(enable ? ST77XX_DISPON : ST77XX_DISPOFF);
+}
+
+
 ////////// stuff not actively being used, but kept for posterity
 /*
 
