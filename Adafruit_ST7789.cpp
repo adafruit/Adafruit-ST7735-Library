@@ -12,7 +12,7 @@
     @param  rst   Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t mosi,
-  int8_t sclk, int8_t rst) : Adafruit_ST77xx(240, 240, cs, dc, mosi, sclk,
+  int8_t sclk, int8_t rst) : Adafruit_ST77xx(240, 320, cs, dc, mosi, sclk,
   rst) {
 }
 
@@ -23,7 +23,7 @@ Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t mosi,
     @param  rst  Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t rst) :
-  Adafruit_ST77xx(240, 240, cs, dc, rst) {
+  Adafruit_ST77xx(240, 320, cs, dc, rst) {
 }
 
 #if !defined(ESP8266)
@@ -35,7 +35,7 @@ Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t rst) :
     @param  rst       Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7789::Adafruit_ST7789(SPIClass *spiClass, int8_t cs, int8_t dc,
-  int8_t rst) : Adafruit_ST77xx(240, 240, spiClass, cs, dc, rst) {
+  int8_t rst) : Adafruit_ST77xx(240, 320, spiClass, cs, dc, rst) {
 }
 #endif // end !ESP8266
 

@@ -212,10 +212,11 @@ void Adafruit_ST7735::initB(void) {
 /*!
     @brief  Initialization code common to all ST7735R displays
     @param  options  Tab color from adafruit purchase
+    @param  spiFreq  Max speed for SPI clock, default is SPI_DEFAULT_FREQ
 */
 /**************************************************************************/
-void Adafruit_ST7735::initR(uint8_t options) {
-  commonInit(Rcmd1);
+void Adafruit_ST7735::initR(uint8_t options, uint32_t spiFreq) {
+  commonInit(Rcmd1, spiFreq);
   if(options == INITR_GREENTAB) {
     displayInit(Rcmd2green);
     _colstart = 2;

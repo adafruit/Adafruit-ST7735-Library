@@ -30,7 +30,6 @@
 #endif
 #include <SPI.h>
 
-#define SPI_DEFAULT_FREQ 16000000 ///< Default SPI data clock frequency
 
 /**************************************************************************/
 /*!
@@ -134,10 +133,11 @@ void Adafruit_ST77xx::begin(uint32_t freq) {
 /*!
     @brief  Initialization code common to all ST77XX displays
     @param  cmdList  Flash memory array with commands and data to send
+    @param  spiFreq  Max SPI speed we want to attempt, default is SPI_DEFAULT_FREQ
 */
 /**************************************************************************/
-void Adafruit_ST77xx::commonInit(const uint8_t *cmdList) {
-  begin();
+void Adafruit_ST77xx::commonInit(const uint8_t *cmdList, uint32_t spiFreq) {
+  begin(spiFreq);
 
   if(cmdList) {
     displayInit(cmdList);

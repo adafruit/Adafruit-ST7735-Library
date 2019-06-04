@@ -31,6 +31,8 @@
 #include <Adafruit_SPITFT.h>
 #include <Adafruit_SPITFT_Macros.h>
 
+#define SPI_DEFAULT_FREQ 16000000 ///< Default SPI data clock frequency
+
 #define ST7735_TFTWIDTH_128   128 // for 1.44 and mini
 #define ST7735_TFTWIDTH_80     80 // for mini
 #define ST7735_TFTHEIGHT_128  128 // for 1.44" display
@@ -104,7 +106,7 @@ class Adafruit_ST77xx : public Adafruit_SPITFT {
             spiMode   = SPI_MODE0; ///< Certain display needs MODE3 instead
 
     void    begin(uint32_t freq = 0);
-    void    commonInit(const uint8_t *cmdList);
+    void    commonInit(const uint8_t *cmdList, uint32_t spiFreq=SPI_DEFAULT_FREQ);
     void    displayInit(const uint8_t *addr);
     void    setColRowStart(int8_t col, int8_t row);
 };

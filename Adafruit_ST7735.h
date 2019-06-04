@@ -60,7 +60,7 @@ class Adafruit_ST7735 : public Adafruit_ST77xx {
     // Differences between displays (usu. identified by colored tab on
     // plastic overlay) are odd enough that we need to do this 'by hand':
     void    initB(void);                             // for ST7735B displays
-    void    initR(uint8_t options = INITR_GREENTAB); // for ST7735R
+    void    initR(uint8_t options = INITR_GREENTAB, uint32_t spiFreq=SPI_DEFAULT_FREQ); // for ST7735R
 
     void    setRotation(uint8_t m);
 
