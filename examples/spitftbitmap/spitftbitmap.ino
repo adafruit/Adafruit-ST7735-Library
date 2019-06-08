@@ -38,6 +38,8 @@ as well as Adafruit raw 1.8" TFT display
   #define TFT_DC        38 // Display data/command select
   #define TFT_BACKLIGHT  7 // Display backlight pin
 
+  #define SD_CS          4 // Default chip select line for SD card (not tested with this device)
+
 #elif defined(ESP32)
   #define TFT_CS         5
   #define TFT_RST        22 
@@ -59,6 +61,7 @@ as well as Adafruit raw 1.8" TFT display
   #define TFT_RST        16                                            
   #define TFT_DC         5
 
+  #define SD_CS          4 // Default chip select line for SD card (not tested with this device)
 #else
   // For the breakout board, you can use any 2 or 3 pins.
   // These pins will also work for the 1.8" TFT shield.
