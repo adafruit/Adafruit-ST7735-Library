@@ -29,10 +29,39 @@ as well as Adafruit raw 1.8" TFT display
 
 // For the breakout, you can use any 2 or 3 pins
 // These pins will also work for the 1.8" TFT shield
-#define TFT_CS     10
-#define TFT_RST    9  // you can also connect this to the Arduino reset
-                      // in which case, set this #define pin to -1!
-#define TFT_DC     8
+#ifdef ADAFRUIT_HALLOWING
+  #define TFT_CS        39 // Hallowing display control pins: chip select
+  #define TFT_RST       37 // Display reset
+  #define TFT_DC        38 // Display data/command select
+  #define TFT_BACKLIGHT  7 // Display backlight pin
+  //
+#elif defined(ESP32)
+  #define TFT_CS         5
+  #define TFT_RST        22 
+  #define TFT_DC         21
+  //
+  // define not needed for all pins; reference for ESP32 physical pins connections to VSPI:
+  // SDA  GPIO23 aka VSPI MOSI
+  // SCLK GPIO18 aka SCK aka VSPI SCK
+  // D/C  GPIO21 aka A0 (also I2C SDA)
+  // RST  GPIO22 aka RESET (also I2C SCL)
+  // CS   GPIO5  aka chip select
+  // LED  3.3V
+  // VCC  5V
+  // GND - GND
+  //
+#elif defined(ESP8266)
+  #define TFT_CS         4
+  #define TFT_RST        16                                            
+  #define TFT_DC         5
+  //
+#else
+  // For the breakout board, you can use any 2 or 3 pins.
+  // These pins will also work for the 1.8" TFT shield.
+  #define TFT_CS        10
+  #define TFT_RST        9 // Or set to -1 and connect to Arduino RESET pin
+  #define TFT_DC         8
+#endif
 
 // Option 1 (recommended): must use the hardware SPI pins
 // (for UNO thats sclk = 13 and sid = 11) and pin 10 must be
