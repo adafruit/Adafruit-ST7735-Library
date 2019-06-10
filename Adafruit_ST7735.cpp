@@ -176,7 +176,7 @@ static const uint8_t PROGMEM
     2,                              //  2 commands in list:
     ST77XX_CASET,   4,              //  1: Column addr set, 4 args, no delay:
       0x00, 0x00,                   //     XSTART = 0
-      0x00, 0x7F,                   //     XEND = 79
+      0x00, 0x4F,                   //     XEND = 79
     ST77XX_RASET,   4,              //  2: Row addr set, 4 args, no delay:
       0x00, 0x00,                   //     XSTART = 0
       0x00, 0x9F },                 //     XEND = 159
