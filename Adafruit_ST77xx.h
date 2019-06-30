@@ -58,8 +58,10 @@
 #define ST77XX_RAMRD      0x2E
 
 #define ST77XX_PTLAR      0x30
-#define ST77XX_COLMOD     0x3A
+#define ST77XX_TEOFF      0x34
+#define ST77XX_TEON       0x35
 #define ST77XX_MADCTL     0x36
+#define ST77XX_COLMOD     0x3A
 
 #define ST77XX_MADCTL_MY  0x80
 #define ST77XX_MADCTL_MX  0x40
@@ -98,6 +100,7 @@ class Adafruit_ST77xx : public Adafruit_SPITFT {
     void setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
     void setRotation(uint8_t r);
     void enableDisplay(boolean enable);
+    void enableTearing(boolean enable);
   protected:
     uint8_t _colstart = 0, ///< Some displays need this changed to offset
             _rowstart = 0, ///< Some displays need this changed to offset

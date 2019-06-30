@@ -230,6 +230,17 @@ void Adafruit_ST77xx::enableDisplay(boolean enable) {
 }
 
 
+/**************************************************************************/
+/*!
+ @brief  Change whether TE pin output is on or off
+ @param  enable True if you want the TE pin ON, false OFF
+ */
+/**************************************************************************/
+void Adafruit_ST77xx::enableTearing(boolean enable) {
+  sendCommand(enable ? ST77XX_TEON : ST77XX_TEOFF);
+}
+
+
 ////////// stuff not actively being used, but kept for posterity
 /*
 
