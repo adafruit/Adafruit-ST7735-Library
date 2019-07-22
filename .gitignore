@@ -5,3 +5,4 @@ Doxyfile*
 doxygen_sqlite3.db
 html
 /.vs
+*.DS_Store

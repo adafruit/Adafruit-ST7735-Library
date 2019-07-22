@@ -60,7 +60,7 @@
 // For 1.44" and 1.8" TFT with ST7735 (including HalloWing) use:
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
-// For 1.54" TFT with ST7789:
+// For 1.54" and 2.0" TFT with ST7789:
 //Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 // OPTION 2 lets you interface the display using ANY TWO or THREE PINS,
@@ -163,9 +163,7 @@ void displayUpTime() {
     
         // and remember the new value
         strcpy(oldTimeString,newTimeString);
-        
     }
-
 }
 
 void setup() {
@@ -204,6 +202,9 @@ void setup() {
     
       // OR use this initializer (uncomment) if using a 1.54" 240x240 TFT:
       //tft.init(240, 240);           // Init ST7789 240x240
+
+      // OR use this initializer (uncomment) if using a 2.0" 320x240 TFT:
+      //tft.init(240, 320);           // Init ST7789 320x240
     #endif
 
     // initialise the display
