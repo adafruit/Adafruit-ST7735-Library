@@ -7,6 +7,10 @@ The 1.8" TFT shield
   ----> https://www.adafruit.com/product/802
 The 1.44" TFT breakout
   ----> https://www.adafruit.com/product/2088
+The 1.54" TFT breakout
+  ----> https://www.adafruit.com/product/3787
+The 2.0" TFT breakout
+  ----> https://www.adafruit.com/product/4311
 as well as Adafruit raw 1.8" TFT display
   ----> http://www.adafruit.com/products/618
 
@@ -34,7 +38,13 @@ as well as Adafruit raw 1.8" TFT display
   #define TFT_RST       37 // Display reset
   #define TFT_DC        38 // Display data/command select
   #define TFT_BACKLIGHT  7 // Display backlight pin
-  //
+
+#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+  #define TFT_CS        44 // PyBadge/PyGamer display control pins: chip select
+  #define TFT_RST       46 // Display reset
+  #define TFT_DC        45 // Display data/command select
+  #define TFT_BACKLIGHT 47 // Display backlight pin
+
 #elif defined(ESP32)
   #define TFT_CS         5
   #define TFT_RST        22 
@@ -67,10 +77,16 @@ as well as Adafruit raw 1.8" TFT display
 // (for UNO thats sclk = 13 and sid = 11) and pin 10 must be
 // an output. This is much faster - also required if you want
 // to use the microSD card (see the image drawing example)
-Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
-
-// For 1.54" TFT with ST7789
-//Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS,  TFT_DC, TFT_RST);
+#if defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+    // For PyBadge and PyGamer
+    Adafruit_ST7735 tft = Adafruit_ST7735(&SPI1, TFT_CS, TFT_DC, TFT_RST);
+#else
+    // For 1.44" and 1.8" TFT with ST7735 (including HalloWing) use:
+    Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+    
+    // For 1.54" and 2.0" TFT with ST7789
+    //Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
+#endif
 
 // Option 2: use any pins but a little slower!
 //#define TFT_SCLK 13   // set these to be whatever pins you like!
@@ -81,17 +97,35 @@ void setup(void) {
   Serial.begin(9600);
   Serial.print("Hello! Adafruit ST77XX rotation test");
 
-  // Use this initializer if you're using a 1.8" TFT
-  tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
+  #ifdef ADAFRUIT_HALLOWING
+    // HalloWing is a special case. It uses a ST7735R display just like the
+    // breakout board, but the orientation and backlight control are different.
+    tft.initR(INITR_HALLOWING);        // Initialize HalloWing-oriented screen
+    pinMode(TFT_BACKLIGHT, OUTPUT);
+    digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
+  
+  #elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+    tft.initR(INITR_BLACKTAB);        // Initialize ST7735R screen
+    tft.setRotation(1);
+    pinMode(TFT_BACKLIGHT, OUTPUT);
+    digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
+  
+  #else
+      // Use this initializer if you're using a 1.8" TFT
+      tft.initR(INITR_BLACKTAB);   // initialize a ST7735S chip, black tab
+    
+      // Use this initializer (uncomment) if you're using a 1.44" TFT
+      //tft.initR(INITR_144GREENTAB);   // initialize a ST7735S chip, black tab
+    
+      // Use this initializer (uncomment) if you're using a 0.96" 180x60 TFT
+      //tft.initR(INITR_MINI160x80);   // initialize a ST7735S chip, mini display
+    
+      // Use this initializer (uncomment) if you're using a 1.54" 240x240 TFT
+      //tft.init(240, 240);   // initialize a ST7789 chip, 240x240 pixels
 
-  // Use this initializer (uncomment) if you're using a 1.44" TFT
-  //tft.initR(INITR_144GREENTAB);   // initialize a ST7735S chip, black tab
-
-  // Use this initializer (uncomment) if you're using a 0.96" 180x60 TFT
-  //tft.initR(INITR_MINI160x80);   // initialize a ST7735S chip, mini display
-
-  // Use this initializer (uncomment) if you're using a 1.54" 240x240 TFT
-  //tft.init(240, 240);   // initialize a ST7789 chip, 240x240 pixels
+      // OR use this initializer (uncomment) if using a 2.0" 320x240 TFT:
+      //tft.init(240, 320);           // Init ST7789 320x240
+  #endif
   
   Serial.println("init");
 

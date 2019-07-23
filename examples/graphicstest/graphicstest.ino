@@ -7,6 +7,10 @@
     ----> https://www.adafruit.com/product/802
   The 1.44" TFT breakout
     ----> https://www.adafruit.com/product/2088
+  The 1.54" TFT breakout
+    ----> https://www.adafruit.com/product/3787
+  The 2.0" TFT breakout
+    ----> https://www.adafruit.com/product/4311
   as well as Adafruit raw 1.8" TFT display
     ----> http://www.adafruit.com/products/618
 
@@ -32,6 +36,12 @@
   #define TFT_RST       37 // Display reset
   #define TFT_DC        38 // Display data/command select
   #define TFT_BACKLIGHT  7 // Display backlight pin
+
+#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+  #define TFT_CS        44 // PyBadge/PyGamer display control pins: chip select
+  #define TFT_RST       46 // Display reset
+  #define TFT_DC        45 // Display data/command select
+  #define TFT_BACKLIGHT 47 // Display backlight pin
 
 #elif defined(ESP32)
   #define TFT_CS         5
@@ -66,11 +76,16 @@
 // SCLK = pin 13. This is the fastest mode of operation and is required if
 // using the breakout board's microSD card.
 
-// For 1.44" and 1.8" TFT with ST7735 (including HalloWing) use:
-Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+#if defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+    // For PyBadge and PyGamer
+    Adafruit_ST7735 tft = Adafruit_ST7735(&SPI1, TFT_CS, TFT_DC, TFT_RST);
+#else
+    // For 1.44" and 1.8" TFT with ST7735 (including HalloWing) use:
+    Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
-// For 1.54" TFT with ST7789:
-//Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
+    // For 1.54" and 2.0" TFT with ST7789:
+    //Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
+#endif
 
 // OPTION 2 lets you interface the display using ANY TWO or THREE PINS,
 // tradeoff being that performance is not as fast as hardware SPI above.
@@ -90,6 +105,13 @@ void setup(void) {
   tft.initR(INITR_HALLOWING);        // Initialize HalloWing-oriented screen
   pinMode(TFT_BACKLIGHT, OUTPUT);
   digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
+
+#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+  tft.initR(INITR_BLACKTAB);        // Initialize ST7735R screen
+  tft.setRotation(1);
+  pinMode(TFT_BACKLIGHT, OUTPUT);
+  digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
+
 #else
   // Use this initializer if using a 1.8" TFT screen:
   tft.initR(INITR_BLACKTAB);      // Init ST7735S chip, black tab
@@ -102,6 +124,9 @@ void setup(void) {
 
   // OR use this initializer (uncomment) if using a 1.54" 240x240 TFT:
   //tft.init(240, 240);           // Init ST7789 240x240
+
+  // OR use this initializer (uncomment) if using a 2.0" 320x240 TFT:
+  //tft.init(240, 320);           // Init ST7789 320x240
 #endif
 
   Serial.println(F("Initialized"));
