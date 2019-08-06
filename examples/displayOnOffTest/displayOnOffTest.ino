@@ -60,7 +60,7 @@
 // For 1.44" and 1.8" TFT with ST7735 (including HalloWing) use:
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
-// For 1.54" and 2.0" TFT with ST7789:
+// For 1.3", 1.54", and 2.0" TFT with ST7789:
 //Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 // OPTION 2 lets you interface the display using ANY TWO or THREE PINS,
