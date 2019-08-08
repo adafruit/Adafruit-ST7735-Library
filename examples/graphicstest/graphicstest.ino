@@ -91,8 +91,8 @@
 
 // OPTION 2 lets you interface the display using ANY TWO or THREE PINS,
 // tradeoff being that performance is not as fast as hardware SPI above.
-#define TFT_MOSI 11  // Data out
-#define TFT_SCLK 13  // Clock out
+//#define TFT_MOSI 11  // Data out
+//#define TFT_SCLK 13  // Clock out
 
 // For ST7735-based displays, we will use this call
 //Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
