@@ -93,7 +93,13 @@
 // tradeoff being that performance is not as fast as hardware SPI above.
 //#define TFT_MOSI 11  // Data out
 //#define TFT_SCLK 13  // Clock out
+
+// For ST7735-based displays, we will use this call
 //Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+
+// OR for the ST7789-based displays, we will use this call
+//Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
+
 
 float p = 3.1415926;
 
@@ -124,7 +130,7 @@ void setup(void) {
   // OR use this initializer (uncomment) if using a 0.96" 180x60 TFT:
   //tft.initR(INITR_MINI160x80);  // Init ST7735S mini display
 
-  // OR use this initializer (uncomment) if using a 1.54" 240x240 TFT:
+  // OR use this initializer (uncomment) if using a 1.3" or 1.54" 240x240 TFT:
   //tft.init(240, 240);           // Init ST7789 240x240
 
   // OR use this initializer (uncomment) if using a 2.0" 320x240 TFT:
