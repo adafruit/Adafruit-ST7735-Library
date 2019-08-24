@@ -51,9 +51,9 @@ static const uint8_t PROGMEM
   generic_st7789[] =  {                // Init commands for 7789 screens
     9,                              //  9 commands in list:
     ST77XX_SWRESET,   ST_CMD_DELAY, //  1: Software reset, no args, w/delay
-      150,                          //    150 ms delay
+      150,                          //     ~150 ms delay
     ST77XX_SLPOUT ,   ST_CMD_DELAY, //  2: Out of sleep mode, no args, w/delay
-      255,                          //     255 = 500 ms delay
+      10,                          //      10 ms delay
     ST77XX_COLMOD , 1+ST_CMD_DELAY, //  3: Set color mode, 1 arg + delay:
       0x55,                         //     16-bit color
       10,                           //     10 ms delay
@@ -74,7 +74,7 @@ static const uint8_t PROGMEM
     ST77XX_NORON  ,   ST_CMD_DELAY, //  8: Normal display on, no args, w/delay
       10,                           //     10 ms delay
     ST77XX_DISPON ,   ST_CMD_DELAY, //  9: Main screen turn on, no args, delay
-    255 };                          //     255 = max (500 ms) delay
+      10 };                          //    10 ms delay
 
 /**************************************************************************/
 /*!
