@@ -16,6 +16,17 @@ The 2.0" TFT breakout
 as well as Adafruit raw 1.8" TFT display
   ----> http://www.adafruit.com/products/618
 
+This also works with many of the products with integrated displays
+
+The HalloWing M0 Express
+  ----> http://www.adafruit.com/products/3900
+The PyBadge
+  ----> http://www.adafruit.com/products/4200
+The PyGamer
+  ----> http://www.adafruit.com/products/4242
+The HalloWing M4 Express
+  ----> http://www.adafruit.com/products/4300
+    
   Check out the links above for our tutorials and wiring diagrams
   These displays use SPI to communicate, 4 or 5 pins are required to
   interface (RST is optional)
@@ -32,7 +43,6 @@ as well as Adafruit raw 1.8" TFT display
 #include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
 #include <SPI.h>
 
-
 // For the breakout, you can use any 2 or 3 pins
 // These pins will also work for the 1.8" TFT shield
 #ifdef ADAFRUIT_HALLOWING
@@ -41,7 +51,7 @@ as well as Adafruit raw 1.8" TFT display
   #define TFT_DC        38 // Display data/command select
   #define TFT_BACKLIGHT  7 // Display backlight pin
 
-#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS) || defined(ADAFRUIT_HALLOWING_M4_EXPRESS)
   #define TFT_CS        44 // PyBadge/PyGamer display control pins: chip select
   #define TFT_RST       46 // Display reset
   #define TFT_DC        45 // Display data/command select
@@ -79,7 +89,10 @@ as well as Adafruit raw 1.8" TFT display
 // (for UNO thats sclk = 13 and sid = 11) and pin 10 must be
 // an output. This is much faster - also required if you want
 // to use the microSD card (see the image drawing example)
-#if defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+#if defined(ADAFRUIT_HALLOWING_M4_EXPRESS)
+    // For Hallowing M4 Express
+    Adafruit_ST7789 tft = Adafruit_ST7789(&SPI1, TFT_CS, TFT_DC, TFT_RST);
+#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
     // For PyBadge and PyGamer
     Adafruit_ST7735 tft = Adafruit_ST7735(&SPI1, TFT_CS, TFT_DC, TFT_RST);
 #else
@@ -99,7 +112,14 @@ void setup(void) {
   Serial.begin(9600);
   Serial.print("Hello! Adafruit ST77XX rotation test");
 
-  #ifdef ADAFRUIT_HALLOWING
+  #ifdef ADAFRUIT_HALLOWING_M4_EXPRESS
+    // HalloWing M4 is a special case. It uses a ST7789 display just like the
+    // breakout board, but the orientation and backlight control are different.
+    tft.init(240, 240);                // Initialize ST7789 screen
+    pinMode(TFT_BACKLIGHT, OUTPUT);
+    digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
+  
+  #elif ADAFRUIT_HALLOWING
     // HalloWing is a special case. It uses a ST7735R display just like the
     // breakout board, but the orientation and backlight control are different.
     tft.initR(INITR_HALLOWING);        // Initialize HalloWing-oriented screen
