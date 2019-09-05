@@ -16,6 +16,17 @@
   as well as Adafruit raw 1.8" TFT display
     ----> http://www.adafruit.com/products/618
 
+  This also works with many of the products with integrated displays
+
+  The HalloWing M0 Express
+    ----> http://www.adafruit.com/products/3900
+  The PyBadge
+    ----> http://www.adafruit.com/products/4200
+  The PyGamer
+    ----> http://www.adafruit.com/products/4242
+  The HalloWing M4 Express
+    ----> http://www.adafruit.com/products/4300
+
   Check out the links above for our tutorials and wiring diagrams.
   These displays use SPI to communicate, 4 or 5 pins are required to
   interface (RST is optional).
@@ -39,7 +50,7 @@
   #define TFT_DC        38 // Display data/command select
   #define TFT_BACKLIGHT  7 // Display backlight pin
 
-#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS) || defined(ADAFRUIT_HALLOWING_M4_EXPRESS)
   #define TFT_CS        44 // PyBadge/PyGamer display control pins: chip select
   #define TFT_RST       46 // Display reset
   #define TFT_DC        45 // Display data/command select
@@ -78,7 +89,10 @@
 // SCLK = pin 13. This is the fastest mode of operation and is required if
 // using the breakout board's microSD card.
 
-#if defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
+#if defined(ADAFRUIT_HALLOWING_M4_EXPRESS)
+    // For Hallowing M4 Express
+    Adafruit_ST7789 tft = Adafruit_ST7789(&SPI1, TFT_CS, TFT_DC, TFT_RST);
+#elif defined(ADAFRUIT_PYBADGE_M4_EXPRESS) || defined(ADAFRUIT_PYGAMER_M4_EXPRESS)
     // For PyBadge and PyGamer
     Adafruit_ST7735 tft = Adafruit_ST7735(&SPI1, TFT_CS, TFT_DC, TFT_RST);
 #else
@@ -107,7 +121,14 @@ void setup(void) {
   Serial.begin(9600);
   Serial.print(F("Hello! ST77xx TFT Test"));
 
-#ifdef ADAFRUIT_HALLOWING
+#ifdef ADAFRUIT_HALLOWING_M4_EXPRESS
+  // HalloWing M4 is a special case. It uses a ST7789 display just like the
+  // breakout board, but the orientation and backlight control are different.
+  tft.init(240, 240);                // Initialize ST7789 screen
+  pinMode(TFT_BACKLIGHT, OUTPUT);
+  digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
+
+#elif ADAFRUIT_HALLOWING
   // HalloWing is a special case. It uses a ST7735R display just like the
   // breakout board, but the orientation and backlight control are different.
   tft.initR(INITR_HALLOWING);        // Initialize HalloWing-oriented screen
