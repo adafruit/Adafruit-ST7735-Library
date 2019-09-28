@@ -9,7 +9,7 @@ git:
   quiet: true
 env:
   global:
-     - ARDUINO_IDE_VERSION="1.8.5"
+     - ARDUINO_IDE_VERSION="1.8.9"
      - PRETTYNAME="Adafruit ST77xx Display Arduino Library"
 # Optional, will default to "$TRAVIS_BUILD_DIR/Doxyfile"
 #    - DOXYFILE: $TRAVIS_BUILD_DIR/Doxyfile
