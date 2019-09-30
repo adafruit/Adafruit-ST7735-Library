@@ -119,7 +119,7 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
   displayInit(generic_st7789);
 
   if ((width == 135) && (height == 240)) { 
-    setRotation(3);
+    setRotation(0);
   } else {
     setRotation(0);
   }
@@ -153,15 +153,25 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
      break;
   case 2:
      madctl  = ST77XX_MADCTL_RGB;
-     _xstart = 0;
-     _ystart = 0;
+     if ((WIDTH == 135) && (HEIGHT == 240)) { 
+       _xstart = _colstart-1;
+       _ystart = _rowstart;
+     } else {
+       _xstart = 0;
+       _ystart = 0;
+     }
      _width = WIDTH;
      _height = HEIGHT;
      break;
    case 3:
      madctl  = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
-     _xstart = 0;
-     _ystart = 0;
+     if ((WIDTH == 135) && (HEIGHT == 240)) { 
+       _xstart = _rowstart;
+       _ystart = _colstart;
+     } else {
+       _xstart = 0;
+       _ystart = 0;
+     }
      _height = WIDTH;
      _width = HEIGHT;
      break;
