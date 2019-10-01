@@ -28,10 +28,10 @@
 // You will need to use Adafruit's CircuitPlayground Express Board Definition
 // for Gizmos rather than the Arduino version since there are additional SPI
 // ports exposed.
-#ifdef ADAFRUIT_CIRCUITPLAYGROUND_M0
-  SPIClass* spi = &SPI1;
-#else
+#if (SPI_INTERFACES_COUNT == 1)
   SPIClass* spi = &SPI;
+#else
+  SPIClass* spi = &SPI1;
 #endif
 
 // OPTION 1 (recommended) is to use the HARDWARE SPI pins, which are unique
@@ -67,7 +67,7 @@ void setup(void) {
   // large block of text
   tft.fillScreen(ST77XX_BLACK);
   testdrawtext("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur adipiscing ante sed nibh tincidunt feugiat. Maecenas enim massa, fringilla sed malesuada et, malesuada sit amet turpis. Sed porttitor neque ut ante pretium vitae malesuada nunc bibendum. Nullam aliquet ultrices massa eu hendrerit. Ut sed nisi lorem. In vestibulum purus a tortor imperdiet posuere. ", ST77XX_WHITE);
-  delay(1000);
+  delay(60000);
 
   // tft print function!
   tftPrintTest();
