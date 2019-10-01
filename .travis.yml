@@ -9,20 +9,29 @@ git:
   quiet: true
 env:
   global:
-     - ARDUINO_IDE_VERSION="1.8.5"
+     - ARDUINO_IDE_VERSION="1.8.9"
      - PRETTYNAME="Adafruit ST77xx Display Arduino Library"
 # Optional, will default to "$TRAVIS_BUILD_DIR/Doxyfile"
 #    - DOXYFILE: $TRAVIS_BUILD_DIR/Doxyfile
+
+addons:
+  apt:
+    packages:
+      - python3
+      - python3-pip
+      - python3-setuptools
 
 before_install:
    - source <(curl -SLs https://raw.githubusercontent.com/adafruit/travis-ci-arduino/master/install.sh)
 
 install:
+   - pip3 install --user adafruit-nrfutil
    - arduino --install-library "Adafruit GFX Library","Adafruit seesaw Library"
 
 script:
    - build_main_platforms
    - build_arcada_platforms
+   - build_cplay_platforms
 
 # Generate and deploy documentation
 after_success:
