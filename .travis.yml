@@ -18,6 +18,7 @@ before_install:
    - source <(curl -SLs https://raw.githubusercontent.com/adafruit/travis-ci-arduino/master/install.sh)
 
 install:
+   - pip3 install --user adafruit-nrfutil
    - arduino --install-library "Adafruit GFX Library","Adafruit seesaw Library"
 
 script:
