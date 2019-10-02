@@ -28,10 +28,10 @@
 // You will need to use Adafruit's CircuitPlayground Express Board Definition
 // for Gizmos rather than the Arduino version since there are additional SPI
 // ports exposed.
-#ifdef ADAFRUIT_CIRCUITPLAYGROUND_M0
-  SPIClass* spi = &SPI1;
-#else
+#if (SPI_INTERFACES_COUNT == 1)
   SPIClass* spi = &SPI;
+#else
+  SPIClass* spi = &SPI1;
 #endif
 
 // OPTION 1 (recommended) is to use the HARDWARE SPI pins, which are unique
