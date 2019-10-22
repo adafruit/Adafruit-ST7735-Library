@@ -7,6 +7,8 @@ The 1.8" TFT shield
   ----> https://www.adafruit.com/product/802
 The 1.44" TFT breakout
   ----> https://www.adafruit.com/product/2088
+The 1.14" TFT breakout
+----> https://www.adafruit.com/product/4383
 The 1.3" TFT breakout
   ----> https://www.adafruit.com/product/4313
 The 1.54" TFT breakout
@@ -99,7 +101,7 @@ The HalloWing M4 Express
     // For 1.44" and 1.8" TFT with ST7735 (including HalloWing) use:
     Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
     
-    // For 1.3", 1.54", and 2.0" TFT with ST7789
+    // For 1.14", 1.3", 1.54", and 2.0" TFT with ST7789:
     //Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 #endif
 
@@ -147,7 +149,10 @@ void setup(void) {
 
       // OR use this initializer (uncomment) if using a 2.0" 320x240 TFT:
       //tft.init(240, 320);           // Init ST7789 320x240
-  #endif
+
+      // OR use this initializer (uncomment) if using a 1.14" 240x135 TFT:
+      //tft.init(135, 240);           // Init ST7789 240x135
+#endif
   
   Serial.println("init");
 
