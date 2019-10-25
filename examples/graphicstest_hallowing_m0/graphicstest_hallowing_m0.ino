@@ -196,7 +196,7 @@ void testdrawcircles(uint8_t radius, uint16_t color) {
 
 void testtriangles() {
   tft.fillScreen(ST77XX_BLACK);
-  int color = 0xF800;
+  uint16_t color = 0xF800;
   int t;
   int w = tft.width()/2;
   int x = tft.height()-1;
@@ -213,7 +213,7 @@ void testtriangles() {
 
 void testroundrects() {
   tft.fillScreen(ST77XX_BLACK);
-  int color = 100;
+  uint16_t color = 100;
   int i;
   int t;
   for(t = 0 ; t <= 4; t+=1) {
