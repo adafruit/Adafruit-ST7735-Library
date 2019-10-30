@@ -35,21 +35,11 @@
 #include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
 #include <SPI.h>
 
-#if defined(ESP32)
-  #define TFT_CS         5
-  #define TFT_RST        22 
-  #define TFT_DC         21
-  //
-  // define not needed for all pins; reference for ESP32 physical pins connections to VSPI:
-  // SDA  GPIO23 aka VSPI MOSI
-  // SCLK GPIO18 aka SCK aka VSPI SCK
-  // D/C  GPIO21 aka A0 (also I2C SDA)
-  // RST  GPIO22 aka RESET (also I2C SCL)
-  // CS   GPIO5  aka chip select
-  // LED  3.3V
-  // VCC  5V
-  // GND - GND
-  //
+#if defined(ARDUINO_FEATHER_ESP32) // Feather Huzzah32
+  #define TFT_CS         14
+  #define TFT_RST        15
+  #define TFT_DC         32
+
 #elif defined(ESP8266)
   #define TFT_CS         4
   #define TFT_RST        16                                            
