@@ -59,6 +59,11 @@ The HalloWing M4 Express
   #define TFT_DC        45 // Display data/command select
   #define TFT_BACKLIGHT 47 // Display backlight pin
 
+#elif defined(ARDUINO_FEATHER_ESP32) // Feather Huzzah32
+  #define TFT_CS         14
+  #define TFT_RST        15
+  #define TFT_DC         32
+
 #elif defined(ESP32)
   #define TFT_CS         5
   #define TFT_RST        22 
