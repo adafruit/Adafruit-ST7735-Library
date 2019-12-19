@@ -227,8 +227,8 @@ void Adafruit_ST7735::initR(uint8_t options) {
     _colstart = 2;
     _rowstart = 3; // For default rotation 0
   } else if(options == INITR_MINI160x80) {
-    _height   = ST7735_TFTHEIGHT_160;
-    _width    = ST7735_TFTWIDTH_80;
+    _height   = ST7735_TFTWIDTH_80;
+    _width    = ST7735_TFTHEIGHT_160;
     displayInit(Rcmd2green160x80);
     _colstart = 24;
     _rowstart = 0;
