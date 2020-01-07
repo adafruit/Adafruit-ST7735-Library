@@ -5,11 +5,11 @@ on: [pull_request, push, repository_dispatch]
 jobs:
   build:
     strategy:
-    fail-fast: false
-    matrix:
-      arduino-platform: ['main_platforms', 'arcada_platforms']
+      fail-fast: false
+      matrix:
+        arduino-platform: ['main_platforms', 'arcada_platforms']
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/setup-python@v1
       with:
