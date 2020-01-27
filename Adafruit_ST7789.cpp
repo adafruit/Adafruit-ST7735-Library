@@ -113,8 +113,6 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
     _colstart = 0;
     _rowstart = 0;
   }
-  WIDTH = width;
-  HEIGHT = height;
   _width = width;
   _height = height;
 
