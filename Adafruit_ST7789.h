@@ -9,6 +9,7 @@ public:
   Adafruit_ST7789(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk,
                   int8_t rst = -1);
   Adafruit_ST7789(int8_t cs, int8_t dc, int8_t rst);
+  Adafruit_ST7789(uint8_t w, uint8_t h, int8_t cs, int8_t dc, int8_t rst);
 #if !defined(ESP8266)
   Adafruit_ST7789(SPIClass *spiClass, int8_t cs, int8_t dc, int8_t rst);
 #endif // end !ESP8266
