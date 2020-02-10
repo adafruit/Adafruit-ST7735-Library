@@ -13,7 +13,7 @@
 */
 Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk,
                                  int8_t rst)
-    : Adafruit_ST77xx(320, 240, cs, dc, mosi, sclk, rst) {}
+    : Adafruit_ST77xx(240, 320, cs, dc, mosi, sclk, rst) {}
 
 /*!
     @brief  Instantiate Adafruit ST7789 driver with hardware SPI
@@ -22,7 +22,7 @@ Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk,
     @param  rst  Reset pin # (optional, pass -1 if unused)
 */
 Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t rst)
-    : Adafruit_ST77xx(320, 240, cs, dc, rst) {}
+    : Adafruit_ST77xx(240, 320, cs, dc, rst) {}
 
 #if !defined(ESP8266)
 /*!
@@ -34,7 +34,7 @@ Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, int8_t rst)
 */
 Adafruit_ST7789::Adafruit_ST7789(SPIClass *spiClass, int8_t cs, int8_t dc,
                                  int8_t rst)
-    : Adafruit_ST77xx(320, 240, spiClass, cs, dc, rst) {}
+    : Adafruit_ST77xx(240, 320, spiClass, cs, dc, rst) {}
 #endif // end !ESP8266
 
 // SCREEN INITIALIZATION ***************************************************
@@ -113,8 +113,8 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
     _colstart = 0;
     _rowstart = 0;
   }
-  _width = width;
-  _height = height;
+  WIDTH = width;
+  HEIGHT = height;
 
   displayInit(generic_st7789);
 
