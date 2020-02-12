@@ -15,6 +15,9 @@ public:
 
   void setRotation(uint8_t m);
   void init(uint16_t width, uint16_t height, uint8_t spiMode = SPI_MODE0);
+private:
+  uint16_t windowWidth;
+  uint16_t windowHeight;
 };
 
 #endif // _ADAFRUIT_ST7789H_

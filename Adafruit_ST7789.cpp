@@ -113,8 +113,9 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
     _colstart = 0;
     _rowstart = 0;
   }
-  WIDTH = width;
-  HEIGHT = height;
+
+  windowWidth = width;
+  windowHeight = height;
 
   displayInit(generic_st7789);
 
@@ -141,15 +142,15 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
     madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST77XX_MADCTL_RGB;
     _xstart = _colstart;
     _ystart = _rowstart;
-    _width = WIDTH;
-    _height = HEIGHT;
+    _width = windowWidth;
+    _height = windowHeight;
     break;
   case 1:
     madctl = ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
     _xstart = _rowstart;
     _ystart = _colstart;
-    _height = WIDTH;
-    _width = HEIGHT;
+    _height = windowWidth;
+    _width = windowHeight;
     break;
   case 2:
     madctl = ST77XX_MADCTL_RGB;
@@ -160,8 +161,8 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
       _xstart = 0;
       _ystart = 0;
     }
-    _width = WIDTH;
-    _height = HEIGHT;
+    _width = windowWidth;
+    _height = windowHeight;
     break;
   case 3:
     madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
@@ -172,8 +173,8 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
       _xstart = 0;
       _ystart = 0;
     }
-    _height = WIDTH;
-    _width = HEIGHT;
+    _height = windowWidth;
+    _width = windowHeight;
     break;
   }
 
