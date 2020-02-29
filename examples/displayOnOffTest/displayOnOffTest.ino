@@ -195,6 +195,11 @@ void setup() {
 
       // OR use this initializer (uncomment) if using a 2.0" 320x240 TFT:
       //tft.init(240, 320);           // Init ST7789 320x240
+  
+      // SPI speed defaults to SPI_DEFAULT_FREQ defined in the library, you can override it here
+      // Note that speed allowable depends on chip and quality of wiring, if you go too fast, you
+      // may end up with a black screen some times, or all the time.
+      //tft.setSPISpeed(40000000);
     #endif
 
     // initialise the display
