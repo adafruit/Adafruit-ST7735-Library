@@ -103,6 +103,11 @@ void setup(void) {
 
   // OR use this initializer (uncomment) if using a 1.14" 240x135 TFT:
   //tft.init(135, 240);           // Init ST7789 240x135
+  
+  // SPI speed defaults to SPI_DEFAULT_FREQ defined in the library, you can override it here
+  // Note that speed allowable depends on chip and quality of wiring, if you go too fast, you
+  // may end up with a black screen some times, or all the time.
+  //tft.setSPISpeed(40000000);
 
   Serial.println(F("Initialized"));
 
