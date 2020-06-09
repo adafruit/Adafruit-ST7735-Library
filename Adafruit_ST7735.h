@@ -59,6 +59,7 @@ public:
   // Differences between displays (usu. identified by colored tab on
   // plastic overlay) are odd enough that we need to do this 'by hand':
   void initB(void);                             // for ST7735B displays
+  void initS(void);                             // for ST7735S displays
   void initR(uint8_t options = INITR_GREENTAB); // for ST7735R
 
   void setRotation(uint8_t m);
