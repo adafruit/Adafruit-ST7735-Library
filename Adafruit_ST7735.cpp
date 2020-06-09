@@ -212,6 +212,22 @@ void Adafruit_ST7735::initB(void) {
 
 /**************************************************************************/
 /*!
+    @brief  Initialization code common to ST7735S displays
+*/
+/**************************************************************************/
+void Adafruit_ST7735::initS() {
+  commonInit(Rcmd1);
+  _height = ST7735_TFTWIDTH_80;
+  _width = ST7735_TFTHEIGHT_160;
+  displayInit(Rcmd2green160x80);
+  _colstart = 24;
+  _rowstart = 0;
+  displayInit(Rcmd3);
+  setRotation(0);
+}
+
+/**************************************************************************/
+/*!
     @brief  Initialization code common to all ST7735R displays
     @param  options  Tab color from adafruit purchase
 */
