@@ -13,6 +13,7 @@
 #define INITR_144GREENTAB 0x01
 #define INITR_MINI160x80 0x04
 #define INITR_HALLOWING 0x05
+#define INITR_MINI160x80_RGB 0x06
 
 // Some register settings
 #define ST7735_MADCTL_BGR 0x08
@@ -59,7 +60,6 @@ public:
   // Differences between displays (usu. identified by colored tab on
   // plastic overlay) are odd enough that we need to do this 'by hand':
   void initB(void);                             // for ST7735B displays
-  void initS(void);                             // for ST7735S displays
   void initR(uint8_t options = INITR_GREENTAB); // for ST7735R
 
   void setRotation(uint8_t m);
