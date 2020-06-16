@@ -286,7 +286,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     if (tabcolor == INITR_144GREENTAB) {
       _height = ST7735_TFTHEIGHT_128;
       _width = ST7735_TFTWIDTH_128;
-    } else if ((tabcolor == INITR_MINI160x80)|| (tabcolor == INITR_MINI160x80_RGB)) {
+    } else if ((tabcolor == INITR_MINI160x80) || (tabcolor == INITR_MINI160x80_RGB)) {
       _height = ST7735_TFTHEIGHT_160;
       _width = ST7735_TFTWIDTH_80;
     } else {
@@ -306,7 +306,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     if (tabcolor == INITR_144GREENTAB) {
       _width = ST7735_TFTHEIGHT_128;
       _height = ST7735_TFTWIDTH_128;
-    } else if ((tabcolor == INITR_MINI160x80) ||  (tabcolor == INITR_MINI160x80_RGB)) {
+    } else if ((tabcolor == INITR_MINI160x80) || (tabcolor == INITR_MINI160x80_RGB)) {
       _width = ST7735_TFTHEIGHT_160;
       _height = ST7735_TFTWIDTH_80;
     } else {
@@ -326,7 +326,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     if (tabcolor == INITR_144GREENTAB) {
       _height = ST7735_TFTHEIGHT_128;
       _width = ST7735_TFTWIDTH_128;
-    } else if ((tabcolor == INITR_MINI160x80) ||  (tabcolor == INITR_MINI160x80_RGB)) {
+    } else if ((tabcolor == INITR_MINI160x80) || (tabcolor == INITR_MINI160x80_RGB)) {
       _height = ST7735_TFTHEIGHT_160;
       _width = ST7735_TFTWIDTH_80;
     } else {
@@ -346,7 +346,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     if (tabcolor == INITR_144GREENTAB) {
       _width = ST7735_TFTHEIGHT_128;
       _height = ST7735_TFTWIDTH_128;
-    } else if ((tabcolor == INITR_MINI160x80) ||  (tabcolor == INITR_MINI160x80_RGB)) {
+    } else if ((tabcolor == INITR_MINI160x80) || (tabcolor == INITR_MINI160x80_RGB)) {
       _width = ST7735_TFTHEIGHT_160;
       _height = ST7735_TFTWIDTH_80;
     } else {
