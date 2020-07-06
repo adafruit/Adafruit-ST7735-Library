@@ -343,9 +343,9 @@ void vscrolltest ()
 
 void hscrolltest() 
 {
-  char message [] PROGMEM = "In a village of La Mancha, the name of which I have no\
-  desire to call to mind, there lived not long since one of those gentlemen that keep\
-  a lance in the lance-rack, an old buckler, a lean hack, and a greyhound for coursing.";
+  char message [] = "In a village of La Mancha, the name of which I have no desire\
+  to call to mind, there lived not long since one of those gentlemen that keep a lance\
+  in the lance-rack, an old buckler, a lean hack, and a greyhound for coursing.";
   int x, minX;
 
   tft.setRotation(1);
