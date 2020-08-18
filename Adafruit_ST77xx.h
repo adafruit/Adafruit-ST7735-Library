@@ -101,6 +101,7 @@ public:
   void setRotation(uint8_t r);
   void enableDisplay(boolean enable);
   void enableTearing(boolean enable);
+  void enableSleep(boolean enable);
 
 protected:
   uint8_t _colstart = 0,   ///< Some displays need this changed to offset
