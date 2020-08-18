@@ -238,6 +238,16 @@ void Adafruit_ST77xx::enableTearing(boolean enable) {
   sendCommand(enable ? ST77XX_TEON : ST77XX_TEOFF);
 }
 
+/**************************************************************************/
+/*!
+ @brief  Change whether sleep mode is on or off
+ @param  enable True if you want sleep mode ON, false OFF
+ */
+/**************************************************************************/
+void Adafruit_ST77xx::enableSleep(boolean enable) {
+  sendCommand(enable ? ST77XX_SLPIN : ST77XX_SLPOUT);
+}
+
 ////////// stuff not actively being used, but kept for posterity
 /*
 
