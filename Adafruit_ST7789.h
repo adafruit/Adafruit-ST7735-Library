@@ -16,6 +16,10 @@ public:
   void setRotation(uint8_t m);
   void init(uint16_t width, uint16_t height, uint8_t spiMode = SPI_MODE0);
 
+protected:
+  uint8_t _colstart2 = 0, ///< Offset from the right
+      _rowstart2 = 0;     ///< Offset from the bottom
+
 private:
   uint16_t windowWidth;
   uint16_t windowHeight;
