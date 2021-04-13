@@ -350,14 +350,14 @@ void mediabuttons()
   const int br = 6; // border radius
 
   // Play button
-  tft.fillScreen(ST7735_BLACK);
-  tft.fillRoundRect(border, border, bw, bh, br, ST7735_WHITE);
-  tft.fillTriangle(border+margin, border+margin, border+margin, border+bh-margin,  w-border-margin, border+bh/2, ST7735_RED);
+  tft.fillScreen(ST77XX_BLACK);
+  tft.fillRoundRect(border, border, bw, bh, br, ST77XX_WHITE);
+  tft.fillTriangle(border+margin, border+margin, border+margin, border+bh-margin,  w-border-margin, border+bh/2, ST77XX_RED);
 
   // Pause button
   const int h2 = h/2;
   const int barw = (bw-3*margin)/2; // bar width
-  tft.fillRoundRect(border, h2+border, bw, bh, br, ST7735_WHITE);
-  tft.fillRoundRect(border+margin, h2+border+margin, barw, bh-2*margin, br/2, ST7735_GREEN);
-  tft.fillRoundRect(border+margin+barw+margin, h2+border+margin, barw, bh-2*margin, br/2, ST7735_GREEN);
+  tft.fillRoundRect(border, h2+border, bw, bh, br, ST77XX_WHITE);
+  tft.fillRoundRect(border+margin, h2+border+margin, barw, bh-2*margin, br/2, ST77XX_GREEN);
+  tft.fillRoundRect(border+margin+barw+margin, h2+border+margin, barw, bh-2*margin, br/2, ST77XX_GREEN);
 }
