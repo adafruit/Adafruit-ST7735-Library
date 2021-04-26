@@ -40,8 +40,8 @@ Adafruit_ST7789 tft = Adafruit_ST7789(spi, TFT_CS, TFT_DC, TFT_RST);
 
 // OPTION 2 lets you interface the display using ANY TWO or THREE PINS,
 // tradeoff being that performance is not as fast as hardware SPI above.
-//#define TFT_MOSI      PIN_A5  // Data out
-//#define TFT_SCLK      PIN_A4  // Clock out
+//#define TFT_MOSI      PIN_WIRE_SDA  // Data out
+//#define TFT_SCLK      PIN_WIRE_SCL  // Clock out
 //Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
 float p = 3.1415926;
