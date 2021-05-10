@@ -17,32 +17,29 @@ Adafruit_miniTFTWing ss;
 #define TFT_RST    -1    // we use the seesaw for resetting to save a pin
 
 #ifdef ESP8266
-   #define TFT_CS   2
-   #define TFT_DC   16
-#endif
-#ifdef ESP32
-   #define TFT_CS   14
-   #define TFT_DC   32
-#endif
-#ifdef TEENSYDUINO
-   #define TFT_CS   8
-   #define TFT_DC   3
-#endif
-#ifdef ARDUINO_STM32_FEATHER
-   #define TFT_CS   PC5
-   #define TFT_DC   PC7
-#endif
-#ifdef ARDUINO_NRF52832_FEATHER /* BSP 0.6.5 and higher! */
-   #define TFT_CS   27
-   #define TFT_DC   30
+   #define TFT_CS   0
+   #define TFT_DC   15
+#else if defined(ESP32)
+   #define TFT_CS   15
+   #define TFT_DC   33
+#else if defined(TEENSYDUINO)
+   #define TFT_DC   10
+   #define TFT_CS   4
+#else if defined(ARDUINO_STM32_FEATHER)
+   #define TFT_DC   PB4
+   #define TFT_CS   PA15
+#else if defined(ARDUINO_NRF52832_FEATHER)  /* BSP 0.6.5 and higher! */
+   #define TFT_DC   11
+   #define TFT_CS   31
+#else if defined(ARDUINO_MAX32620FTHR) || defined(ARDUINO_MAX32630FTHR)
+   #define TFT_DC   P5_4
+   #define TFT_CS   P5_3
+#else
+    // Anything else, defaults!
+   #define TFT_CS   9
+   #define TFT_DC   10
 #endif
 
-// Anything else!
-#if defined (__AVR_ATmega32U4__) || defined(ARDUINO_SAMD_FEATHER_M0) || defined (__AVR_ATmega328P__) || \
-    defined(ARDUINO_SAMD_ZERO) || defined(__SAMD51__) || defined(__SAM3X8E__) || defined(ARDUINO_NRF52840_FEATHER)
-   #define TFT_CS   5
-   #define TFT_DC   6
-#endif
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
 
