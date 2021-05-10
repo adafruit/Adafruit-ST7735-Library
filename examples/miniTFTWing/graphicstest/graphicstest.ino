@@ -16,22 +16,23 @@
 Adafruit_miniTFTWing ss;
 #define TFT_RST    -1    // we use the seesaw for resetting to save a pin
 
+
 #ifdef ESP8266
    #define TFT_CS   0
    #define TFT_DC   15
-#else if defined(ESP32)
+#elif defined(ESP32)
    #define TFT_CS   15
    #define TFT_DC   33
-#else if defined(TEENSYDUINO)
+#elif defined(TEENSYDUINO)
    #define TFT_DC   10
    #define TFT_CS   4
-#else if defined(ARDUINO_STM32_FEATHER)
+#elif defined(ARDUINO_STM32_FEATHER)
    #define TFT_DC   PB4
    #define TFT_CS   PA15
-#else if defined(ARDUINO_NRF52832_FEATHER)  /* BSP 0.6.5 and higher! */
+#elif defined(ARDUINO_NRF52832_FEATHER)  /* BSP 0.6.5 and higher! */
    #define TFT_DC   11
    #define TFT_CS   31
-#else if defined(ARDUINO_MAX32620FTHR) || defined(ARDUINO_MAX32630FTHR)
+#elif defined(ARDUINO_MAX32620FTHR) || defined(ARDUINO_MAX32630FTHR)
    #define TFT_DC   P5_4
    #define TFT_CS   P5_3
 #else
@@ -39,7 +40,6 @@ Adafruit_miniTFTWing ss;
    #define TFT_CS   9
    #define TFT_DC   10
 #endif
-
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
 
