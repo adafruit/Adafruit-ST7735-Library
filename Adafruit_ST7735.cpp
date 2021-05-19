@@ -181,6 +181,16 @@ static const uint8_t PROGMEM
       0x00, 0x00,                   //     XSTART = 0
       0x00, 0x9F },                 //     XEND = 159
 
+  Rcmd2green160x80bgr[] = {         // 7735S init, part 2 (mini 160x80 bgr)
+    3,                              //  3 commands in list:
+    ST77XX_CASET,   4,              //  1: Column addr set, 4 args, no delay:
+      0x00, 0x00,                   //     XSTART = 0
+      0x00, 0x4F,                   //     XEND = 79
+    ST77XX_RASET,   4,              //  2: Row addr set, 4 args, no delay:
+      0x00, 0x00,                   //     XSTART = 0
+      0x00, 0x9F,                   //     XEND = 159
+     ST77XX_INVON,  0 },            //  3: Invert display, no args   
+
   Rcmd3[] = {                       // 7735R init, part 3 (red or green tab)
     4,                              //  4 commands in list:
     ST7735_GMCTRP1, 16      ,       //  1: Gamma Adjustments (pos. polarity), 16 args + delay:
@@ -234,6 +244,12 @@ void Adafruit_ST7735::initR(uint8_t options) {
     displayInit(Rcmd2green160x80);
     _colstart = 24;
     _rowstart = 0;
+  } else if (options == INITR_MINI160x80BGR) {
+    _height = ST7735_TFTHEIGHT_160;
+    _width = ST7735_TFTWIDTH_80;
+    displayInit(Rcmd2green160x80bgr);
+    _colstart = 26;
+    _rowstart = 1;
   } else {
     // colstart, rowstart left at default '0' values
     displayInit(Rcmd2red);
@@ -242,9 +258,15 @@ void Adafruit_ST7735::initR(uint8_t options) {
 
   // Black tab, change MADCTL color filter
   if ((options == INITR_BLACKTAB) || (options == INITR_MINI160x80)) {
-    uint8_t data = 0xC0;
-    sendCommand(ST77XX_MADCTL, &data, 1);
+    madctl = 0xC0;
+    sendCommand(ST77XX_MADCTL, &madctl, 1);
   }
+
+  if (options == INITR_MINI160x80BGR)
+  {
+    invertOnCommand = ST77XX_INVOFF;
+    invertOffCommand = ST77XX_INVON;
+  } 
 
   if (options == INITR_HALLOWING) {
     // Hallowing is simply a 1.44" green tab upside-down:
@@ -265,7 +287,6 @@ void Adafruit_ST7735::initR(uint8_t options) {
 */
 /**************************************************************************/
 void Adafruit_ST7735::setRotation(uint8_t m) {
-  uint8_t madctl = 0;
 
   rotation = m & 3; // can't be higher than 3
 
@@ -286,7 +307,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     if (tabcolor == INITR_144GREENTAB) {
       _height = ST7735_TFTHEIGHT_128;
       _width = ST7735_TFTWIDTH_128;
-    } else if (tabcolor == INITR_MINI160x80) {
+    } else if (tabcolor == INITR_MINI160x80 || tabcolor == INITR_MINI160x80BGR) {
       _height = ST7735_TFTHEIGHT_160;
       _width = ST7735_TFTWIDTH_80;
     } else {
@@ -306,7 +327,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     if (tabcolor == INITR_144GREENTAB) {
       _width = ST7735_TFTHEIGHT_128;
       _height = ST7735_TFTWIDTH_128;
-    } else if (tabcolor == INITR_MINI160x80) {
+    } else if (tabcolor == INITR_MINI160x80 || tabcolor == INITR_MINI160x80BGR) {
       _width = ST7735_TFTHEIGHT_160;
       _height = ST7735_TFTWIDTH_80;
     } else {
@@ -326,7 +347,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     if (tabcolor == INITR_144GREENTAB) {
       _height = ST7735_TFTHEIGHT_128;
       _width = ST7735_TFTWIDTH_128;
-    } else if (tabcolor == INITR_MINI160x80) {
+    } else if (tabcolor == INITR_MINI160x80 || tabcolor == INITR_MINI160x80BGR) {
       _height = ST7735_TFTHEIGHT_160;
       _width = ST7735_TFTWIDTH_80;
     } else {
@@ -346,7 +367,7 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     if (tabcolor == INITR_144GREENTAB) {
       _width = ST7735_TFTHEIGHT_128;
       _height = ST7735_TFTWIDTH_128;
-    } else if (tabcolor == INITR_MINI160x80) {
+    } else if (tabcolor == INITR_MINI160x80 || tabcolor == INITR_MINI160x80BGR) {
       _width = ST7735_TFTHEIGHT_160;
       _height = ST7735_TFTWIDTH_80;
     } else {
@@ -360,3 +381,40 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
 
   sendCommand(ST77XX_MADCTL, &madctl, 1);
 }
+
+
+/**************************************************************************/
+/*!
+    @brief  Only for ST7735S. Sets Vertical Scrolling Area basic config, VSA must be within TFA and BFA.
+    @param  top_fix_height      TFA Top Fixed Area in pixels, >= 1
+    @param  bottom_fix_height   BFA Bottom Fixed Area in pixels, >=1
+    @param  bottom_to_top       Scroll direction
+*/
+/**************************************************************************/
+void Adafruit_ST7735::setVerticalScrollConfig(uint8_t top_fix_height, uint8_t bottom_fix_height, bool bottom_to_top) {
+  uint8_t scroll_height;
+  scroll_height = _height - top_fix_height - bottom_fix_height; // TFA + VSA + BFA = 162 
+
+  uint8_t args [6] = {0x00, top_fix_height, 0x00, scroll_height, 0x00, bottom_fix_height};
+  sendCommand(ST7735_SCRLAR, args, 6);
+
+  if(bottom_to_top)
+    madctl |= ST77XX_MADCTL_ML; // sets ML bit = 1
+  else
+    madctl &= ~ST77XX_MADCTL_ML; // sets ML bit = 0
+    
+  sendCommand(ST77XX_MADCTL, &madctl, 1);
+}
+
+
+/**************************************************************************/
+/*!
+    @brief  Only for ST7735S. Sets Vertical Scroll Pointer, vsp must be within TFA and BFA.
+    @param  vsp  Vertical Scroll Pointer
+*/
+/**************************************************************************/
+void Adafruit_ST7735::setVerticalScrollPointer(uint8_t vsp) {
+  uint8_t args[2] = {0x00, vsp};
+  sendCommand(ST7735_VSCSAD, args, 2);
+}
+
