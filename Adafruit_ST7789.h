@@ -3,6 +3,19 @@
 
 #include "Adafruit_ST77xx.h"
 
+// Define the screen rotation position in a clockwise direction
+//
+//        NONE
+//  LEFT   +    RIGHT
+//       BOTTOM
+//
+#define ST77XX_ROTATE_NONE              2
+#define ST77XX_ROTATE_RIGHT             1
+#define ST77XX_ROTATE_LEFT              3
+#define ST77XX_ROTATE_BOTTOM            0
+// Flip the screen horizontally, useful in some applications that use mirrors.
+#define ST77XX_FLIP_HORIZONTAL          true
+
 /// Subclass of ST77XX type display for ST7789 TFT Driver
 class Adafruit_ST7789 : public Adafruit_ST77xx {
 public:
@@ -14,6 +27,7 @@ public:
 #endif // end !ESP8266
 
   void setRotation(uint8_t m);
+  void setRotation(uint8_t r, bool flip);
   void init(uint16_t width, uint16_t height, uint8_t spiMode = SPI_MODE0);
 
 protected:
