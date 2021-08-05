@@ -161,7 +161,7 @@ void Adafruit_ST7789::setRotation(uint8_t m, bool flip) {
     _width = windowWidth;
     _height = windowHeight;
     break;
-  case 1:                      // 270deg   ST77XX_ROTATE_RIGHT
+  case 1:                      // 270deg   ST77XX_ROTATE_LEFT
     if (flip) {
       madctl = ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
       _xstart = _rowstart2;

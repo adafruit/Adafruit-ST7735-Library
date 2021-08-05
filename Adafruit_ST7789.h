@@ -10,8 +10,8 @@
 //       BOTTOM
 //
 #define ST77XX_ROTATE_NONE              2
-#define ST77XX_ROTATE_RIGHT             1
-#define ST77XX_ROTATE_LEFT              3
+#define ST77XX_ROTATE_RIGHT             3
+#define ST77XX_ROTATE_LEFT              1
 #define ST77XX_ROTATE_BOTTOM            0
 // Flip the screen horizontally, useful in some applications that use mirrors.
 #define ST77XX_FLIP_HORIZONTAL          true
