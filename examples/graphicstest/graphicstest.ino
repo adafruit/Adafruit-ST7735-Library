@@ -13,6 +13,8 @@
   ----> https://www.adafruit.com/product/4313
   The 1.54" TFT breakout
     ----> https://www.adafruit.com/product/3787
+  The 1.69" TFT breakout
+    ----> https://www.adafruit.com/product/5206
   The 2.0" TFT breakout
     ----> https://www.adafruit.com/product/4311
   as well as Adafruit raw 1.8" TFT display
@@ -61,7 +63,7 @@
 // For 1.44" and 1.8" TFT with ST7735 use:
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
-// For 1.14", 1.3", 1.54", and 2.0" TFT with ST7789:
+// For 1.14", 1.3", 1.54", 1.69", and 2.0" TFT with ST7789:
 //Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_RST);
 
 
