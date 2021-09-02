@@ -98,6 +98,9 @@ void setup(void) {
   // OR use this initializer (uncomment) if using a 1.3" or 1.54" 240x240 TFT:
   //tft.init(240, 240);           // Init ST7789 240x240
 
+  // OR use this initializer (uncomment) if using a 1.69" 280x240 TFT:
+  //tft.init(240, 280);           // Init ST7789 280x240
+
   // OR use this initializer (uncomment) if using a 2.0" 320x240 TFT:
   //tft.init(240, 320);           // Init ST7789 320x240
 
