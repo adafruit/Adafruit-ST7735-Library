@@ -232,10 +232,17 @@ void Adafruit_ST77xx::enableDisplay(boolean enable) {
 /*!
  @brief  Change whether TE pin output is on or off
  @param  enable True if you want the TE pin ON, false OFF
+ @param  mode   True for V-Blanking and H-Blanking, false for V-Blanking
  */
 /**************************************************************************/
-void Adafruit_ST77xx::enableTearing(boolean enable) {
-  sendCommand(enable ? ST77XX_TEON : ST77XX_TEOFF);
+void Adafruit_ST77xx::enableTearing(boolean enable, boolean mode) {
+  if(enable) {
+    sendCommand(ST77XX_TEON);
+    spiWrite(mode ? 1 : 0);
+  } else {
+    sendCommand(ST77XX_TEOFF);
+    /* turning off does not require sending data about flags */
+  }
 }
 
 /**************************************************************************/
