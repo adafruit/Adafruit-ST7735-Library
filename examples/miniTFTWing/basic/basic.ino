@@ -8,7 +8,7 @@ Adafruit_miniTFTWing ss;
 #ifdef ESP8266
    #define TFT_CS   0
    #define TFT_DC   15
-#elif defined(ESP32)
+#elif defined(ESP32) && !defined(ARDUINO_ADAFRUIT_FEATHER_ESP32S2)
    #define TFT_CS   15
    #define TFT_DC   33
 #elif defined(TEENSYDUINO)
@@ -25,8 +25,8 @@ Adafruit_miniTFTWing ss;
    #define TFT_CS   P5_3
 #else
     // Anything else, defaults!
-   #define TFT_CS   9
-   #define TFT_DC   10
+   #define TFT_CS   5
+   #define TFT_DC   6
 #endif
 
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS,  TFT_DC, TFT_RST);
