@@ -50,17 +50,11 @@
 /// Subclass of ST77XX for ST7735B and ST7735R TFT Drivers:
 class Adafruit_ST7735 : public Adafruit_ST77xx {
 public:
-#if defined(ARDUINO_ARCH_STM32) 
   Adafruit_ST7735(int16_t cs, int16_t dc, int16_t mosi, int16_t sclk, int16_t rst);
   Adafruit_ST7735(int16_t cs, int16_t dc, int16_t rst);
-  Adafruit_ST7735(SPIClass *spiClass, int16_t cs, int16_t dc, int16_t rst);
-#else
-  Adafruit_ST7735(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk, int8_t rst);
-  Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst);
 #if !defined(ESP8266)
-  Adafruit_ST7735(SPIClass *spiClass, int8_t cs, int8_t dc, int8_t rst);
+  Adafruit_ST7735(SPIClass *spiClass, int16_t cs, int16_t dc, int16_t rst);
 #endif // end !ESP8266
-#endif //end ARDUINO_ARCH_STM32
 
   // Differences between displays (usu. identified by colored tab on
   // plastic overlay) are odd enough that we need to do this 'by hand':
