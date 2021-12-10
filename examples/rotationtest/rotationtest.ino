@@ -78,7 +78,7 @@ The HalloWing M4 Express
 #endif
 
 // Option 1 (recommended): must use the hardware SPI pins
-// (for UNO thats sclk = 13 and sid = 11) and pin 10 must be
+// (for UNO that's sclk = 13 and sid = 11) and pin 10 must be
 // an output. This is much faster - also required if you want
 // to use the microSD card (see the image drawing example)
 #if defined(ADAFRUIT_HALLOWING_M4_EXPRESS)
