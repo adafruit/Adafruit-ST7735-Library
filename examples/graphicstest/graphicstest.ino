@@ -109,8 +109,8 @@ void setup(void) {
   // OR use this initializer (uncomment) if using a 1.14" 240x135 TFT:
   //tft.init(135, 240);           // Init ST7789 240x135
   
-  // OR use this initializer (uncomment) if using a 1.47" 174x320 TFT:
-  //tft.init(174, 320);           // Init ST7789 174x320
+  // OR use this initializer (uncomment) if using a 1.47" 172x320 TFT:
+  //tft.init(172, 320);           // Init ST7789 172x320
 
   // SPI speed defaults to SPI_DEFAULT_FREQ defined in the library, you can override it here
   // Note that speed allowable depends on chip and quality of wiring, if you go too fast, you
