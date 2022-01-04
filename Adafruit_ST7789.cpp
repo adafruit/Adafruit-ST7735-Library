@@ -114,9 +114,9 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
     _colstart = _colstart2 = 0;
   } else if (width < 240) {
     // 1.14" display
-    _rowstart = _rowstart2 = (int)((320 - height + 1) / 2);
-    _colstart = (int)((240 - width + 1) / 2);
-    _colstart2 = (int)((240 - width) / 2);
+    _rowstart = _rowstart2 = (int)((320 - height) / 2);
+    _colstart = (int)((240 - width) / 2);
+    _colstart2 = (int)((240 - width + 1) / 2);
   } else {
     // 1.3", 1.54", and 2.0" displays
     _rowstart = (320 - height);
