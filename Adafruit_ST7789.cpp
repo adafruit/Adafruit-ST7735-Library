@@ -119,8 +119,11 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
   } else if (width == 135 && height == 240) {
     // 1.14" display
     _rowstart = _rowstart2 = (int)((320 - height) / 2);
-    _colstart = (int)((240 - width) / 2);
-    _colstart2 = (int)((240 - width + 1) / 2);
+    // This is the only device currently supported device that has different
+    // values for _colstart & _colstart2. You must ensure that the extra
+    // pixel lands in _colstart and not in _colstart2
+    _colstart = (int)((240 - width + 1) / 2);
+    _colstart2 = (int)((240 - width) / 2);
   } else {
     // 1.3", 1.54", and 2.0" displays
     _rowstart = (320 - height);
@@ -157,7 +160,7 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
   case 1:
     madctl = ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
     _xstart = _rowstart;
-    _ystart = _colstart;
+    _ystart = _colstart2;
     _height = windowWidth;
     _width = windowHeight;
     break;
@@ -171,7 +174,7 @@ void Adafruit_ST7789::setRotation(uint8_t m) {
   case 3:
     madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
     _xstart = _rowstart2;
-    _ystart = _colstart2;
+    _ystart = _colstart;
     _height = windowWidth;
     _width = windowHeight;
     break;
