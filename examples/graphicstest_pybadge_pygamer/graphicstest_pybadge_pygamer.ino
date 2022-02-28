@@ -40,12 +40,13 @@ float p = 3.1415926;
 
 void setup(void) {
   Serial.begin(9600);
-  Serial.print(F("Hello! ST77xx TFT Test"));
+  Serial.print(F("Hello! PyBadge/PyGamer TFT Test"));
+
+  pinMode(TFT_BACKLIGHT, OUTPUT);
+  digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
 
   tft.initR(INITR_BLACKTAB);        // Initialize ST7735R screen
   tft.setRotation(1);
-  pinMode(TFT_BACKLIGHT, OUTPUT);
-  digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
 
   Serial.println(F("Initialized"));
 

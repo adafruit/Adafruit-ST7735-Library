@@ -18,7 +18,7 @@
 #include <Adafruit_ST7789.h> // Hardware-specific library for ST7789
 #include <SPI.h>
 
-#define TFT_CS        44 // PyBadge/PyGamer display control pins: chip select
+#define TFT_CS        44 // HalloWing M4 display control pins: chip select
 #define TFT_RST       46 // Display reset
 #define TFT_DC        45 // Display data/command select
 #define TFT_BACKLIGHT 47 // Display backlight pin
@@ -38,11 +38,12 @@ float p = 3.1415926;
 
 void setup(void) {
   Serial.begin(9600);
-  Serial.print(F("Hello! ST77xx TFT Test"));
+  Serial.print(F("Hello! HalloWing TFT Test"));
 
-  tft.init(240, 240);                // Initialize ST7789 screen
   pinMode(TFT_BACKLIGHT, OUTPUT);
   digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
+
+  tft.init(240, 240); // Initialize ST7789 screen
 
   Serial.println(F("Initialized"));
 

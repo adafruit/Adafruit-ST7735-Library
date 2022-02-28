@@ -48,12 +48,13 @@ float p = 3.1415926;
 
 void setup(void) {
   Serial.begin(9600);
-  Serial.print(F("Hello! ST77xx TFT Test"));
+  Serial.print(F("Hello! Gizmo TFT Test"));
 
-  tft.init(240, 240);                // Init ST7789 240x240
-  tft.setRotation(2);  
   pinMode(TFT_BACKLIGHT, OUTPUT);
   digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
+
+  tft.init(240, 240);                // Init ST7789 240x240
+  tft.setRotation(2);
 
   Serial.println(F("Initialized"));
 
