@@ -241,7 +241,8 @@ void Adafruit_ST7735::initR(uint8_t options) {
   displayInit(Rcmd3);
 
   // Black tab, change MADCTL color filter
-  if ((options == INITR_BLACKTAB) || (options == INITR_GREENTAB_WS) || (options == INITR_MINI160x80)) {
+  if ((options == INITR_BLACKTAB) || (options == INITR_GREENTAB_WS) ||
+      (options == INITR_MINI160x80)) {
     uint8_t data = 0xC0;
     sendCommand(ST77XX_MADCTL, &data, 1);
   }
@@ -277,7 +278,8 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
 
   switch (rotation) {
   case 0:
-    if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_GREENTAB_WS) || (tabcolor == INITR_MINI160x80)) {
+    if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_GREENTAB_WS) ||
+        (tabcolor == INITR_MINI160x80)) {
       madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST77XX_MADCTL_RGB;
     } else {
       madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MY | ST7735_MADCTL_BGR;
@@ -297,7 +299,8 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     _ystart = _rowstart;
     break;
   case 1:
-    if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_GREENTAB_WS) || (tabcolor == INITR_MINI160x80)) {
+    if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_GREENTAB_WS) ||
+        (tabcolor == INITR_MINI160x80)) {
       madctl = ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
     } else {
       madctl = ST77XX_MADCTL_MY | ST77XX_MADCTL_MV | ST7735_MADCTL_BGR;
@@ -317,7 +320,8 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     _xstart = _rowstart;
     break;
   case 2:
-    if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_GREENTAB_WS) || (tabcolor == INITR_MINI160x80)) {
+    if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_GREENTAB_WS) ||
+        (tabcolor == INITR_MINI160x80)) {
       madctl = ST77XX_MADCTL_RGB;
     } else {
       madctl = ST7735_MADCTL_BGR;
@@ -337,7 +341,8 @@ void Adafruit_ST7735::setRotation(uint8_t m) {
     _ystart = _rowstart;
     break;
   case 3:
-    if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_GREENTAB_WS) || (tabcolor == INITR_MINI160x80)) {
+    if ((tabcolor == INITR_BLACKTAB) || (tabcolor == INITR_GREENTAB_WS) ||
+        (tabcolor == INITR_MINI160x80)) {
       madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST77XX_MADCTL_RGB;
     } else {
       madctl = ST77XX_MADCTL_MX | ST77XX_MADCTL_MV | ST7735_MADCTL_BGR;
