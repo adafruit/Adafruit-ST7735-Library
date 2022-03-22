@@ -102,22 +102,13 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
   // case-by-case basis.)
 
   commonInit(NULL);
-
-  if (width == 172 && height == 320) {
-    // 1.47" display
-    _rowstart = _rowstart2 = 0;
-    _colstart = _colstart2 = 34;
-  } else if (width == 170 && height == 320) {
-    // 1.9" display
-    _rowstart = _rowstart2 = 0;
-    _colstart = _colstart2 = 36;
-  } else if (width == 240 && height == 280) {
-    // 1.69" display
-    _rowstart = 20;
+  if (width == 240 && height == 240) {
+    // 1.3", 1.54" displays (right justified)
+    _rowstart = (320 - height);
     _rowstart2 = 0;
-    _colstart = _colstart2 = 0;
+    _colstart = _colstart2 = (240 - width);
   } else if (width == 135 && height == 240) {
-    // 1.14" display
+    // 1.14" display (centered, with odd size)
     _rowstart = _rowstart2 = (int)((320 - height) / 2);
     // This is the only device currently supported device that has different
     // values for _colstart & _colstart2. You must ensure that the extra
@@ -125,10 +116,9 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
     _colstart = (int)((240 - width + 1) / 2);
     _colstart2 = (int)((240 - width) / 2);
   } else {
-    // 1.3", 1.54", and 2.0" displays
-    _rowstart = (320 - height);
-    _rowstart2 = 0;
-    _colstart = _colstart2 = (240 - width);
+    // 1.47", 1.69, 1.9", 2.0" displays (centered)
+    _rowstart = _rowstart2 = (int)((320 - height) / 2);
+    _colstart = _colstart2 = (int)((240 - width) / 2);
   }
 
   windowWidth = width;
