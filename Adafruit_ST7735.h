@@ -13,6 +13,7 @@
 #define INITR_144GREENTAB 0x01
 #define INITR_MINI160x80 0x04
 #define INITR_HALLOWING 0x05
+#define INITR_MINI160x80BGR 0x06 // ST7735S
 
 // Some register settings
 #define ST7735_MADCTL_BGR 0x08
@@ -35,6 +36,10 @@
 
 #define ST7735_GMCTRP1 0xE0
 #define ST7735_GMCTRN1 0xE1
+
+// Vertical Scrolling
+#define ST7735_SCRLAR 0x33
+#define ST7735_VSCSAD 0x37
 
 // Some ready-made 16-bit ('565') color settings:
 #define ST7735_BLACK ST77XX_BLACK
@@ -63,8 +68,12 @@ public:
 
   void setRotation(uint8_t m);
 
+  void setVerticalScrollConfig(uint8_t top_fix_height = 1, uint8_t bottom_fix_height = 1, bool bottom_to_top = true); 
+  void setVerticalScrollPointer(uint8_t vsp); 
+
 private:
   uint8_t tabcolor;
+  uint8_t madctl;
 };
 
 #endif // _ADAFRUIT_ST7735H_
