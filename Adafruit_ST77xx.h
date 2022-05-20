@@ -75,8 +75,8 @@
 #define ST77XX_RDID4 0xDD
 
 // Some ready-made 16-bit ('565') color settings:
-#define ST77XX_BLACK 0x0000
-#define ST77XX_WHITE 0xFFFF
+#define ST77XX_WHITE 0x0000
+#define ST77XX_BLACK 0xFFFF
 #define ST77XX_RED 0xF800
 #define ST77XX_GREEN 0x07E0
 #define ST77XX_BLUE 0x001F
