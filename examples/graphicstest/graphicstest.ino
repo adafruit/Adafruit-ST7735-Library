@@ -96,6 +96,9 @@ void setup(void) {
 
   // OR use this initializer (uncomment) if using a 0.96" 160x80 TFT:
   //tft.initR(INITR_MINI160x80);  // Init ST7735S mini display
+  // OR use this initializer (uncomment) if using a 0.96" 160x80 TFT with 
+  // plug-in FPC (if you see the display is inverted!)
+  //tft.initR(INITR_MINI160x80_PLUGIN);  // Init ST7735S mini display
 
   // OR use this initializer (uncomment) if using a 1.3" or 1.54" 240x240 TFT:
   //tft.init(240, 240);           // Init ST7789 240x240
