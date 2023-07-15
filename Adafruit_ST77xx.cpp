@@ -224,7 +224,7 @@ void Adafruit_ST77xx::setColRowStart(int8_t col, int8_t row) {
  @param  enable True if you want the display ON, false OFF
  */
 /**************************************************************************/
-void Adafruit_ST77xx::enableDisplay(boolean enable) {
+void Adafruit_ST77xx::enableDisplay(bool enable) {
   sendCommand(enable ? ST77XX_DISPON : ST77XX_DISPOFF);
 }
 
@@ -234,7 +234,7 @@ void Adafruit_ST77xx::enableDisplay(boolean enable) {
  @param  enable True if you want the TE pin ON, false OFF
  */
 /**************************************************************************/
-void Adafruit_ST77xx::enableTearing(boolean enable) {
+void Adafruit_ST77xx::enableTearing(bool enable) {
   sendCommand(enable ? ST77XX_TEON : ST77XX_TEOFF);
 }
 
@@ -244,7 +244,7 @@ void Adafruit_ST77xx::enableTearing(boolean enable) {
  @param  enable True if you want sleep mode ON, false OFF
  */
 /**************************************************************************/
-void Adafruit_ST77xx::enableSleep(boolean enable) {
+void Adafruit_ST77xx::enableSleep(bool enable) {
   sendCommand(enable ? ST77XX_SLPIN : ST77XX_SLPOUT);
 }
 
