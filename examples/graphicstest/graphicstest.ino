@@ -349,23 +349,26 @@ void tftPrintTest() {
   tft.print(" seconds.");
 }
 
-void mediabuttons() {
-  // play
+void mediabuttons()
+{
+  const int border = 6; // border around screen
+  const int margin = 14; // margin inside button
+  static int w = tft.width();
+  static int h = tft.height();
+  
+  const int bh = (h-3*border) / 2; // button height
+  const int bw = (w-2*border); // button width
+  const int br = 6; // border radius
+
+  // Play button
   tft.fillScreen(ST77XX_BLACK);
-  tft.fillRoundRect(25, 10, 78, 60, 8, ST77XX_WHITE);
-  tft.fillTriangle(42, 20, 42, 60, 90, 40, ST77XX_RED);
-  delay(500);
-  // pause
-  tft.fillRoundRect(25, 90, 78, 60, 8, ST77XX_WHITE);
-  tft.fillRoundRect(39, 98, 20, 45, 5, ST77XX_GREEN);
-  tft.fillRoundRect(69, 98, 20, 45, 5, ST77XX_GREEN);
-  delay(500);
-  // play color
-  tft.fillTriangle(42, 20, 42, 60, 90, 40, ST77XX_BLUE);
-  delay(50);
-  // pause color
-  tft.fillRoundRect(39, 98, 20, 45, 5, ST77XX_RED);
-  tft.fillRoundRect(69, 98, 20, 45, 5, ST77XX_RED);
-  // play color
-  tft.fillTriangle(42, 20, 42, 60, 90, 40, ST77XX_GREEN);
+  tft.fillRoundRect(border, border, bw, bh, br, ST77XX_WHITE);
+  tft.fillTriangle(border+margin, border+margin, border+margin, border+bh-margin,  w-border-margin, border+bh/2, ST77XX_RED);
+
+  // Pause button
+  const int h2 = h/2;
+  const int barw = (bw-3*margin)/2; // bar width
+  tft.fillRoundRect(border, h2+border, bw, bh, br, ST77XX_WHITE);
+  tft.fillRoundRect(border+margin, h2+border+margin, barw, bh-2*margin, br/2, ST77XX_GREEN);
+  tft.fillRoundRect(border+margin+barw+margin, h2+border+margin, barw, bh-2*margin, br/2, ST77XX_GREEN);
 }
