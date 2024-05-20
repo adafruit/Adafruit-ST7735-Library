@@ -50,13 +50,13 @@ void setup(void) {
   Serial.begin(9600);
   Serial.print(F("Hello! Gizmo TFT Test"));
 
-  pinMode(TFT_BACKLIGHT, OUTPUT);
-  digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
-
   tft.init(240, 240);                // Init ST7789 240x240
   tft.setRotation(2);
 
   Serial.println(F("Initialized"));
+
+  pinMode(TFT_BACKLIGHT, OUTPUT);
+  digitalWrite(TFT_BACKLIGHT, HIGH); // Backlight on
 
   uint16_t time = millis();
   tft.fillScreen(ST77XX_BLACK);
