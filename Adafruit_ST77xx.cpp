@@ -47,9 +47,9 @@
     @param  miso  SPI MISO pin # (optional, pass -1 if unused)
 */
 /**************************************************************************/
-Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
-                                 int8_t mosi, int8_t sclk, int8_t rst,
-                                 int8_t miso)
+Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, int16_t cs, int16_t dc,
+                                 int16_t mosi, int16_t sclk, int16_t rst,
+                                 int16_t miso)
     : Adafruit_SPITFT(w, h, cs, dc, mosi, sclk, rst, miso) {}
 
 /**************************************************************************/
@@ -62,8 +62,8 @@ Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
     @param  rst   Reset pin # (optional, pass -1 if unused)
 */
 /**************************************************************************/
-Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
-                                 int8_t rst)
+Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, int16_t cs, int16_t dc,
+                                 int16_t rst)
     : Adafruit_SPITFT(w, h, cs, dc, rst) {}
 
 #if !defined(ESP8266)
@@ -79,7 +79,7 @@ Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
 */
 /**************************************************************************/
 Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass,
-                                 int8_t cs, int8_t dc, int8_t rst)
+                                 int16_t cs, int16_t dc, int16_t rst)
     : Adafruit_SPITFT(w, h, spiClass, cs, dc, rst) {}
 #endif // end !ESP8266
 
