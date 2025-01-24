@@ -150,7 +150,7 @@ void Adafruit_ST77xx::commonInit(const uint8_t *cmdList) {
 /*!
   @brief  SPI displays set an address window rectangle for blitting pixels
   @param  x  Top left corner x coordinate
-  @param  y  Top left corner x coordinate
+  @param  y  Top left corner y coordinate
   @param  w  Width of window
   @param  h  Height of window
 */
