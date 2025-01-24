@@ -11,8 +11,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -44,32 +44,31 @@
  * @brief Enum for ST7796S color order.
  */
 enum ST7796S_ColorOrder {
-    ST7796S_RGB = 0x00, ///< Red-Green-Blue color order
-    ST7796S_BGR = 0x08  ///< Blue-Green-Red color order
+  ST7796S_RGB = 0x00, ///< Red-Green-Blue color order
+  ST7796S_BGR = 0x08  ///< Blue-Green-Red color order
 };
 
 /**
  * @brief Adafruit driver for the ST7796S TFT display.
  */
 class Adafruit_ST7796S : public Adafruit_ST77xx {
-  public:
-    Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t MOSI, int8_t SCLK, int8_t RST = -1);
-    Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t RST = -1);
+public:
+  Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t MOSI, int8_t SCLK,
+                   int8_t RST = -1);
+  Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t RST = -1);
 #if !defined(ESP8266)
-    Adafruit_ST7796S(SPIClass *spiClass, int8_t CS, int8_t RS, int8_t RST);
+  Adafruit_ST7796S(SPIClass *spiClass, int8_t CS, int8_t RS, int8_t RST);
 #endif
 
-    void init(uint16_t width = ST7796S_TFTWIDTH,
-              uint16_t height = ST7796S_TFTHEIGHT,
-              uint8_t rowOffset = 0,
-              uint8_t colOffset = 0,
-              ST7796S_ColorOrder colorOrder = ST7796S_RGB);
+  void init(uint16_t width = ST7796S_TFTWIDTH,
+            uint16_t height = ST7796S_TFTHEIGHT, uint8_t rowOffset = 0,
+            uint8_t colOffset = 0, ST7796S_ColorOrder colorOrder = ST7796S_RGB);
 
-    void setRotation(uint8_t r);
+  void setRotation(uint8_t r);
 
-  private:
-    ST7796S_ColorOrder _colorOrder; ///< Color order setting.
-    uint16_t windowWidth, windowHeight; ///< Dimensions of the display window.
+private:
+  ST7796S_ColorOrder _colorOrder;     ///< Color order setting.
+  uint16_t windowWidth, windowHeight; ///< Dimensions of the display window.
 };
 
 #endif
