@@ -35,7 +35,11 @@ void loop() {
   show_char_map();
   show_custom_text();
   show_bitmap();
+
+#if !defined(__AVR__)
+  // we dont have the RAM or Flash for canvas
   show_canvas();
+#endif
 
   if (++rotate > 3) rotate = 0; // Cycle through screen rotations 0-3
   display.setRotation(rotate);  // Takes effect on next drawing command
