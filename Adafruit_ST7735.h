@@ -14,6 +14,7 @@
 #define INITR_MINI160x80 0x04
 #define INITR_HALLOWING 0x05
 #define INITR_MINI160x80_PLUGIN 0x06
+#define INITR_BLACKTAB_OFFSETS 0x07  // like black tab, but with offsets of green tab
 
 // Some register settings
 #define ST7735_MADCTL_BGR 0x08
