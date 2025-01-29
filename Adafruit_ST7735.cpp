@@ -11,8 +11,8 @@
     @param  sclk  SPI Clock pin #
     @param  rst   Reset pin # (optional, pass -1 if unused)
 */
-Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk,
-                                 int8_t rst)
+Adafruit_ST7735::Adafruit_ST7735(int16_t cs, int16_t dc, int16_t mosi, int16_t sclk,
+                                 int16_t rst)
     : Adafruit_ST77xx(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, cs, dc, mosi,
                       sclk, rst) {}
 
@@ -22,7 +22,7 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t mosi, int8_t sclk,
     @param  dc   Data/Command pin #
     @param  rst  Reset pin # (optional, pass -1 if unused)
 */
-Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst)
+Adafruit_ST7735::Adafruit_ST7735(int16_t cs, int16_t dc, int16_t rst)
     : Adafruit_ST77xx(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, cs, dc, rst) {}
 
 #if !defined(ESP8266)
@@ -33,8 +33,8 @@ Adafruit_ST7735::Adafruit_ST7735(int8_t cs, int8_t dc, int8_t rst)
     @param  dc        Data/Command pin #
     @param  rst       Reset pin # (optional, pass -1 if unused)
 */
-Adafruit_ST7735::Adafruit_ST7735(SPIClass *spiClass, int8_t cs, int8_t dc,
-                                 int8_t rst)
+Adafruit_ST7735::Adafruit_ST7735(SPIClass *spiClass, int16_t cs, int16_t dc,
+                                 int16_t rst)
     : Adafruit_ST77xx(ST7735_TFTWIDTH_128, ST7735_TFTHEIGHT_160, spiClass, cs,
                       dc, rst) {}
 #endif // end !ESP8266
