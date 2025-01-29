@@ -102,6 +102,7 @@ public:
   void enableDisplay(boolean enable);
   void enableTearing(boolean enable);
   void enableSleep(boolean enable);
+  void setColRowStart(int8_t col, int8_t row);
 
 protected:
   uint8_t _colstart = 0,   ///< Some displays need this changed to offset
@@ -111,7 +112,7 @@ protected:
   void begin(uint32_t freq = 0);
   void commonInit(const uint8_t *cmdList);
   void displayInit(const uint8_t *addr);
-  void setColRowStart(int8_t col, int8_t row);
+  
 };
 
 #endif // _ADAFRUIT_ST77XXH_
