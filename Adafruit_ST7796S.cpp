@@ -24,51 +24,100 @@
 
 #include "Adafruit_ST7796S.h"
 
-static const uint8_t PROGMEM st7796s_init[] = {14, // 14 commands
-                                               ST77XX_SWRESET,
-                                               ST_CMD_DELAY, // Software reset
-                                               150,
-                                               0xF0,
-                                               1, // Unlock manufacturer
-                                               0xC3,
-                                               0xF0,
-                                               1,
-                                               0x96,
-                                               0xC5,
-                                               1, // VCOM Control
-                                               0x1C,
-                                               ST77XX_MADCTL,
-                                               1, // Memory Access
-                                               0x48,
-                                               ST77XX_COLMOD,
-                                               1, // Color Mode - 16 bit
-                                               0x55,
-                                               0xB0,
-                                               1, // Interface Control
-                                               0x80,
-                                               0xB4,
-                                               1, // Inversion Control
-                                               0x00,
-                                               0xB6,
-                                               3, // Display Function Control
-                                               0x80,
-                                               0x02,
-                                               0x3B,
-                                               0xB7,
-                                               1, // Entry Mode
-                                               0xC6,
-                                               0xF0,
-                                               1, // Lock manufacturer commands
-                                               0x69,
-                                               0xF0,
-                                               1,
-                                               0x3C,
-                                               ST77XX_SLPOUT,
-                                               ST_CMD_DELAY, // Exit sleep
-                                               150,
-                                               ST77XX_DISPON,
-                                               ST_CMD_DELAY, // Display on
-                                               150};
+static const uint8_t PROGMEM st7796s_init[] = {
+    19, // 19 commands
+    ST77XX_SLPOUT,
+    ST_CMD_DELAY, // Exit sleep
+    120,
+    0xF0,
+    1, // Unlock manufacturer
+    0xC3,
+    0xF0,
+    1,
+    0x96,
+    0xB6,
+    3, // Display Function Control
+    0x8A,
+    0x07,
+    0x3B,
+    0xB5,
+    4, // Blanking Porch Control
+    0x20,
+    0x20,
+    0x00,
+    0x20,
+    0xB1,
+    2, // Frame Rate
+    0x80,
+    0x10,
+    ST77XX_MADCTL,
+    1, // Memory Access Control
+    0x48,
+    0xB4,
+    1, // Display Inversion
+    0x00,
+    0xC5,
+    1, // VCOM Control
+    0x45,
+    0xC1,
+    1, // Power Control 2
+    0x04,
+    ST77XX_INVON,
+    0, // Inversion ON
+    0xE8,
+    8, // Display Output Ctrl Adjust
+    0x40,
+    0x84,
+    0x1B,
+    0x1B,
+    0x10,
+    0x03,
+    0xB8,
+    0x33,
+    ST7796S_PGAMCTRL,
+    14, // Positive Gamma
+    0x00,
+    0x03,
+    0x07,
+    0x07,
+    0x07,
+    0x23,
+    0x2B,
+    0x33,
+    0x46,
+    0x1A,
+    0x19,
+    0x19,
+    0x27,
+    0x2F,
+    ST7796S_NGAMCTRL,
+    14, // Negative Gamma
+    0x00,
+    0x03,
+    0x06,
+    0x07,
+    0x04,
+    0x22,
+    0x2F,
+    0x54,
+    0x49,
+    0x1B,
+    0x17,
+    0x15,
+    0x25,
+    0x2D,
+    0x12,
+    0, // Partial Mode ON
+    0xE4,
+    1,
+    0x31,
+    ST77XX_COLMOD,
+    1, // Interface Pixel Format
+    0x55,
+    ST77XX_DISPON,
+    0,   // Display On
+    0x00 // End of list
+};
 
 /**
  * @brief Constructor with software SPI.
