@@ -37,6 +37,30 @@ Adafruit_ST7789::Adafruit_ST7789(SPIClass *spiClass, int8_t cs, int8_t dc,
     : Adafruit_ST77xx(240, 320, spiClass, cs, dc, rst) {}
 #endif // end !ESP8266
 
+#if defined(ARDUINO_ARDUINO_NESSO_N1)
+Adafruit_ST7789::Adafruit_ST7789(int8_t cs, ExpanderPin *dc, ExpanderPin *rst)
+    : Adafruit_ST77xx(240, 320, cs, dc, rst) {}
+
+Adafruit_ST7789::Adafruit_ST7789(int8_t cs, int8_t dc, ExpanderPin *rst)
+    : Adafruit_ST77xx(240, 320, cs, dc, rst) {}
+
+Adafruit_ST7789::Adafruit_ST7789(ExpanderPin *cs, ExpanderPin *dc,
+                                 ExpanderPin *rst)
+    : Adafruit_ST77xx(240, 320, cs, dc, rst) {}
+
+Adafruit_ST7789::Adafruit_ST7789(SPIClass *spiClass, int8_t cs, int8_t dc,
+                                 ExpanderPin *rst)
+    : Adafruit_ST77xx(240, 320, spiClass, cs, dc, rst) {}
+
+Adafruit_ST7789::Adafruit_ST7789(SPIClass *spiClass, int8_t cs, ExpanderPin *dc,
+                                 ExpanderPin *rst)
+    : Adafruit_ST77xx(240, 320, spiClass, cs, dc, rst) {}
+
+Adafruit_ST7789::Adafruit_ST7789(SPIClass *spiClass, ExpanderPin *cs,
+                                 ExpanderPin *dc, ExpanderPin *rst)
+    : Adafruit_ST77xx(240, 320, spiClass, cs, dc, rst) {}
+#endif
+
 // SCREEN INITIALIZATION ***************************************************
 
 // Rather than a bazillion writecommand() and writedata() calls, screen
@@ -102,6 +126,15 @@ void Adafruit_ST7789::init(uint16_t width, uint16_t height, uint8_t mode) {
   // case-by-case basis.)
 
   commonInit(NULL);
+
+#if defined(ARDUINO_ARDUINO_NESSO_N1)
+  if (width == 135 && height == 240 && _rstExp != nullptr) {
+    _rowstart = 40;
+    _rowstart2 = 40;
+    _colstart = 53;
+    _colstart2 = 52;
+  } else
+#endif
   if (width == 240 && height == 240) {
     // 1.3", 1.54" displays (right justified)
     _rowstart = (320 - height);

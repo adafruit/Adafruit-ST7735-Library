@@ -25,18 +25,19 @@
 #ifndef _ADAFRUIT_ST77XXH_
 #define _ADAFRUIT_ST77XXH_
 
-#include "Arduino.h"
-#include "Print.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SPITFT.h>
 #include <Adafruit_SPITFT_Macros.h>
 
-#define ST7735_TFTWIDTH_128 128  // for 1.44 and mini
-#define ST7735_TFTWIDTH_80 80    // for mini
-#define ST7735_TFTHEIGHT_128 128 // for 1.44" display
-#define ST7735_TFTHEIGHT_160 160 // for 1.8" and mini display
+#include "Arduino.h"
+#include "Print.h"
 
-#define ST_CMD_DELAY 0x80 // special signifier for command lists
+#define ST7735_TFTWIDTH_128 128   // for 1.44 and mini
+#define ST7735_TFTWIDTH_80 80     // for mini
+#define ST7735_TFTHEIGHT_128 128  // for 1.44" display
+#define ST7735_TFTHEIGHT_160 160  // for 1.8" and mini display
+
+#define ST_CMD_DELAY 0x80  // special signifier for command lists
 
 #define ST77XX_NOP 0x00
 #define ST77XX_SWRESET 0x01
@@ -87,15 +88,29 @@
 
 /// Subclass of SPITFT for ST77xx displays (lots in common!)
 class Adafruit_ST77xx : public Adafruit_SPITFT {
-public:
+ public:
   Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t _CS, int8_t _DC, int8_t _MOSI,
                   int8_t _SCLK, int8_t _RST = -1, int8_t _MISO = -1);
   Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t CS, int8_t RS,
                   int8_t RST = -1);
 #if !defined(ESP8266)
-  Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass, int8_t CS,
+  Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass* spiClass, int8_t CS,
                   int8_t RS, int8_t RST = -1);
-#endif // end !ESP8266
+#endif  // end !ESP8266
+#if defined(ARDUINO_ARDUINO_NESSO_N1)
+  Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass* spiClass, int8_t cs,
+                  ExpanderPin* dc, ExpanderPin* rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass* spiClass, int8_t cs,
+                  int8_t dc, ExpanderPin* rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass* spiClass, ExpanderPin* cs,
+                  ExpanderPin* dc, ExpanderPin* rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs, ExpanderPin* dc,
+                  ExpanderPin* rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
+                  ExpanderPin* rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, ExpanderPin* cs, ExpanderPin* dc,
+                  ExpanderPin* rst = NULL);
+#endif
 
   void setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
   void setRotation(uint8_t r);
@@ -103,15 +118,15 @@ public:
   void enableTearing(boolean enable);
   void enableSleep(boolean enable);
 
-protected:
-  uint8_t _colstart = 0,   ///< Some displays need this changed to offset
-      _rowstart = 0,       ///< Some displays need this changed to offset
-      spiMode = SPI_MODE0; ///< Certain display needs MODE3 instead
+ protected:
+  uint8_t _colstart = 0,    ///< Some displays need this changed to offset
+      _rowstart = 0,        ///< Some displays need this changed to offset
+      spiMode = SPI_MODE0;  ///< Certain display needs MODE3 instead
 
   void begin(uint32_t freq = 0);
-  void commonInit(const uint8_t *cmdList);
-  void displayInit(const uint8_t *addr);
+  void commonInit(const uint8_t* cmdList);
+  void displayInit(const uint8_t* addr);
   void setColRowStart(int8_t col, int8_t row);
 };
 
-#endif // _ADAFRUIT_ST77XXH_
+#endif  // _ADAFRUIT_ST77XXH_

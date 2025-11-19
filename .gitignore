@@ -6,3 +6,7 @@ doxygen_sqlite3.db
 html
 /.vs
 *.DS_Store
+.vscode/
+build/
+.vs/
+.pio/
