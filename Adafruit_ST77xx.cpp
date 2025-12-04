@@ -83,6 +83,33 @@ Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass,
     : Adafruit_SPITFT(w, h, spiClass, cs, dc, rst) {}
 #endif // end !ESP8266
 
+#if defined(ARDUINO_ARDUINO_NESSO_N1)
+Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass,
+                                 int8_t cs, ExpanderPin *dc, ExpanderPin *rst)
+    : Adafruit_SPITFT(w, h, spiClass, cs, dc, rst) {}
+
+Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass,
+                                 int8_t cs, int8_t dc, ExpanderPin *rst)
+    : Adafruit_SPITFT(w, h, spiClass, cs, dc, rst) {}
+
+Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass,
+                                 ExpanderPin *cs, ExpanderPin *dc,
+                                 ExpanderPin *rst)
+    : Adafruit_SPITFT(w, h, spiClass, cs, dc, rst) {}
+
+Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs,
+                                 ExpanderPin *dc, ExpanderPin *rst)
+    : Adafruit_SPITFT(w, h, cs, dc, rst) {}
+
+Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
+                                 ExpanderPin *rst)
+    : Adafruit_SPITFT(w, h, cs, dc, rst) {}
+
+Adafruit_ST77xx::Adafruit_ST77xx(uint16_t w, uint16_t h, ExpanderPin *cs,
+                                 ExpanderPin *dc, ExpanderPin *rst)
+    : Adafruit_SPITFT(w, h, cs, dc, rst) {}
+#endif
+
 /**************************************************************************/
 /*!
     @brief  Companion code to the initiliazation tables. Reads and issues

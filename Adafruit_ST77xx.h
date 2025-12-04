@@ -25,11 +25,12 @@
 #ifndef _ADAFRUIT_ST77XXH_
 #define _ADAFRUIT_ST77XXH_
 
-#include "Arduino.h"
-#include "Print.h"
 #include <Adafruit_GFX.h>
 #include <Adafruit_SPITFT.h>
 #include <Adafruit_SPITFT_Macros.h>
+
+#include "Arduino.h"
+#include "Print.h"
 
 #define ST7735_TFTWIDTH_128 128  // for 1.44 and mini
 #define ST7735_TFTWIDTH_80 80    // for mini
@@ -96,6 +97,20 @@ public:
   Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass, int8_t CS,
                   int8_t RS, int8_t RST = -1);
 #endif // end !ESP8266
+#if defined(ARDUINO_ARDUINO_NESSO_N1)
+  Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass, int8_t cs,
+                  ExpanderPin *dc, ExpanderPin *rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass, int8_t cs,
+                  int8_t dc, ExpanderPin *rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, SPIClass *spiClass, ExpanderPin *cs,
+                  ExpanderPin *dc, ExpanderPin *rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs, ExpanderPin *dc,
+                  ExpanderPin *rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, int8_t cs, int8_t dc,
+                  ExpanderPin *rst = NULL);
+  Adafruit_ST77xx(uint16_t w, uint16_t h, ExpanderPin *cs, ExpanderPin *dc,
+                  ExpanderPin *rst = NULL);
+#endif
 
   void setAddrWindow(uint16_t x, uint16_t y, uint16_t w, uint16_t h);
   void setRotation(uint8_t r);
