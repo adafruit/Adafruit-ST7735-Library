@@ -2,7 +2,6 @@
 #define _ADAFRUIT_ST7789H_
 
 #include "Adafruit_ST77xx.h"
-// extern class ExpanderPin;
 
 /// Subclass of ST77XX type display for ST7789 TFT Driver
 class Adafruit_ST7789 : public Adafruit_ST77xx {
