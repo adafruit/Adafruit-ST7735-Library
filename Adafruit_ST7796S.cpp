@@ -72,38 +72,38 @@ static const uint8_t PROGMEM st7796s_init[] = {14, // 14 commands
 
 /**
  * @brief Constructor with software SPI.
- * @param CS Chip select pin.
- * @param RS Data/command pin.
- * @param MOSI SPI MOSI pin.
- * @param SCLK SPI clock pin.
- * @param RST Reset pin (optional).
+ * @param cs Chip select pin.
+ * @param rs Data/command pin.
+ * @param mosi SPI MOSI pin.
+ * @param sclk SPI clock pin.
+ * @param rst Reset pin (optional).
  */
-Adafruit_ST7796S::Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t MOSI,
-                                   int8_t SCLK, int8_t RST)
-    : Adafruit_ST77xx(ST7796S_TFTWIDTH, ST7796S_TFTHEIGHT, CS, RS, MOSI, SCLK,
-                      RST) {}
+Adafruit_ST7796S::Adafruit_ST7796S(int8_t cs, int8_t rs, int8_t mosi,
+                                   int8_t sclk, int8_t rst)
+    : Adafruit_ST77xx(ST7796S_TFTWIDTH, ST7796S_TFTHEIGHT, cs, rs, mosi, sclk,
+                      rst) {}
 
 /**
  * @brief Constructor with hardware SPI.
- * @param CS Chip select pin.
- * @param RS Data/command pin.
- * @param RST Reset pin (optional).
+ * @param cs Chip select pin.
+ * @param rs Data/command pin.
+ * @param rst Reset pin (optional).
  */
-Adafruit_ST7796S::Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t RST)
-    : Adafruit_ST77xx(ST7796S_TFTWIDTH, ST7796S_TFTHEIGHT, CS, RS, RST) {}
+Adafruit_ST7796S::Adafruit_ST7796S(int8_t cs, int8_t rs, int8_t rst)
+    : Adafruit_ST77xx(ST7796S_TFTWIDTH, ST7796S_TFTHEIGHT, cs, rs, rst) {}
 
 #if !defined(ESP8266)
 /**
  * @brief Constructor with hardware SPI and custom SPI class.
  * @param spiClass Pointer to SPI class.
- * @param CS Chip select pin.
- * @param RS Data/command pin.
- * @param RST Reset pin (optional).
+ * @param cs Chip select pin.
+ * @param rs Data/command pin.
+ * @param rst Reset pin (optional).
  */
-Adafruit_ST7796S::Adafruit_ST7796S(SPIClass *spiClass, int8_t CS, int8_t RS,
-                                   int8_t RST)
-    : Adafruit_ST77xx(ST7796S_TFTWIDTH, ST7796S_TFTHEIGHT, spiClass, CS, RS,
-                      RST) {}
+Adafruit_ST7796S::Adafruit_ST7796S(SPIClass *spiClass, int8_t cs, int8_t rs,
+                                   int8_t rst)
+    : Adafruit_ST77xx(ST7796S_TFTWIDTH, ST7796S_TFTHEIGHT, spiClass, cs, rs,
+                      rst) {}
 #endif
 
 /**
