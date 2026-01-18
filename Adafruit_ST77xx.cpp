@@ -25,7 +25,7 @@
 #include "Adafruit_ST77xx.h"
 #include <limits.h>
 #if !defined(ARDUINO_STM32_FEATHER) && !defined(ARDUINO_UNOR4_WIFI)
-#if !defined(ARDUINO_UNOR4_MINIMA)
+#if !defined(ARDUINO_UNOR4_MINIMA) && !defined(ARDUINO_ARCH_ZEPHYR)
 #include "pins_arduino.h"
 #include "wiring_private.h"
 #endif
