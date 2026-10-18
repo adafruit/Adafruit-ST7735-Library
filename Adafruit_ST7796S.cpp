@@ -78,8 +78,8 @@ static const uint8_t PROGMEM st7796s_init[] = {14, // 14 commands
  * @param SCLK SPI clock pin.
  * @param RST Reset pin (optional).
  */
-Adafruit_ST7796S::Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t MOSI,
-                                   int8_t SCLK, int8_t RST)
+Adafruit_ST7796S::Adafruit_ST7796S(int16_t CS, int16_t RS, int16_t MOSI,
+                                   int16_t SCLK, int16_t RST)
     : Adafruit_ST77xx(ST7796S_TFTWIDTH, ST7796S_TFTHEIGHT, CS, RS, MOSI, SCLK,
                       RST) {}
 
@@ -89,7 +89,7 @@ Adafruit_ST7796S::Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t MOSI,
  * @param RS Data/command pin.
  * @param RST Reset pin (optional).
  */
-Adafruit_ST7796S::Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t RST)
+Adafruit_ST7796S::Adafruit_ST7796S(int16_t CS, int16_t RS, int16_t RST)
     : Adafruit_ST77xx(ST7796S_TFTWIDTH, ST7796S_TFTHEIGHT, CS, RS, RST) {}
 
 #if !defined(ESP8266)
@@ -100,8 +100,8 @@ Adafruit_ST7796S::Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t RST)
  * @param RS Data/command pin.
  * @param RST Reset pin (optional).
  */
-Adafruit_ST7796S::Adafruit_ST7796S(SPIClass *spiClass, int8_t CS, int8_t RS,
-                                   int8_t RST)
+Adafruit_ST7796S::Adafruit_ST7796S(SPIClass *spiClass, int16_t CS, int16_t RS,
+                                   int16_t RST)
     : Adafruit_ST77xx(ST7796S_TFTWIDTH, ST7796S_TFTHEIGHT, spiClass, CS, RS,
                       RST) {}
 #endif
