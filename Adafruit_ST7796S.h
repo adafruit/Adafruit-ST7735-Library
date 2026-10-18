@@ -53,11 +53,11 @@ enum ST7796S_ColorOrder {
  */
 class Adafruit_ST7796S : public Adafruit_ST77xx {
 public:
-  Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t MOSI, int8_t SCLK,
-                   int8_t RST = -1);
-  Adafruit_ST7796S(int8_t CS, int8_t RS, int8_t RST = -1);
+  Adafruit_ST7796S(int16_t CS, int16_t RS, int16_t MOSI, int16_t SCLK,
+                   int16_t RST = -1);
+  Adafruit_ST7796S(int16_t CS, int16_t RS, int16_t RST = -1);
 #if !defined(ESP8266)
-  Adafruit_ST7796S(SPIClass *spiClass, int8_t CS, int8_t RS, int8_t RST);
+  Adafruit_ST7796S(SPIClass *spiClass, int16_t CS, int16_t RS, int16_t RST);
 #endif
 
   void init(uint16_t width = ST7796S_TFTWIDTH,
