@@ -173,6 +173,5 @@ void Adafruit_ST7796S::setRotation(uint8_t m) {
     break;
   }
 
-  Serial.println(madctl, HEX);
   sendCommand(ST77XX_MADCTL, &madctl, 1);
 }
