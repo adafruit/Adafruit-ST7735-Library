@@ -24,11 +24,11 @@
 
 #include "Adafruit_ST77xx.h"
 #include <limits.h>
-#if !defined(ARDUINO_STM32_FEATHER) && !defined(ARDUINO_UNOR4_WIFI)
-#if !defined(ARDUINO_UNOR4_MINIMA)
+#if !defined(ARDUINO_STM32_FEATHER) && !defined(ARDUINO_UNOR4_WIFI) &&         \
+    (defined(STM32_CORE_VERSION) && (STM32_CORE_VERSION < 0x03000000)) &&      \
+    !defined(ARDUINO_UNOR4_MINIMA)
 #include "pins_arduino.h"
 #include "wiring_private.h"
-#endif
 #endif
 #include <SPI.h>
 
